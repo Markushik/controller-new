@@ -7,14 +7,14 @@ import asyncio
 from aiogram import Bot
 from aiogram import Dispatcher
 from aiogram.filters import CommandStart
-from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram_dialog import setup_dialogs
 from loguru import logger
 
-from config import settings
+from tgbot.config import settings
 from handlers import client
 from tgbot.dialogs.create import dialog
+from tgbot.handlers import errors
 from tgbot.handlers.client import start
 
 
@@ -35,10 +35,12 @@ async def main() -> None:
     disp = Dispatcher(storage=storage)
 
     setup_dialogs(disp)
+    disp.include_router(dialog)
+
     disp.message.register(start, CommandStart())
 
+    disp.include_router(errors.router)
     disp.include_router(client.router)
-    disp.include_router(dialog)
 
     try:
         await disp.start_polling(bot, allowed_updates=disp.resolve_used_update_types())

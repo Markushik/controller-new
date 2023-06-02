@@ -12,12 +12,12 @@ router = Router()
 redis = Redis()
 
 
-async def service_name_handler(message: Message, dialog: DialogProtocol, manager: DialogManager):
+async def service_name_handler(message: Message, dialog: DialogProtocol, manager: DialogManager) -> None:
     manager.dialog_data["service"] = message.text
     await manager.switch_to(UserSG.months)
 
 
-async def months_count_handler(message: Message, dialog: DialogProtocol, manager: DialogManager):
+async def months_count_handler(message: Message, dialog: DialogProtocol, manager: DialogManager) -> None:
     if message.text.isdigit() and int(message.text) in range(1, 12 + 1):
         manager.dialog_data["months"] = message.text
         await manager.switch_to(UserSG.reminder)
@@ -31,7 +31,7 @@ async def on_click_calendar_reminder(query: CallbackQuery, widget: Any, manager:
     await manager.switch_to(UserSG.check)
 
 
-async def get_data(dialog_manager: DialogManager, **kwargs):
+async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
     return {
         "data": "📩 Проверьте <b>правильность</b> введённых данных:\n\n"
                 f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n"
@@ -40,5 +40,5 @@ async def get_data(dialog_manager: DialogManager, **kwargs):
     }
 
 
-async def start(message: Message, dialog_manager: DialogManager):  # TODO: delete registration start command in __main__
+async def start(message: Message, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.service, mode=StartMode.RESET_STACK)
