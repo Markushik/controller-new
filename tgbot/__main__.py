@@ -6,7 +6,6 @@ import asyncio
 
 from aiogram import Bot
 from aiogram import Dispatcher
-from aiogram.filters import CommandStart
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
@@ -14,11 +13,10 @@ from loguru import logger
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from tgbot.config import settings
 from handlers import client
+from tgbot.config import settings
 from tgbot.dialogs.create import dialog
 from tgbot.handlers import errors
-from tgbot.handlers.client import start
 from tgbot.middlewares.database import DbSessionMiddleware
 
 
