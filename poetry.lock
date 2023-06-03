@@ -186,6 +186,26 @@ files = [
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "alembic"
+version = "1.11.1"
+description = "A database migration tool for SQLAlchemy."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "alembic-1.11.1-py3-none-any.whl", hash = "sha256:dc871798a601fab38332e38d6ddb38d5e734f60034baeb8e2db5b642fccd8ab8"},
+    {file = "alembic-1.11.1.tar.gz", hash = "sha256:6a810a6b012c88b33458fceb869aef09ac75d6ace5291915ba7fae44de372c01"},
+]
+
+[package.dependencies]
+Mako = "*"
+SQLAlchemy = ">=1.3.0"
+typing-extensions = ">=4"
+
+[package.extras]
+tz = ["python-dateutil"]
+
+[[package]]
 name = "anyio"
 version = "3.7.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -669,6 +689,26 @@ files = [
     {file = "magic-filter-1.0.9.tar.gz", hash = "sha256:d0f1ffa5ff1fbe5105fd5f293c79b5d3795f336ea0f6129c636959a687bf422a"},
     {file = "magic_filter-1.0.9-py3-none-any.whl", hash = "sha256:51002312a8972fa514b998b7ff89340c98be3fc499967c1f5f2af98d13baf8d5"},
 ]
+
+[[package]]
+name = "mako"
+version = "1.2.4"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "Mako-1.2.4-py3-none-any.whl", hash = "sha256:c97c79c018b9165ac9922ae4f32da095ffd3c4e6872b45eded42926deea46818"},
+    {file = "Mako-1.2.4.tar.gz", hash = "sha256:d60a3903dc3bb01a18ad6a89cdbe2e4eadc69c0bc8ef1e3773ba53d44c3f7a34"},
+]
+
+[package.dependencies]
+MarkupSafe = ">=0.9.2"
+
+[package.extras]
+babel = ["Babel"]
+lingua = ["lingua"]
+testing = ["pytest"]
 
 [[package]]
 name = "markupsafe"
@@ -1232,4 +1272,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "18dd4af92892b2b420b81c4424dec6e5382af96fd6b4da8c8402aed7ad75bb66"
+content-hash = "cca408d536e1694849ac810e1ed73199490b162b04cc1f2d7e099de53354f2fd"

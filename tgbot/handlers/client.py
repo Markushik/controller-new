@@ -2,6 +2,7 @@ from datetime import date
 from typing import Any
 
 from aiogram import Router
+from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from redis.asyncio import Redis
@@ -10,6 +11,11 @@ from tgbot.states.user import UserSG
 
 router = Router()
 redis = Redis()
+
+
+@router.message(CommandStart())
+async def start(message: Message, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.service, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, manager: DialogManager) -> None:
@@ -36,9 +42,5 @@ async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
         "data": "📩 Проверьте <b>правильность</b> введённых данных:\n\n"
                 f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n"
                 f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n"
-                f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>",
+                f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
     }
-
-
-async def start(message: Message, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.service, mode=StartMode.RESET_STACK)
