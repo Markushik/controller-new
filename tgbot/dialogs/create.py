@@ -1,10 +1,11 @@
 from aiogram.enums import ContentType
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import Calendar
-from aiogram_dialog.widgets.text import Jinja, Format
+from aiogram_dialog.widgets.kbd import Calendar, Button, Row
+from aiogram_dialog.widgets.text import Jinja, Format, Const
 
-from tgbot.handlers.client import service_name_handler, months_count_handler, on_click_calendar_reminder, get_data
+from tgbot.handlers.client import service_name_handler, months_count_handler, on_click_calendar_reminder, get_data, \
+    on_click_button_confirm, on_click_button_reject
 from tgbot.states.user import UserSG
 
 dialog = Dialog(
@@ -30,6 +31,10 @@ dialog = Dialog(
     ),
     Window(
         Format("{data}"),
+        Row(
+            Button(Const("✅"), id="confirm_id", on_click=on_click_button_confirm),
+            Button(Const("❎"), id="reject_id", on_click=on_click_button_reject),
+        ),
         state=UserSG.check,
     ),
     getter=get_data

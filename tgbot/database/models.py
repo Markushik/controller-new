@@ -13,7 +13,7 @@ from .base import BaseModel
 class Users(BaseModel):
     __tablename__ = "users"
 
-    user_id: Mapped[int] = mapped_column(BigInteger, nullable=True, primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     user_name: Mapped[str] = mapped_column(VARCHAR(120))
     chat_id: Mapped[int] = mapped_column(BigInteger)
 
@@ -21,6 +21,6 @@ class Users(BaseModel):
 class Services(BaseModel):
     __tablename__ = "services"
 
-    service_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    service_id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
     title: Mapped[str] = mapped_column(VARCHAR(30))
     reminder: Mapped[date] = mapped_column(Date)

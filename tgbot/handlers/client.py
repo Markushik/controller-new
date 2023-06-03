@@ -6,7 +6,9 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from redis.asyncio import Redis
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from tgbot.database.models import Services
 from tgbot.states.user import UserSG
 
 router = Router()
@@ -18,23 +20,46 @@ async def start(message: Message, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.service, mode=StartMode.RESET_STACK)
 
 
-async def service_name_handler(message: Message, dialog: DialogProtocol, manager: DialogManager) -> None:
-    manager.dialog_data["service"] = message.text
-    await manager.switch_to(UserSG.months)
+async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
+    dialog_manager.dialog_data["service"] = message.text
+    await dialog_manager.switch_to(UserSG.months)
 
 
-async def months_count_handler(message: Message, dialog: DialogProtocol, manager: DialogManager) -> None:
+async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
     if message.text.isdigit() and int(message.text) in range(1, 12 + 1):
-        manager.dialog_data["months"] = message.text
-        await manager.switch_to(UserSG.reminder)
+        pass
     else:
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
+        return
+
+    dialog_manager.dialog_data["months"] = message.text
+    await dialog_manager.switch_to(UserSG.reminder)
 
 
-async def on_click_calendar_reminder(query: CallbackQuery, widget: Any, manager: DialogManager,
+async def on_click_calendar_reminder(query: CallbackQuery, widget: Any, dialog_manager: DialogManager,
                                      selected_date: date) -> None:
-    manager.dialog_data["reminder"] = (str(date.strftime(selected_date, '%d-%m-%Y')))
-    await manager.switch_to(UserSG.check)
+    dialog_manager.dialog_data["reminder"] = date.strftime(selected_date, '%d-%m-%Y')
+    await dialog_manager.switch_to(UserSG.check)
+
+
+async def on_click_button_confirm(query: CallbackQuery, session: AsyncSession, dialog_manager: DialogManager) -> None:
+    await session.merge(
+        Services(
+            service_id=1,
+            title=dialog_manager.dialog_data.get('service'),
+            reminder=dialog_manager.dialog_data.get('reminder')
+        )
+    )
+    await session.commit()
+
+    await query.message.answer("<b>✅ Одобрено:</b> Данные успешно записаны")
+    await dialog_manager.done()
+
+
+async def on_click_button_reject(query: CallbackQuery, widget: Any, dialog_manager: DialogManager,
+                                 session: AsyncSession) -> None:
+    await query.message.answer("<b>❎ Отклонено:</b> Данные не записаны")
+    await dialog_manager.done()
 
 
 async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
