@@ -2,6 +2,7 @@
 This file contains table assets
 """
 from datetime import date
+from typing import Optional
 
 from sqlalchemy import VARCHAR, BigInteger, Integer, Date
 from sqlalchemy.orm import Mapped
@@ -13,14 +14,14 @@ from .base import BaseModel
 class Users(BaseModel):
     __tablename__ = "users"
 
-    user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    user_name: Mapped[str] = mapped_column(VARCHAR(120))
-    chat_id: Mapped[int] = mapped_column(BigInteger)
+    user_id: Mapped[Optional[int]] = mapped_column(BigInteger, primary_key=True)
+    user_name: Mapped[Optional[str]] = mapped_column(VARCHAR(120))
+    chat_id: Mapped[Optional[int]] = mapped_column(BigInteger)
 
 
 class Services(BaseModel):
     __tablename__ = "services"
 
-    service_id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
-    title: Mapped[str] = mapped_column(VARCHAR(30))
-    reminder: Mapped[date] = mapped_column(Date)
+    service_id: Mapped[Optional[int]] = mapped_column(Integer, autoincrement=True, primary_key=True)
+    title: Mapped[Optional[str]] = mapped_column(VARCHAR(30))
+    reminder: Mapped[Optional[date]] = mapped_column(Date)

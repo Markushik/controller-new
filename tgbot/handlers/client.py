@@ -45,7 +45,6 @@ async def on_click_calendar_reminder(query: CallbackQuery, widget: Any, dialog_m
 async def on_click_button_confirm(query: CallbackQuery, session: AsyncSession, dialog_manager: DialogManager) -> None:
     await session.merge(
         Services(
-            service_id=1,
             title=dialog_manager.dialog_data.get('service'),
             reminder=dialog_manager.dialog_data.get('reminder')
         )
@@ -56,16 +55,14 @@ async def on_click_button_confirm(query: CallbackQuery, session: AsyncSession, d
     await dialog_manager.done()
 
 
-async def on_click_button_reject(query: CallbackQuery, widget: Any, dialog_manager: DialogManager,
-                                 session: AsyncSession) -> None:
+async def on_click_button_reject(query: CallbackQuery, dialog_manager: DialogManager, session: AsyncSession) -> None:
     await query.message.answer("<b>❎ Отклонено:</b> Данные не записаны")
     await dialog_manager.done()
 
 
 async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
     return {
-        "data": "📩 Проверьте <b>правильность</b> введённых данных:\n\n"
-                f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n"
-                f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n"
-                f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
+        "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
+        "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
+        "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
     }

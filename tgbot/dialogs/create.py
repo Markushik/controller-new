@@ -30,7 +30,8 @@ dialog = Dialog(
         state=UserSG.reminder,
     ),
     Window(
-        Format("{data}"),
+        Format("📩 Проверьте <b>правильность</b> введённых данных:\n\n"
+               "{service}{months}{reminder}"),
         Row(
             Button(Const("✅"), id="confirm_id", on_click=on_click_button_confirm),
             Button(Const("❎"), id="reject_id", on_click=on_click_button_reject),
