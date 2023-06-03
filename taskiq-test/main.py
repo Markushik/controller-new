@@ -1,7 +1,20 @@
-from datetime import datetime
+from taskiq import TaskiqScheduler
+from taskiq.schedule_sources import LabelScheduleSource
+from taskiq_nats import NatsBroker
 
-date_str = '09-19-2022'
+from taskiq_redis import RedisAsyncResultBackend
 
-date_object = datetime.strptime(date_str, '%m-%d-%Y').date()
+broker = NatsBroker("nats://127.0.0.1:4222", queue="iop").with_result_backend(
+    RedisAsyncResultBackend("redis://localhost/1")
+)
 
-print(date_object, type(date_object))
+scheduler = TaskiqScheduler(
+    broker=broker,
+    sources=[LabelScheduleSource(broker)],
+)
+
+
+@broker.task(schedule=[{"cron": "*/1 * * * *", "args": [1]}])
+async def heavy_task(value: int) -> int:
+    print("AAAA")
+    return value + 1
