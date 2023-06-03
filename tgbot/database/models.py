@@ -4,7 +4,7 @@ This file contains table assets
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import VARCHAR, BigInteger, Integer, Date
+from sqlalchemy import VARCHAR, BigInteger, Integer, Date, Text
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
@@ -24,4 +24,4 @@ class Services(BaseModel):
 
     service_id: Mapped[Optional[int]] = mapped_column(Integer, autoincrement=True, primary_key=True)
     title: Mapped[Optional[str]] = mapped_column(VARCHAR(30))
-    reminder: Mapped[Optional[date]] = mapped_column(Date)
+    reminder: Mapped[Optional[str]] = mapped_column(VARCHAR(10))

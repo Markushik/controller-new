@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Any
 
 from aiogram import Router
@@ -38,11 +38,13 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
 
 async def on_click_calendar_reminder(query: CallbackQuery, widget: Any, dialog_manager: DialogManager,
                                      selected_date: date) -> None:
-    dialog_manager.dialog_data["reminder"] = date.strftime(selected_date, '%d-%m-%Y')
+    dialog_manager.dialog_data["reminder"] = str(selected_date)
     await dialog_manager.switch_to(UserSG.check)
 
 
-async def on_click_button_confirm(query: CallbackQuery, session: AsyncSession, dialog_manager: DialogManager) -> None:
+async def on_click_button_confirm(query: CallbackQuery, widget: Any, dialog_manager: DialogManager) -> None:
+    session = dialog_manager.middleware_data["session"]
+
     await session.merge(
         Services(
             title=dialog_manager.dialog_data.get('service'),
