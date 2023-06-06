@@ -3,7 +3,7 @@ This file contains table assets
 """
 from typing import Optional
 
-from sqlalchemy import VARCHAR, BigInteger, Integer
+from sqlalchemy import VARCHAR, BigInteger, Integer, SmallInteger
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
@@ -23,4 +23,5 @@ class Services(BaseModel):
 
     service_id: Mapped[Optional[int]] = mapped_column(Integer, autoincrement=True, primary_key=True)
     title: Mapped[Optional[str]] = mapped_column(VARCHAR(30))
+    months: Mapped[Optional[int]] = mapped_column(SmallInteger)
     reminder: Mapped[Optional[str]] = mapped_column(VARCHAR(10))

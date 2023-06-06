@@ -6,6 +6,7 @@ import asyncio
 
 from aiogram import Bot
 from aiogram import Dispatcher
+from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
@@ -17,7 +18,7 @@ from handlers import client
 from tgbot.config import settings
 from tgbot.dialogs.create import dialog
 from tgbot.dialogs.menu import main_menu
-from tgbot.handlers import errors
+# from tgbot.handlers.errors import dialogs_router
 from tgbot.middlewares.database import DbSessionMiddleware
 from tgbot.middlewares.trolttling import ThrottlingMiddleware
 
@@ -35,7 +36,7 @@ async def main() -> None:  # TODO: add tests with .workflows
 
     storage = RedisStorage.from_url(
         url=f"redis://{settings.REDIS_HOST}/{settings.REDIS_DB}",
-        key_builder=DefaultKeyBuilder(with_destiny=True)
+        key_builder=DefaultKeyBuilder(with_destiny=True)  # TODO: use dynaconf another
     )
     postgres_url = URL.create(drivername="postgresql+asyncpg", host=settings.POSTGRES_HOST,
                               port=settings.POSTGRES_PORT, username=settings.POSTGRES_USERNAME,
@@ -52,7 +53,6 @@ async def main() -> None:  # TODO: add tests with .workflows
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_router(errors.router)
     disp.include_router(client.router)
 
     setup_dialogs(disp)

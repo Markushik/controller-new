@@ -5,19 +5,19 @@ from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
-from redis.asyncio import Redis
+from aiogram_dialog.widgets.kbd import Button
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tgbot.database.models import Services
 from tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
-redis = Redis()
 
 
 @router.message(CommandStart())
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
+    #await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -36,13 +36,13 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
     await dialog_manager.switch_to(SubscriptionSG.reminder)
 
 
-async def on_click_calendar_reminder(query: CallbackQuery, widget: Any, dialog_manager: DialogManager,
+async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                      selected_date: date) -> None:
     dialog_manager.dialog_data["reminder"] = str(selected_date)  # TODO: fix type
     await dialog_manager.switch_to(SubscriptionSG.check)
 
 
-async def on_click_button_confirm(query: CallbackQuery, widget: Any, dialog_manager: DialogManager) -> None:
+async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
 
     await session.merge(
@@ -70,13 +70,13 @@ async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
     }
 
 
-async def on_click_get_help(query: CallbackQuery, dialog_manager: DialogManager) -> None:
-    await query.message.edit_text("test")
+async def on_click_get_help(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.help, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_subs(query: CallbackQuery, dialog_manager: DialogManager) -> None:
-    await query.message.edit_text("test2")
+    await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
 
 
-async def on_click_get_donate(query: CallbackQuery, dialog_manager: DialogManager) -> None:
-    await query.message.edit_text("test3")
+async def on_click_get_donate(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.donate, mode=StartMode.RESET_STACK)
