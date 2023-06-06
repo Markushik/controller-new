@@ -26,7 +26,10 @@ async def main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logger.add("../debug.log", format="{time} {level} {message}", level="DEBUG")  # TODO: fix more size file
+    logger.add(
+        "../debug.log", format="{time} {level} {message}", level="DEBUG",
+        colorize=True, encoding="utf-8", rotation="5 MB", compression="zip"
+    )
     logger.info("LAUNCHING BOT")
 
     storage = RedisStorage.from_url(
@@ -43,7 +46,7 @@ async def main() -> None:
     engine = create_async_engine(url=postgres_url, echo=True)
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
-    disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
+    disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))  # TODO: all log update to loguru
     disp.update.middleware(ThrottlingMiddleware())
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
