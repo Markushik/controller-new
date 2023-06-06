@@ -16,12 +16,13 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from handlers import client
 from tgbot.config import settings
 from tgbot.dialogs.create import dialog
+from tgbot.dialogs.menu import main_menu
 from tgbot.handlers import errors
 from tgbot.middlewares.database import DbSessionMiddleware
 from tgbot.middlewares.trolttling import ThrottlingMiddleware
 
 
-async def main() -> None:
+async def main() -> None:  # TODO: add tests with .workflows
     """
     The main function responsible for launching the bot
     :return:
@@ -55,7 +56,9 @@ async def main() -> None:
     disp.include_router(client.router)
 
     setup_dialogs(disp)
+
     disp.include_router(dialog)
+    disp.include_router(main_menu)
 
     try:
         await disp.start_polling(bot, allowed_updates=disp.resolve_used_update_types())

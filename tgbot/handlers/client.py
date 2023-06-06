@@ -9,15 +9,15 @@ from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tgbot.database.models import Services
-from tgbot.states.user import SubscriptionSG
+from tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
 redis = Redis()
 
 
 @router.message(CommandStart())
-async def start(message: Message, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
+async def command_start(message: Message, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -70,5 +70,13 @@ async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
     }
 
 
-# async def on_click_get_help(query: CallbackQuery, dialog_manager: DialogManager) -> None:
-#     await query.message.edit_text()
+async def on_click_get_help(query: CallbackQuery, dialog_manager: DialogManager) -> None:
+    await query.message.edit_text("test")
+
+
+async def on_click_get_subs(query: CallbackQuery, dialog_manager: DialogManager) -> None:
+    await query.message.edit_text("test2")
+
+
+async def on_click_get_donate(query: CallbackQuery, dialog_manager: DialogManager) -> None:
+    await query.message.edit_text("test3")

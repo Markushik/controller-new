@@ -2,6 +2,7 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class UserSG(StatesGroup):
+    main = State()
     subs = State()
     help = State()
     donate = State()
