@@ -25,6 +25,7 @@ class InterceptHandler(logging.Handler):
 
 
 logging.basicConfig(handlers=[InterceptHandler()], level=0)
+
 broker = NatsBroker("nats://127.0.0.1:4222", queue="iop").with_result_backend(
     RedisAsyncResultBackend("redis://localhost/1")
 )

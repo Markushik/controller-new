@@ -18,6 +18,7 @@ from tgbot.config import settings
 from tgbot.dialogs.create import dialog
 from tgbot.handlers import errors
 from tgbot.middlewares.database import DbSessionMiddleware
+from tgbot.middlewares.trolttling import ThrottlingMiddleware
 
 
 async def main() -> None:
@@ -25,7 +26,7 @@ async def main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logger.add("../debug.log", format="{time} {level} {message}", level="DEBUG")
+    logger.add("../debug.log", format="{time} {level} {message}", level="DEBUG")  # TODO: fix more size file
     logger.info("LAUNCHING BOT")
 
     storage = RedisStorage.from_url(
@@ -43,6 +44,8 @@ async def main() -> None:
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
     disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
+    disp.update.middleware(ThrottlingMiddleware())
+
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
     disp.include_router(errors.router)
