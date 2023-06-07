@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The main file responsible for launching the bot
 """
