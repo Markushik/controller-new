@@ -5,7 +5,7 @@ from aiogram.types import TelegramObject, User
 from cachetools import TTLCache
 
 
-class ThrottlingMiddleware(BaseMiddleware):
+class ThrottlingMiddleware(BaseMiddleware):  # TODO: fix set a little input lag
     RATE_LIMIT = 0.7
 
     def __init__(self, rate_limit: float = RATE_LIMIT) -> None:

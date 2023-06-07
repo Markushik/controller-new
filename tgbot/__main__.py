@@ -6,7 +6,6 @@ import asyncio
 
 from aiogram import Bot
 from aiogram import Dispatcher
-from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
@@ -20,7 +19,6 @@ from tgbot.dialogs.create import dialog
 from tgbot.dialogs.menu import main_menu
 # from tgbot.handlers.errors import dialogs_router
 from tgbot.middlewares.database import DbSessionMiddleware
-from tgbot.middlewares.trolttling import ThrottlingMiddleware
 
 
 async def main() -> None:  # TODO: add tests with .workflows
@@ -49,7 +47,7 @@ async def main() -> None:  # TODO: add tests with .workflows
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
     disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))  # TODO: all log update to loguru
-    disp.update.middleware(ThrottlingMiddleware())
+    # disp.update.middleware(ThrottlingMiddleware())
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 

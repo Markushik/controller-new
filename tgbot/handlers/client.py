@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Any
 
 from aiogram import Router
 from aiogram.filters import CommandStart
@@ -16,8 +15,11 @@ router = Router()
 
 @router.message(CommandStart())
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
+
+
+async def on_click_start_create_sub(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
-    #await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -32,7 +34,7 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
         return
 
-    dialog_manager.dialog_data["months"] = message.text
+    dialog_manager.dialog_data["months"] = int(message.text)
     await dialog_manager.switch_to(SubscriptionSG.reminder)
 
 
@@ -44,17 +46,18 @@ async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialo
 
 async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
-
     await session.merge(
         Services(
             title=dialog_manager.dialog_data.get('service'),
+            months=dialog_manager.dialog_data.get('months'),
             reminder=dialog_manager.dialog_data.get('reminder')
         )
     )
     await session.commit()
 
-    await query.message.answer("<b>✅ Одобрено:</b> Данные успешно записаны")
+    await query.message.answer("<b>✅ Одобрено:</b> Данные успешно записаны")  # TODO: don't send, edit text
     await dialog_manager.done()
+    await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
 
 
 async def on_click_button_reject(query: CallbackQuery, dialog_manager: DialogManager) -> None:
@@ -74,9 +77,13 @@ async def on_click_get_help(query: CallbackQuery, button: Button, dialog_manager
     await dialog_manager.start(UserSG.help, mode=StartMode.RESET_STACK)
 
 
-async def on_click_get_subs(query: CallbackQuery, dialog_manager: DialogManager) -> None:
+async def on_click_get_subs(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_donate(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.donate, mode=StartMode.RESET_STACK)
+
+
+async def on_click_back_to_main(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)

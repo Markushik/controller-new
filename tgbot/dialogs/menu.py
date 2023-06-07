@@ -1,9 +1,16 @@
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Row, Button
-from aiogram_dialog.widgets.text import Jinja, Const, Format
+from aiogram_dialog.widgets.kbd import Row, Button, NumberedPager, Url
+from aiogram_dialog.widgets.text import Jinja, Const, ScrollingText
 
-from tgbot.handlers.client import on_click_get_help, on_click_get_donate, on_click_get_subs
+from tgbot.handlers.client import (on_click_get_help, on_click_get_donate, on_click_get_subs, on_click_start_create_sub,
+                                   on_click_back_to_main)
 from tgbot.states.user import UserSG
+
+VERY_LONG_TEXT = """\
+Тестовое сообщение #1
+
+Тестовое сообщение #2
+"""
 
 main_menu = Dialog(
     Window(
@@ -16,15 +23,44 @@ main_menu = Dialog(
         state=UserSG.main,
     ),
     Window(
-        Jinja("Help"),  # TODO: create nice menu how to use with MultiGroup
+        ScrollingText(
+            text=Jinja(VERY_LONG_TEXT),
+            id="text_scroll",
+            page_size=15,
+        ),
+        NumberedPager(
+            scroll="text_scroll",
+        ),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
         state=UserSG.help,
     ),
     Window(
-        Jinja("Subs"),  # TODO: add button "add" and "delete"
+        Jinja("Subs"),
+        Row(
+            Button(Const("Добавить"), id="add_id", on_click=on_click_start_create_sub),
+            Button(Const("Удалить"), id="remove_id", on_click=on_click_get_help),
+        ),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
         state=UserSG.subs,
     ),
     Window(
-        Jinja("Donate"),  # TODO: add button
+        Jinja("Donate"),
+        Row(
+            Url(
+                Const("☕ 199 ₽"),
+                Const('https://github.com/Markushik/controller-new/'),
+            ),
+            Url(
+                Const("🍔 299 ₽"),
+                Const('https://github.com/Markushik/controller-new/'),
+            ),
+            Url(
+                Const("🍕 499 ₽"),
+                Const('https://github.com/Markushik/controller-new/'),
+            ),
+        ),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
         state=UserSG.donate,
-    )
+    ),
+
 )

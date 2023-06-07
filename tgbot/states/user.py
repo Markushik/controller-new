@@ -1,6 +1,7 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
+# TODO: to uppercase
 class UserSG(StatesGroup):
     main = State()
     subs = State()
