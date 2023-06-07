@@ -36,7 +36,7 @@ scheduler = TaskiqScheduler(
 )
 
 
-@broker.task(schedule=[{"cron": "*/1 * * * *", "args": [1]}])
+@broker.task()
 async def heavy_task(value: int) -> int:
     print("AAAA")
     return value + 1

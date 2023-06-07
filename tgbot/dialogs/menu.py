@@ -20,7 +20,7 @@ main_menu = Dialog(
             Button(Const("💰 Донаты"), id="donate_id", on_click=on_click_get_donate),
             Button(Const("🆘 Поддержка"), id="help_id", on_click=on_click_get_help),
         ),
-        state=UserSG.main,
+        state=UserSG.MAIN,
     ),
     Window(
         ScrollingText(
@@ -32,16 +32,17 @@ main_menu = Dialog(
             scroll="text_scroll",
         ),
         Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
-        state=UserSG.help,
+        state=UserSG.HELP,
     ),
     Window(
-        Jinja("Subs"),
+        Jinja("🗂️ <b>Каталог активных подписок:</b>\n\n"
+              "🤷‍♂️ <b>Кажется</b>, что здесь ничего <b>нет</b>..."),
         Row(
             Button(Const("Добавить"), id="add_id", on_click=on_click_start_create_sub),
             Button(Const("Удалить"), id="remove_id", on_click=on_click_get_help),
         ),
         Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
-        state=UserSG.subs,
+        state=UserSG.SUBS,
     ),
     Window(
         Jinja("Donate"),
@@ -60,7 +61,7 @@ main_menu = Dialog(
             ),
         ),
         Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
-        state=UserSG.donate,
+        state=UserSG.DONATE,
     ),
 
 )

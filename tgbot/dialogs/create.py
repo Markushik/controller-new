@@ -13,13 +13,13 @@ dialog = Dialog(
         Jinja("— Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
               "<b>Пример:</b> <code>Tinkoff Premium</code>"),
         MessageInput(service_name_handler, content_types=[ContentType.TEXT]),
-        state=SubscriptionSG.service,
+        state=SubscriptionSG.SERVICE,
     ),
     Window(
         Jinja("— Сколько <b>месяцев</b> будет действовать подписка?\n\n"
               "<b>Пример:</b> <code>12 (мес.)</code>"),
         MessageInput(months_count_handler, content_types=[ContentType.TEXT]),
-        state=SubscriptionSG.months,
+        state=SubscriptionSG.MONTHS,
     ),
     Window(
         Jinja("— В какую <b>дату</b> оповестить о <b>ближайшем списании</b>?"),
@@ -27,7 +27,7 @@ dialog = Dialog(
             id="select_date_on_calendar",
             on_click=on_click_calendar_reminder,
         ),
-        state=SubscriptionSG.reminder,
+        state=SubscriptionSG.REMINDER,
     ),
     Window(
         Format("📩 Проверьте <b>правильность</b> введённых данных:\n\n"
@@ -36,7 +36,7 @@ dialog = Dialog(
             Button(Const("✅"), id="confirm_id", on_click=on_click_button_confirm),
             Button(Const("❎"), id="reject_id", on_click=on_click_button_reject),
         ),
-        state=SubscriptionSG.check,
+        state=SubscriptionSG.CHECK,
     ),
     getter=get_data
 )

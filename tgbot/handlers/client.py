@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from aiogram import Router
 from aiogram.filters import CommandStart
@@ -15,16 +15,16 @@ router = Router()
 
 @router.message(CommandStart())
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
 
 async def on_click_start_create_sub(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
     dialog_manager.dialog_data["service"] = message.text
-    await dialog_manager.switch_to(SubscriptionSG.months)
+    await dialog_manager.switch_to(SubscriptionSG.MONTHS)
 
 
 async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -35,13 +35,13 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
         return
 
     dialog_manager.dialog_data["months"] = int(message.text)
-    await dialog_manager.switch_to(SubscriptionSG.reminder)
+    await dialog_manager.switch_to(SubscriptionSG.REMINDER)
 
 
 async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                      selected_date: date) -> None:
-    dialog_manager.dialog_data["reminder"] = str(selected_date)  # TODO: fix type
-    await dialog_manager.switch_to(SubscriptionSG.check)
+    dialog_manager.dialog_data["reminder"] = selected_date  # TODO: fix type
+    await dialog_manager.switch_to(SubscriptionSG.CHECK)
 
 
 async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
@@ -55,14 +55,15 @@ async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_m
     )
     await session.commit()
 
-    await query.message.answer("<b>✅ Одобрено:</b> Данные успешно записаны")  # TODO: don't send, edit text
+    await query.message.edit_text("<b>✅ Одобрено:</b> Данные успешно записаны")
     await dialog_manager.done()
-    await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
-async def on_click_button_reject(query: CallbackQuery, dialog_manager: DialogManager) -> None:
-    await query.message.answer("<b>❎ Отклонено:</b> Данные не записаны")
+async def on_click_button_reject(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await query.message.edit_text("<b>❎ Отклонено:</b> Данные не записаны")
     await dialog_manager.done()
+    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
 async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
@@ -74,16 +75,16 @@ async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
 
 
 async def on_click_get_help(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.help, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.HELP, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_subs(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_donate(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.donate, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.DONATE, mode=StartMode.RESET_STACK)
 
 
 async def on_click_back_to_main(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
