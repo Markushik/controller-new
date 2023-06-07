@@ -26,7 +26,6 @@ jobs:
           pip3 install --no-cache-dir poetry
       - name: Install Dependencies
         run: |
-          poetry env use 3.11.1
           poetry add ruff
       - name: Run Ruff
         run: |
