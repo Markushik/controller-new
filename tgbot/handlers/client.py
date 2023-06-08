@@ -1,13 +1,13 @@
 from datetime import date, datetime
 
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from tgbot.database.models import Services
+from tgbot.database.models import Services, Users
 from tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
@@ -15,6 +15,16 @@ router = Router()
 
 @router.message(CommandStart())
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    await session.merge(
+        Users(
+            user_id=message.from_user.id,
+            user_name=message.from_user.first_name,
+            chat_id=message.chat.id
+        )
+    )
+    await session.commit()
+
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
 

@@ -18,6 +18,7 @@ from handlers import client
 from tgbot.config import settings
 from tgbot.dialogs.create import dialog
 from tgbot.dialogs.menu import main_menu
+from tgbot.handlers import errors
 # from tgbot.handlers.errors import dialogs_router
 from tgbot.middlewares.database import DbSessionMiddleware
 
@@ -33,14 +34,14 @@ async def main() -> None:  # TODO: edit ruff settings
     )
     logger.info("LAUNCHING BOT")
 
-    storage = RedisStorage.from_url(
-        url=f"redis://{settings['REDIS_HOST']}:{settings['REDIS_PORT']}/{settings['REDIS_DATABASE']}",
-        key_builder=DefaultKeyBuilder(with_destiny=True)
-    )
     postgres_url = URL.create(
-        drivername="postgresql+asyncpg", host=settings['POSTGRES_HOST'],
-        port=settings['POSTGRES_PORT'], username=settings['POSTGRES_USERNAME'],
-        password=settings['POSTGRES_PASSWORD'], database=settings['POSTGRES_DATABASE']
+        drivername="postgresql+asyncpg", host=settings['postgres.POSTGRES_HOST'],
+        port=settings['postgres.POSTGRES_PORT'], username=settings['postgres.POSTGRES_USERNAME'],
+        password=settings['postgres.POSTGRES_PASSWORD'], database=settings['postgres.POSTGRES_DATABASE']
+    )
+    storage = RedisStorage.from_url(
+        url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
+        key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode="HTML")
@@ -54,12 +55,16 @@ async def main() -> None:  # TODO: edit ruff settings
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_router(client.router)  # TODO: one include_router for all
+    disp.include_routers(
+        client.router,
+        errors.router
+    )
+    disp.include_routers(
+        dialog,
+        main_menu
+    )
 
     setup_dialogs(disp)
-
-    disp.include_router(dialog)
-    disp.include_router(main_menu)
 
     try:
         await disp.start_polling(bot, allowed_updates=disp.resolve_used_update_types())
