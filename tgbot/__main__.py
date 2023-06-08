@@ -32,7 +32,7 @@ async def main() -> None:  # TODO: add tests with .workflows
         colorize=True, encoding="utf-8", rotation="5 MB", compression="zip"
     )
     logger.info("LAUNCHING BOT")
-
+    logger.info(settings["REDIS_HOST"])
     storage = RedisStorage.from_url(
         url=f"redis://{settings.REDIS_HOST}/{settings.REDIS_DB}",
         key_builder=DefaultKeyBuilder(with_destiny=True)  # TODO: use dynaconf another
