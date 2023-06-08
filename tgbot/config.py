@@ -1,12 +1,10 @@
-from dynaconf import Dynaconf, Validator
+from dynaconf import Dynaconf
 
-settings = Dynaconf(
+settings = Dynaconf(  # TODO: add validation
     envvar_prefix="DYNACONF",
     settings_files=[
         'configs//settings.toml',
         'configs//.secrets.toml'
     ],
-    environments=True,
-    env_switcher="ENV_FOR_DYNACONF",
-
+    environments=True
 )

@@ -22,7 +22,7 @@ from tgbot.dialogs.menu import main_menu
 from tgbot.middlewares.database import DbSessionMiddleware
 
 
-async def main() -> None:  # TODO: add tests with .workflows
+async def main() -> None:
     """
     The main function responsible for launching the bot
     :return:
@@ -32,16 +32,16 @@ async def main() -> None:  # TODO: add tests with .workflows
         colorize=True, encoding="utf-8", rotation="5 MB", compression="zip"
     )
     logger.info("LAUNCHING BOT")
-    logger.info(settings["REDIS_HOST"])
-    storage = RedisStorage.from_url(
-        url=f"redis://{settings.REDIS_HOST}/{settings.REDIS_DB}",
-        key_builder=DefaultKeyBuilder(with_destiny=True)  # TODO: use dynaconf another
-    )
-    postgres_url = URL.create(drivername="postgresql+asyncpg", host=settings.POSTGRES_HOST,
-                              port=settings.POSTGRES_PORT, username=settings.POSTGRES_USERNAME,
-                              password=settings.POSTGRES_PASSWORD, database=settings.POSTGRES_DATABASE)
 
-    bot = Bot(token=settings.API_TOKEN, parse_mode="HTML")
+    storage = RedisStorage.from_url(
+        url=f"redis://{settings['REDIS_HOST']}:{settings['REDIS_PORT']}/{settings['REDIS_DATABASE']}",
+        key_builder=DefaultKeyBuilder(with_destiny=True)
+    )
+    postgres_url = URL.create(drivername="postgresql+asyncpg", host=settings['POSTGRES_HOST'],
+                              port=settings['POSTGRES_PORT'], username=settings['POSTGRES_USERNAME'],
+                              password=settings['POSTGRES_PASSWORD'], database=settings['POSTGRES_DATABASE'])
+
+    bot = Bot(token=settings['API_TOKEN'], parse_mode="HTML")
     disp = Dispatcher(storage=storage)
 
     engine = create_async_engine(url=postgres_url, echo=True)
