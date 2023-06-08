@@ -10,7 +10,7 @@ settings = Dynaconf(
 
 settings.validators.register(
     validators=[
-        Validator("redis.REDIS_HOST", must_exist=True), # TODO: add validation
+        Validator("redis.REDIS_HOST", must_exist=True),  # TODO: add validation
         Validator("redis.REDIS_PORT", must_exist=True),
         Validator("redis.REDIS_DATABASE", must_exist=True),
 

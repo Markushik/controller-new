@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from aiogram import Router, Bot
+from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
