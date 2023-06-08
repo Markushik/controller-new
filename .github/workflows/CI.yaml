@@ -16,17 +16,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Upgrade Pip
         run: |
           pip3 install --no-cache-dir --upgrade pip
+          pip3 install --no-cache-dir setuptools wheel
       - name: Install Poetry
         run: |
-          pip3 install --no-cache-dir setuptools wheel
-          pip3 install --no-cache-dir poetry
-      - name: Install Dependencies
-        run: |
+           curl -sSL https://install.python-poetry.org | python3 -
+           poetry env list
+           where poetry
+           poetry env info
            poetry add ruff@latest --group dev
       - name: Run Ruff
         run: |
