@@ -26,9 +26,7 @@ jobs:
       - name: Install Poetry
         run: |
            curl -sSL https://install.python-poetry.org | python3 -
-           poetry env list
-           where poetry
-           poetry env info
+      - name: Install Dependencies
            poetry add ruff@latest --group dev
       - name: Run Ruff
         run: |
