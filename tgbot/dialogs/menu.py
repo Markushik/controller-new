@@ -14,7 +14,7 @@ VERY_LONG_TEXT = """\
 
 main_menu = Dialog(
     Window(
-        Jinja("Hello"),
+        Jinja("<b>CONTROLLER</b> — ..."),
         Button(Const("🗂 Мои подписки"), id="subs_id", on_click=on_click_get_subs),
         Row(
             Button(Const("💰 Донаты"), id="donate_id", on_click=on_click_get_donate),

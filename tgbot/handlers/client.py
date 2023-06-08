@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from aiogram import Router
 from aiogram.filters import CommandStart
@@ -40,7 +40,7 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
 
 async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                      selected_date: date) -> None:
-    dialog_manager.dialog_data["reminder"] = selected_date  # TODO: fix type
+    dialog_manager.dialog_data["reminder"] = selected_date.isoformat()
     await dialog_manager.switch_to(SubscriptionSG.CHECK)
 
 
@@ -50,7 +50,7 @@ async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_m
         Services(
             title=dialog_manager.dialog_data.get('service'),
             months=dialog_manager.dialog_data.get('months'),
-            reminder=dialog_manager.dialog_data.get('reminder')
+            reminder=datetime.fromisoformat(dialog_manager.dialog_data.get('reminder'))
         )
     )
     await session.commit()

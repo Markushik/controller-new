@@ -1,10 +1,10 @@
 """
 This file contains table assets
 """
-from typing import Optional
 
 from sqlalchemy import VARCHAR, BigInteger, Integer, SmallInteger
 from sqlalchemy.dialects.postgresql import TIMESTAMP
+from datetime import datetime
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
@@ -15,14 +15,19 @@ class Users(BaseModel):
     __tablename__ = "users"
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    user_name: Mapped[Optional[str]] = mapped_column(VARCHAR(120))
-    chat_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    user_name: Mapped[str] = mapped_column(VARCHAR(length=120))
+    chat_id: Mapped[int] = mapped_column(BigInteger)
 
 
 class Services(BaseModel):
     __tablename__ = "services"
 
-    service_id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
-    title: Mapped[Optional[str]] = mapped_column(VARCHAR(30))
-    months: Mapped[Optional[int]] = mapped_column(SmallInteger)
-    reminder = mapped_column(TIMESTAMP)
+    service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(VARCHAR(length=30))
+    months: Mapped[int] = mapped_column(SmallInteger)
+    reminder: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
+
+# class Schedulers(BaseModel):
+#     __tablename__ = "schedulers"
+#
+#     ...

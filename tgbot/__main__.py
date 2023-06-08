@@ -22,7 +22,7 @@ from tgbot.dialogs.menu import main_menu
 from tgbot.middlewares.database import DbSessionMiddleware
 
 
-async def main() -> None:
+async def main() -> None:  # TODO: edit ruff settings
     """
     The main function responsible for launching the bot
     :return:
@@ -37,9 +37,11 @@ async def main() -> None:
         url=f"redis://{settings['REDIS_HOST']}:{settings['REDIS_PORT']}/{settings['REDIS_DATABASE']}",
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
-    postgres_url = URL.create(drivername="postgresql+asyncpg", host=settings['POSTGRES_HOST'],
-                              port=settings['POSTGRES_PORT'], username=settings['POSTGRES_USERNAME'],
-                              password=settings['POSTGRES_PASSWORD'], database=settings['POSTGRES_DATABASE'])
+    postgres_url = URL.create(
+        drivername="postgresql+asyncpg", host=settings['POSTGRES_HOST'],
+        port=settings['POSTGRES_PORT'], username=settings['POSTGRES_USERNAME'],
+        password=settings['POSTGRES_PASSWORD'], database=settings['POSTGRES_DATABASE']
+    )
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode="HTML")
     disp = Dispatcher(storage=storage)
@@ -52,7 +54,7 @@ async def main() -> None:
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_router(client.router)
+    disp.include_router(client.router)  # TODO: one include_router for all
 
     setup_dialogs(disp)
 

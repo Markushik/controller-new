@@ -1,10 +1,10 @@
 [default]
-REDIS_HOST = "127.0.0.1"
-REDIS_PORT = "6379"
-REDIS_DATABASE = "7"
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_DATABASE = 7
 
-POSTGRES_HOST = "127.0.0.1"
-POSTGRES_PORT = "5432"
+POSTGRES_HOST = "localhost"
+POSTGRES_PORT = 5432
 POSTGRES_USERNAME = "postgres"
 POSTGRES_PASSWORD = "postgres"
 POSTGRES_DATABASE = "postgres"
@@ -12,5 +12,3 @@ POSTGRES_DATABASE = "postgres"
 [production]
 
 [development]
-
-[testing]
