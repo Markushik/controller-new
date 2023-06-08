@@ -27,6 +27,7 @@ jobs:
         run: |
            curl -sSL https://install.python-poetry.org | python3 -
       - name: Install Dependencies
+        run: |
            poetry add ruff@latest --group dev
       - name: Run Ruff
         run: |
