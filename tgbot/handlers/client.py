@@ -16,6 +16,7 @@ router = Router()
 @router.message(CommandStart())
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
+
     await session.merge(
         Users(
             user_id=message.from_user.id,
@@ -24,6 +25,7 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
         )
     )
     await session.commit()
+
 
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
@@ -60,7 +62,8 @@ async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_m
         Services(
             title=dialog_manager.dialog_data.get('service'),
             months=dialog_manager.dialog_data.get('months'),
-            reminder=datetime.fromisoformat(dialog_manager.dialog_data.get('reminder'))
+            reminder=datetime.fromisoformat(dialog_manager.dialog_data.get('reminder')),
+            service_by_user_id=query.from_user.id
         )
     )
     await session.commit()

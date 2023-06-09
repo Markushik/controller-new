@@ -2,11 +2,11 @@
 This file contains table assets
 """
 
-from sqlalchemy import VARCHAR, BigInteger, Integer, SmallInteger
-from sqlalchemy.dialects.postgresql import TIMESTAMP
 from datetime import datetime
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+
+from sqlalchemy import VARCHAR, BigInteger, Integer, SmallInteger, ForeignKey
+from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import BaseModel
 
@@ -26,6 +26,8 @@ class Services(BaseModel):
     title: Mapped[str] = mapped_column(VARCHAR(length=30))
     months: Mapped[int] = mapped_column(SmallInteger)
     reminder: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
+
+    service_by_user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.user_id"))
 
 # class Schedulers(BaseModel):
 #     __tablename__ = "schedulers"
