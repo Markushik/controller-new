@@ -54,6 +54,7 @@ async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialo
                                      selected_date: date) -> None:
     dialog_manager.dialog_data["reminder"] = selected_date.isoformat()
     await dialog_manager.switch_to(SubscriptionSG.CHECK)
+    await query.answer()
 
 
 async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
@@ -94,22 +95,30 @@ async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
         .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
     )
     result_all = request.fetchall()
-    subs = [f"<b>{item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n" for item in result_all]
 
-    return {"subs": ''.join(subs)}
+    match result_all:
+        case []:
+            return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
+        case _:
+            subs = [f"<b>{item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n" for item in result_all]
+            return {"subs": ''.join(subs)}  # TODO: max subs == 5
 
 
 async def on_click_get_help(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.HELP, mode=StartMode.RESET_STACK)
+    await query.answer()
 
 
 async def on_click_get_subs(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+    await query.answer()
 
 
 async def on_click_get_donate(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.DONATE, mode=StartMode.RESET_STACK)
+    await query.answer()
 
 
 async def on_click_back_to_main(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
+    await query.answer()
