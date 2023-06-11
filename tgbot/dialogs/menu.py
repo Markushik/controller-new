@@ -1,9 +1,9 @@
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.kbd import Row, Button, NumberedPager, Url
-from aiogram_dialog.widgets.text import Jinja, Const, ScrollingText
+from aiogram_dialog.widgets.text import Jinja, Const, ScrollingText, Format
 
 from tgbot.handlers.client import (on_click_get_help, on_click_get_donate, on_click_get_subs, on_click_start_create_sub,
-                                   on_click_back_to_main)
+                                   on_click_back_to_main, get_subs)
 from tgbot.states.user import UserSG
 
 VERY_LONG_TEXT = """\
@@ -35,14 +35,15 @@ main_menu = Dialog(
         state=UserSG.HELP,
     ),
     Window(
-        Jinja("🗂️ <b>Каталог активных подписок:</b>\n\n"
-              "🤷‍♂️ <b>Кажется</b>, мы ничего <b>не нашли</b>..."),
+        Format("🗂️ <b>Каталог активных подписок:</b>\n\n"
+               "{subs}"),
         Row(
             Button(Const("Добавить"), id="add_id", on_click=on_click_start_create_sub),
             Button(Const("Удалить"), id="remove_id", on_click=on_click_get_help),
         ),
         Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
         state=UserSG.SUBS,
+        getter=get_subs
     ),
     Window(
         Jinja("Donate"),

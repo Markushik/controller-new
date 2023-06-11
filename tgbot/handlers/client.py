@@ -5,6 +5,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tgbot.database.models import Services, Users
@@ -25,7 +26,6 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
         )
     )
     await session.commit()
-
 
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
@@ -85,6 +85,18 @@ async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
         "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
         "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
     }
+
+
+async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    request = await session.execute(
+        select(Services)
+        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
+    )
+    result_all = request.fetchall()
+    subs = [f"<b>{item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n" for item in result_all]
+
+    return {"subs": ''.join(subs)}
 
 
 async def on_click_get_help(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
