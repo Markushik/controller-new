@@ -6,6 +6,7 @@ class UserSG(StatesGroup):
     SUBS = State()
     HELP = State()
     DONATE = State()
+    DELETE = State()
 
 
 class SubscriptionSG(StatesGroup):

@@ -7,6 +7,7 @@ import asyncio
 
 from aiogram import Bot
 from aiogram import Dispatcher
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
@@ -44,7 +45,7 @@ async def main() -> None:  # TODO: edit ruff settings
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    bot = Bot(token=settings['API_TOKEN'], parse_mode="HTML")
+    bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp = Dispatcher(storage=storage)
 
     engine = create_async_engine(url=postgres_url, echo=True)
