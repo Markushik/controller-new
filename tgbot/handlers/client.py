@@ -1,7 +1,7 @@
 from datetime import date, datetime
 
 from aiogram import Router
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
@@ -14,14 +14,40 @@ from tgbot.states.user import SubscriptionSG, UserSG
 router = Router()
 
 
-@router.message(CommandStart())
+async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
+    return {
+        "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
+        "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
+        "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
+    }
+
+
+async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    request = await session.execute(
+        select(Services)
+        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
+    )
+    result_all = request.fetchall()
+
+    match result_all:
+        case []:
+            return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
+        case _:
+            subs = [f"<b>{count + 1}. {item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n"
+                    for count, item in enumerate(result_all)]
+            return {"subs": ''.join(subs)}
+
+
+@router.message(CommandStart(), StateFilter("*"))
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
     await session.merge(
         Users(
             user_id=message.from_user.id,
             user_name=message.from_user.first_name,
-            chat_id=message.chat.id
+            chat_id=message.chat.id,
+            count_subs=0
         )
     )
     await session.commit()
@@ -29,8 +55,21 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
 
-async def on_click_start_create_sub(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
+async def on_click_start_create_sub(query: CallbackQuery, dialog: DialogProtocol,
+                                    dialog_manager: DialogManager) -> None:
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    request = await session.execute(
+        select(Users)
+        .where(Users.user_id == dialog_manager.event.from_user.id)
+    )
+    result_all = request.one()
+
+    if int(result_all.Users.count_subs) <= 7:
+        await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
+    else:
+        await query.message.edit_text("<b>🚫 Ошибка:</b> Достигнут лимит подписок")
+        await dialog_manager.done()
+        await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -66,6 +105,12 @@ async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_m
             service_by_user_id=query.from_user.id
         )
     )
+    await session.merge(
+        Users(
+            user_id=query.from_user.id,
+            count_subs=Users.count_subs + 1
+        )
+    )
     await session.commit()
 
     await query.message.edit_text("<b>✅ Одобрено:</b> Данные успешно записаны")
@@ -79,38 +124,13 @@ async def on_click_button_reject(query: CallbackQuery, button: Button, dialog_ma
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
-async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
-    return {
-        "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
-        "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
-        "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
-    }
-
-
-async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    request = await session.execute(
-        select(Services)
-        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
-    )
-    result_all = request.fetchall()
-
-    match result_all:
-        case []:
-            return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
-        case _:
-            subs = [f"<b>{count + 1}. {item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n"
-                    for count, item in enumerate(result_all)]
-            return {"subs": ''.join(subs)}
+async def on_click_get_subs(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+    await query.answer()
 
 
 async def on_click_back_to_main(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
-    await query.answer()
-
-
-async def on_click_get_subs(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
     await query.answer()
 
 

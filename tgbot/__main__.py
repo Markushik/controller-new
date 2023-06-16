@@ -24,11 +24,31 @@ from tgbot.handlers import errors
 from tgbot.middlewares.database import DbSessionMiddleware
 
 
+# class InterceptHandler(logging.Handler):
+#     def emit(self, record):
+#         try:
+#             level = logger.level(record.levelname).name
+#         except ValueError:
+#             level = record.levelno
+#
+#         frame, depth = logging.currentframe(), 2
+#         while frame.f_code.co_filename == logging.__file__:
+#             frame = frame.f_back
+#             depth += 1
+#
+#         logger.opt(depth=depth, exception=record.exc_info).log(
+#             level, record.getMessage()
+#         )
+
+
 async def main() -> None:  # TODO: edit ruff settings
     """
     The main function responsible for launching the bot
     :return:
     """
+    # logging.basicConfig(
+    #     handlers=[InterceptHandler()], level=0
+    # )
     logger.add(
         "../debug.log", format="{time} {level} {message}", level="DEBUG",
         colorize=True, encoding="utf-8", rotation="5 MB", compression="zip"

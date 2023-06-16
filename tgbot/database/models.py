@@ -17,6 +17,7 @@ class Users(BaseModel):
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     user_name: Mapped[str] = mapped_column(VARCHAR(length=120))
     chat_id: Mapped[int] = mapped_column(BigInteger)
+    count_subs: Mapped[int] = mapped_column(SmallInteger, nullable=True)  # TODO: nullable False
 
 
 class Services(BaseModel):

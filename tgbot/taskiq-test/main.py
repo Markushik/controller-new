@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from loguru import logger
@@ -36,7 +37,18 @@ scheduler = TaskiqScheduler(
 )
 
 
-@broker.task()
+# taskiq worker main:broker
+# taskiq scheduler main:scheduler
+
+@broker.task
 async def heavy_task(value: int) -> int:
-    print("AAAA")
+    print("ya zdes")
     return value + 1
+
+
+async def main():
+    await heavy_task.kiq(1)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
