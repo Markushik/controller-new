@@ -4,9 +4,9 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, Row, Calendar
 from aiogram_dialog.widgets.text import Jinja, Format, Const
 
-from tgbot.handlers.client import service_name_handler, months_count_handler, on_click_calendar_reminder, get_data, \
-    on_click_button_confirm, on_click_button_reject
-from tgbot.states.user import SubscriptionSG
+from app.tgbot.handlers.client import service_name_handler, months_count_handler, on_click_calendar_reminder, \
+    get_data, on_click_button_confirm, on_click_button_reject
+from app.tgbot.states.user import SubscriptionSG
 
 dialog = Dialog(
     Window(
@@ -24,7 +24,7 @@ dialog = Dialog(
     Window(
         Jinja("В какую <b>дату</b> оповестить о <b>ближайшем списании</b>?"),
         Calendar(
-            id="select_date_on_calendar",
+            id="select_date_id",
             on_click=on_click_calendar_reminder,
         ),
         state=SubscriptionSG.REMINDER,

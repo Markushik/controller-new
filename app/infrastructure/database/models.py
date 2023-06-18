@@ -15,9 +15,10 @@ class Users(BaseModel):
     __tablename__ = "users"
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    user_name: Mapped[str] = mapped_column(VARCHAR(length=120))
+    user_name: Mapped[str] = mapped_column(VARCHAR(length=32))
     chat_id: Mapped[int] = mapped_column(BigInteger)
-    count_subs: Mapped[int] = mapped_column(SmallInteger, nullable=True)  # TODO: nullable False
+    language: Mapped[str] = mapped_column(VARCHAR(length=2))
+    count_subs: Mapped[int] = mapped_column(SmallInteger)
 
 
 class Services(BaseModel):

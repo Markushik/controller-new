@@ -4,6 +4,7 @@ The main file responsible for launching the bot
 """
 
 import asyncio
+import logging
 
 from aiogram import Bot
 from aiogram import Dispatcher
@@ -11,52 +12,41 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
+from fluent_compiler.bundle import FluentBundle
+from fluentogram import FluentTranslator, TranslatorHub
 from loguru import logger
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
+from app.infrastructure.utils.logging import InterceptHandler
 from handlers import client
-from tgbot.config import settings
-from tgbot.dialogs.create import dialog
-from tgbot.dialogs.menu import main_menu
-from tgbot.handlers import errors
+from app.infrastructure.utils.config import settings
+from app.tgbot.dialogs.create import dialog
+from app.tgbot.dialogs.menu import main_menu
+from app.tgbot.handlers import errors
 # from tgbot.handlers.errors import dialogs_router
-from tgbot.middlewares.database import DbSessionMiddleware
+from app.tgbot.middlewares.database import DbSessionMiddleware
 
 
-# class InterceptHandler(logging.Handler):
-#     def emit(self, record):
-#         try:
-#             level = logger.level(record.levelname).name
-#         except ValueError:
-#             level = record.levelno
-#
-#         frame, depth = logging.currentframe(), 2
-#         while frame.f_code.co_filename == logging.__file__:
-#             frame = frame.f_back
-#             depth += 1
-#
-#         logger.opt(depth=depth, exception=record.exc_info).log(
-#             level, record.getMessage()
-#         )
+# TODO: up with Docker
+# TODO: edit ruff settings
 
-
-async def main() -> None:  # TODO: edit ruff settings
+async def main() -> None:
     """
     The main function responsible for launching the bot
     :return:
     """
-    # logging.basicConfig(
-    #     handlers=[InterceptHandler()], level=0
-    # )
+    logging.basicConfig(
+        handlers=[InterceptHandler()], level='DEBUG'
+    )
     logger.add(
-        "../debug.log", format="{time} {level} {message}", level="DEBUG",
-        colorize=True, encoding="utf-8", rotation="5 MB", compression="zip"
+        '../../debug.log', format='{time} {level} {message}', level='DEBUG',
+        colorize=True, encoding='utf-8', rotation='5 MB', compression='zip'
     )
     logger.info("LAUNCHING BOT")
 
     postgres_url = URL.create(
-        drivername="postgresql+asyncpg", host=settings['postgres.POSTGRES_HOST'],
+        drivername='postgresql+asyncpg', host=settings['postgres.POSTGRES_HOST'],
         port=settings['postgres.POSTGRES_PORT'], username=settings['postgres.POSTGRES_USERNAME'],
         password=settings['postgres.POSTGRES_PASSWORD'], database=settings['postgres.POSTGRES_DATABASE']
     )
@@ -65,14 +55,25 @@ async def main() -> None:  # TODO: edit ruff settings
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
-    disp = Dispatcher(storage=storage)
+    translator_hub = TranslatorHub(
+        {
+            "ru": ("ru", "en"),
+            "en": ("en",)
+        },
+        [
+            FluentTranslator("ru", translator=FluentBundle.from_files('ru', filenames=['locales/ru.flt'])),
+            FluentTranslator("en", translator=FluentBundle.from_files('en', filenames=['locales/en.flt']))
+        ],
+    )
 
     engine = create_async_engine(url=postgres_url, echo=True)
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
-    disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))  # TODO: all log update to loguru
-    # disp.update.middleware(ThrottlingMiddleware())
+    bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
+    disp = Dispatcher(storage=storage)
+
+    disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
+    # disp.update.middleware(ThrottlingMiddleware()) : TODO: ThrottlingMiddleware with NATS
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
@@ -88,7 +89,8 @@ async def main() -> None:  # TODO: edit ruff settings
     setup_dialogs(disp)
 
     try:
-        await disp.start_polling(bot, allowed_updates=disp.resolve_used_update_types())
+        await bot.delete_webhook(drop_pending_updates=True)
+        await disp.start_polling(bot, _translator_hub=translator_hub)
     finally:
         await disp.storage.close()
         await bot.session.close()

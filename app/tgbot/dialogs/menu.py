@@ -2,10 +2,10 @@ from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.kbd import Row, Button, Url
 from aiogram_dialog.widgets.text import Jinja, Const, Format
 
-from tgbot.handlers.client import (on_click_get_help, on_click_get_settings, on_click_get_subs,
-                                   on_click_start_create_sub,
-                                   on_click_back_to_main, get_subs)
-from tgbot.states.user import UserSG
+from app.tgbot.handlers.client import (on_click_get_help, on_click_get_settings, on_click_get_subs,
+                                       on_click_start_create_sub,
+                                       on_click_back_to_main, get_subs)
+from app.tgbot.states.user import UserSG
 
 main_menu = Dialog(
     Window(

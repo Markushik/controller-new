@@ -8,10 +8,12 @@ from aiogram_dialog.widgets.kbd import Button
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from tgbot.database.models import Services, Users
-from tgbot.states.user import SubscriptionSG, UserSG
+from app.infrastructure.database.models import Services, Users
+from app.tgbot.middlewares.fluent import TranslatorRunnerMiddleware
+from app.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
+router.message.middleware(TranslatorRunnerMiddleware())
 
 
 async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
@@ -41,13 +43,18 @@ async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
 
 @router.message(CommandStart(), StateFilter("*"))
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
+    # i18n: Any = dialog_manager.middleware_data["i18n"]
+    # print(message.from_user.language_code)
+    # await message.answer(i18n.hello())
+
     session: AsyncSession = dialog_manager.middleware_data["session"]
     await session.merge(
         Users(
             user_id=message.from_user.id,
             user_name=message.from_user.first_name,
             chat_id=message.chat.id,
-            count_subs=0
+            language=message.from_user.language_code,
+            count_subs=0,
         )
     )
     await session.commit()
@@ -79,13 +86,10 @@ async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_
 
 async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
     if message.text.isdigit() and int(message.text) in range(1, 12 + 1):
-        pass
+        dialog_manager.dialog_data["months"] = int(message.text)
+        await dialog_manager.switch_to(SubscriptionSG.REMINDER)
     else:
         await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
-        return
-
-    dialog_manager.dialog_data["months"] = int(message.text)
-    await dialog_manager.switch_to(SubscriptionSG.REMINDER)
 
 
 async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialog_manager: DialogManager,
@@ -126,19 +130,15 @@ async def on_click_button_reject(query: CallbackQuery, button: Button, dialog_ma
 
 async def on_click_get_subs(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
-    await query.answer()
 
 
 async def on_click_back_to_main(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
-    await query.answer()
 
 
 async def on_click_get_settings(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.DONATE, mode=StartMode.RESET_STACK)
-    await query.answer()
 
 
 async def on_click_get_help(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.HELP, mode=StartMode.RESET_STACK)
-    await query.answer()
