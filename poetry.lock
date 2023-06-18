@@ -454,6 +454,21 @@ files = [
 ]
 
 [[package]]
+name = "directory-tree"
+version = "0.0.3.1"
+description = "Utility Package that Displays out the Tree Structure of a Particular Directory."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "directory_tree-0.0.3.1-py3-none-any.whl", hash = "sha256:72411e4f1534afaaccadb21fc082c727a680b6a74e8d21a1406ffbe51389cd85"},
+    {file = "directory_tree-0.0.3.1.tar.gz", hash = "sha256:e4f40d60a45c4cdc0bc8e9ee29311f554dee6c969241c0eef8bcd92b4d4bcd4a"},
+]
+
+[package.extras]
+dev = ["pytest (>=3.7)"]
+
+[[package]]
 name = "dynaconf"
 version = "3.1.12"
 description = "The dynamic configurator for your Python Project"
@@ -1408,4 +1423,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a3be17f71a794bf1f24226d3335e40e66079f4822525a2aff4b7f8682a61dc6b"
+content-hash = "255d9b961f550849295904b2d0c3489028bb5a985e231aa7843c74ada5a48c40"

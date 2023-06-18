@@ -24,7 +24,6 @@ from app.infrastructure.utils.config import settings
 from app.tgbot.dialogs.create import dialog
 from app.tgbot.dialogs.menu import main_menu
 from app.tgbot.handlers import errors
-# from tgbot.handlers.errors import dialogs_router
 from app.tgbot.middlewares.database import DbSessionMiddleware
 
 

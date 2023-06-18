@@ -22,6 +22,7 @@ structlog = "^23.1.0"
 fluentogram = "^1.1.6"
 aiolimiter = "^1.1.0"
 alembic = "^1.11.1"
+directory-tree = "^0.0.3.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.272"

@@ -8,10 +8,10 @@ from sqlalchemy import VARCHAR, BigInteger, Integer, SmallInteger, ForeignKey
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import BaseModel
+from .base import Base
 
 
-class Users(BaseModel):
+class Users(Base):
     __tablename__ = "users"
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -21,7 +21,7 @@ class Users(BaseModel):
     count_subs: Mapped[int] = mapped_column(SmallInteger)
 
 
-class Services(BaseModel):
+class Services(Base):
     __tablename__ = "services"
 
     service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -30,8 +30,3 @@ class Services(BaseModel):
     reminder: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
 
     service_by_user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.user_id"))
-
-# class Schedulers(BaseModel):
-#     __tablename__ = "schedulers"
-#
-#     ...
