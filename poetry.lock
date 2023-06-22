@@ -42,14 +42,14 @@ test = ["aresponses (>=2.1.6,<2.2.0)", "pytest (>=7.2.1,<7.3.0)", "pytest-aiohtt
 
 [[package]]
 name = "aiogram-dialog"
-version = "2.0.0b19"
+version = "2.0.0b20"
 description = "Telegram bot UI framework on top of aiogram"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "aiogram_dialog-2.0.0b19-py3-none-any.whl", hash = "sha256:d291ba8e47449c68b780e4116a9c12899e0ab75dd156bb6c0f6bd59a4d6fde96"},
-    {file = "aiogram_dialog-2.0.0b19.tar.gz", hash = "sha256:d78e4f492879ed723c4db27e5f7630d5fb7beaab078246502269fb7bcbb0bf42"},
+    {file = "aiogram_dialog-2.0.0b20-py3-none-any.whl", hash = "sha256:816e60d2285b9a765fb3b92c7ee984e87883610a72d9b881ae59578eeb670119"},
+    {file = "aiogram_dialog-2.0.0b20.tar.gz", hash = "sha256:9c7b7db6ce22132c7ff041a72ac22875f5699350e8e9ead5192a474f94da06d0"},
 ]
 
 [package.dependencies]
@@ -302,6 +302,22 @@ docs = ["Sphinx (>=4.1.2,<4.2.0)", "sphinx-rtd-theme (>=0.5.2,<0.6.0)", "sphinxc
 test = ["flake8 (>=5.0.4,<5.1.0)", "uvloop (>=0.15.3)"]
 
 [[package]]
+name = "asyncstdlib"
+version = "3.10.8"
+description = "The missing async toolbox"
+category = "main"
+optional = false
+python-versions = "~=3.6"
+files = [
+    {file = "asyncstdlib-3.10.8-py3-none-any.whl", hash = "sha256:eb0dbc697a238fe1ef141e29b3396ead816aaf8a28f07e584e05d1d9fb26841a"},
+    {file = "asyncstdlib-3.10.8.tar.gz", hash = "sha256:e18b67de483dfbfec3c17ec2121a8a3fa9b950874ff03802819bd3b1af56148f"},
+]
+
+[package.extras]
+doc = ["sphinx", "sphinxcontrib-trio"]
+test = ["black", "coverage", "flake8", "flake8-2020", "flake8-bugbear", "mypy", "pytest", "pytest-cov"]
+
+[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -452,21 +468,6 @@ files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-
-[[package]]
-name = "directory-tree"
-version = "0.0.3.1"
-description = "Utility Package that Displays out the Tree Structure of a Particular Directory."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "directory_tree-0.0.3.1-py3-none-any.whl", hash = "sha256:72411e4f1534afaaccadb21fc082c727a680b6a74e8d21a1406ffbe51389cd85"},
-    {file = "directory_tree-0.0.3.1.tar.gz", hash = "sha256:e4f40d60a45c4cdc0bc8e9ee29311f554dee6c969241c0eef8bcd92b4d4bcd4a"},
-]
-
-[package.extras]
-dev = ["pytest (>=3.7)"]
 
 [[package]]
 name = "dynaconf"
@@ -1423,4 +1424,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "255d9b961f550849295904b2d0c3489028bb5a985e231aa7843c74ada5a48c40"
+content-hash = "9e654ee39e0c50d8e319afc461987a0271fd0ad6636d9126325b62e8874ecddc"

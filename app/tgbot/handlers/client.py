@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+import asyncstdlib
 from aiogram import Router
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message, CallbackQuery
@@ -9,11 +10,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Services, Users
-from app.tgbot.middlewares.fluent import TranslatorRunnerMiddleware
 from app.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
-router.message.middleware(TranslatorRunnerMiddleware())
 
 
 async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
@@ -37,7 +36,7 @@ async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
             return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
         case _:
             subs = [f"<b>{count + 1}. {item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n"
-                    for count, item in enumerate(result_all)]
+                    async for count, item in asyncstdlib.enumerate(result_all)]
             return {"subs": ''.join(subs)}
 
 
