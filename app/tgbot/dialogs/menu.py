@@ -1,19 +1,22 @@
+import operator
+
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Row, Button, Url
+from aiogram_dialog.widgets.kbd import Row, Button, Url, Select, Column
 from aiogram_dialog.widgets.text import Jinja, Const, Format
 
-from app.tgbot.handlers.client import (on_click_get_help, on_click_get_settings, on_click_get_subs,
-                                       on_click_start_create_sub,
-                                       on_click_back_to_main, get_subs)
+from app.tgbot.handlers.client import (get_subs, on_click_get_subs_menu, on_click_get_settings_menu,
+                                       on_click_get_help_menu, on_click_back_to_main_menu, on_click_get_delete_menu,
+                                       on_click_start_create_sub, get_subs_for_delete, on_click_sub_selected,
+                                       on_click_sub_delete, on_click_sub_not_delete)
 from app.tgbot.states.user import UserSG
 
 main_menu = Dialog(
     Window(
         Jinja("<b>CONTROLLER</b> — ..."),
-        Button(Const("🗂️ Мои подписки"), id="subs_id", on_click=on_click_get_subs),
+        Button(Const("🗂️ Мои подписки"), id="subs_id", on_click=on_click_get_subs_menu),
         Row(
-            Button(Const("⚙️ Настройки"), id="settings_id", on_click=on_click_get_settings),
-            Button(Const("🆘 Поддержка"), id="help_id", on_click=on_click_get_help),
+            Button(Const("⚙️ Настройки"), id="settings_id", on_click=on_click_get_settings_menu),
+            Button(Const("🆘 Поддержка"), id="help_id", on_click=on_click_get_help_menu),
         ),
         state=UserSG.MAIN,
     ),
@@ -38,17 +41,17 @@ main_menu = Dialog(
                 Const("https://github.com/Markushik/controller-new/")
             )
         ),
-        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main_menu),
         state=UserSG.HELP,
     ),
     Window(
-        Format("🗂️ <b>Каталог активных подписок:</b>\n\n"
+        Format("🗂️ <b>Каталог добавленных подписок:</b>\n\n"
                "{subs}"),
         Row(
             Button(Const("Добавить"), id="add_id", on_click=on_click_start_create_sub),
-            Button(Const("Удалить"), id="remove_id", on_click=on_click_get_help),
+            Button(Const("Удалить"), id="remove_id", on_click=on_click_get_delete_menu),
         ),
-        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main_menu),
         state=UserSG.SUBS,
         getter=get_subs
     ),
@@ -56,10 +59,32 @@ main_menu = Dialog(
         Jinja("Settings"),
         Row(
             Button(Const("🇷🇺 Русский"), id="ru_lang_id"),
-            Button(Const("🇺🇸 English"), id="us_lang_id")
+            Button(Const("🇺🇸 English"), id="en_lang_id")
         ),
-        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main),
-        state=UserSG.DONATE,
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main_menu),
+        state=UserSG.SETTINGS,
     ),
-
+    Window(
+        Jinja("Delete"),
+        Column(
+            Select(
+                Format("{item[0]} - {item[2]}"),
+                id="delete_id",
+                item_id_getter=operator.itemgetter(1),
+                items="subs",
+                on_click=on_click_sub_selected
+            ),
+        ),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_back_to_main_menu),
+        state=UserSG.DELETE,
+        getter=get_subs_for_delete,
+    ),
+    Window(
+        Jinja("<b>Вы действительно</b> хотите <b>удалить</b> подписку?"),
+        Row(
+            Button(Const("✅"), id="confirm_delete_id", on_click=on_click_sub_delete),
+            Button(Const("❎"), id="reject_delete_id", on_click=on_click_sub_not_delete),
+        ),
+        state=UserSG.CHECK_DELETE
+    )
 )

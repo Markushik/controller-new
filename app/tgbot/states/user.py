@@ -5,8 +5,10 @@ class UserSG(StatesGroup):
     MAIN = State()
     SUBS = State()
     HELP = State()
-    DONATE = State()
+    SETTINGS = State()
     DELETE = State()
+
+    CHECK_DELETE = State()
 
 
 class SubscriptionSG(StatesGroup):

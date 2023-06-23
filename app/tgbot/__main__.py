@@ -50,17 +50,6 @@ async def main() -> None:
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    # translator_hub = TranslatorHub(
-    #     {
-    #         "ru": ("ru", "en"),
-    #         "en": ("en",)
-    #     },
-    #     [
-    #         FluentTranslator("ru", translator=FluentBundle.from_files('ru', filenames=['locales/ru.flt'])),
-    #         FluentTranslator("en", translator=FluentBundle.from_files('en', filenames=['locales/en.flt']))
-    #     ],
-    # )
-
     engine = create_async_engine(url=postgres_url, echo=True)
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
