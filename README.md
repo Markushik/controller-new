@@ -7,14 +7,14 @@
 
 ## 🚀 Stack
 
-### ⚙️ Technologies
+### Technologies
 - [Python](https://www.python.org/) – programming language
 - [Redis](https://redis.io/) – persistent storage
 - [PostgreSQL](https://www.postgresql.org/) – best relational database
 - [NATS JetStream](https://nats.io/) – communications system for digital systems
 - [Docker](https://www.docker.com/) – containerization platform
 
-### 🔥 Frameworks & Libraries
+### Frameworks & Libraries
 - [aiogram](https://github.com/aiogram/aiogram) – async framework for Telegram Bot API
 - [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog) – developing interactive messages
 - [asyncpg](https://github.com/MagicStack/asyncpg) – fast client for PostgreSQL Database
@@ -23,7 +23,3 @@
 - [taskiq](https://github.com/taskiq-python/taskiq) –  distributed task queue 
 - [dynaconf](https://github.com/dynaconf/dynaconf) – configuration management
 - [loguru](https://github.com/Delgan/loguru) – simple logging
-
-## ✅ ToDo's
-- [ ] Add taskiq schedulers
-- [ ] Add use fluentogram
