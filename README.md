@@ -33,14 +33,13 @@
 ## 🐋 Deployment
 
 **1. Clone the repository**
-
 ```angular2html
 git clone https://github.com/Markushik/controller-new.git
 ```
 
 **2. Create file `.secrets.toml` in folder configs and fill data**
-**3. Run the command**
 
+**3. Run the command**
 ```angular2html
 docker-compose up
 ```
