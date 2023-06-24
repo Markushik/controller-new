@@ -9,6 +9,7 @@ import logging
 from aiogram import Bot
 from aiogram import Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
@@ -31,12 +32,10 @@ async def main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logging.basicConfig(
-        handlers=[InterceptHandler()], level='DEBUG'
-    )
+    logging.basicConfig(handlers=[InterceptHandler()], level='DEBUG')
     logger.add(
         '../../debug.log', format='{time} {level} {message}', level='DEBUG',
-        colorize=True, encoding='utf-8', rotation='10 MB', compression='zip'
+        colorize=True,  encoding='utf-8', rotation='10 MB', compression='zip'
     )
     logger.info("LAUNCHING BOT")
 
@@ -45,10 +44,13 @@ async def main() -> None:
         port=settings['postgres.POSTGRES_PORT'], username=settings['postgres.POSTGRES_USERNAME'],
         password=settings['postgres.POSTGRES_PASSWORD'], database=settings['postgres.POSTGRES_DATABASE']
     )
-    storage = RedisStorage.from_url(
-        url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
-        key_builder=DefaultKeyBuilder(with_destiny=True)
-    )
+
+    if settings['redis.USE_REDIS'] is True:
+        storage = RedisStorage.from_url(
+            url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
+            key_builder=DefaultKeyBuilder(with_destiny=True))
+    else:
+        storage = MemoryStorage()
 
     engine = create_async_engine(url=postgres_url, echo=True)
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
@@ -57,25 +59,17 @@ async def main() -> None:
     disp = Dispatcher(storage=storage)
 
     disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
-    # disp.update.middleware(ThrottlingMiddleware()) : TODO: ThrottlingMiddleware with NATS
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_routers(
-        client.router,
-        errors.router
-    )
-    disp.include_routers(
-        dialog,
-        main_menu
-    )
+    disp.include_routers(client.router, errors.router)
+    disp.include_routers(dialog, main_menu)
 
     setup_dialogs(disp)
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
         await disp.start_polling(bot)
-        # _translator_hub=translator_hub
     finally:
         await disp.storage.close()
         await bot.session.close()

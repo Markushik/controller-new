@@ -12,7 +12,7 @@ from app.tgbot.states.user import UserSG
 
 main_menu = Dialog(
     Window(
-        Jinja("<b>CONTROLLER</b> — ..."),
+        Jinja("<b>CONTROLLER</b> — наверное, лучший способ, напомнить об истечении подписки."),
         Button(Const("🗂️ Мои подписки"), id="subs_id", on_click=on_click_get_subs_menu),
         Row(
             Button(Const("⚙️ Настройки"), id="settings_id", on_click=on_click_get_settings_menu),

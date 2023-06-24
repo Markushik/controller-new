@@ -90,7 +90,7 @@ async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
     match result_all:
         case []:
             return {
-                "message": "<b>🤷‍♂️ Кажется</b>, нам здесь <b>нечего удалять</b>...",
+                "message": "<b>🤷‍♂️ Кажется</b>, нам <b>нечего удалять</b>...",
                 "subs": subs
             }
         case _:
@@ -134,7 +134,6 @@ async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialo
                                      selected_date: date) -> None:
     dialog_manager.dialog_data["reminder"] = selected_date.isoformat()
     await dialog_manager.switch_to(SubscriptionSG.CHECK)
-    await query.answer()
 
 
 async def on_click_button_confirm(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
