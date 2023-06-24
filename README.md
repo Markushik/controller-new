@@ -43,3 +43,5 @@ git clone https://github.com/Markushik/controller-new.git
 ```angular2html
 docker-compose up
 ```
+
+## 💳 Credits
