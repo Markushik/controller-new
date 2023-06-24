@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Any
 
 import asyncstdlib
 from aiogram import Router
@@ -52,7 +53,7 @@ async def on_click_get_delete_menu(query: CallbackQuery, button: Button, dialog_
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
-async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
+async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[str, str]:
     session: AsyncSession = dialog_manager.middleware_data["session"]
     request = await session.execute(
         select(Services)
@@ -75,7 +76,7 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
             }
 
 
-async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
+async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[str, str | list[tuple[Any, str, str]]]:
     session: AsyncSession = dialog_manager.middleware_data["session"]
     request = await session.execute(
         select(Services)
@@ -165,7 +166,7 @@ async def on_click_button_reject(query: CallbackQuery, button: Button, dialog_ma
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
-async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> None:
+async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> dict[str, str, str]:
     return {
         "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
         "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",

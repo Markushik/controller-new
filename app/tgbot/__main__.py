@@ -25,17 +25,15 @@ from app.tgbot.handlers import errors, client
 from app.tgbot.middlewares.database import DbSessionMiddleware
 
 
-# TODO: edit ruff settings
-
 async def main() -> None:
     """
     The main function responsible for launching the bot
     :return:
     """
-    logging.basicConfig(handlers=[InterceptHandler()], level='DEBUG')
+    logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
     logger.add(
-        '../../debug.log', format='{time} {level} {message}', level='DEBUG',
-        colorize=True,  encoding='utf-8', rotation='10 MB', compression='zip'
+        '../../debug.log', format='{time} {level} {message}', level='INFO',
+        colorize=True, encoding='utf-8', rotation='10 MB', compression='zip'
     )
     logger.info("LAUNCHING BOT")
 
@@ -52,7 +50,7 @@ async def main() -> None:
     else:
         storage = MemoryStorage()
 
-    engine = create_async_engine(url=postgres_url, echo=True)
+    engine = create_async_engine(url=postgres_url, echo=False)
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
