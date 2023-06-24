@@ -36,7 +36,7 @@ async def main() -> None:
     )
     logger.add(
         '../../debug.log', format='{time} {level} {message}', level='DEBUG',
-        colorize=True, encoding='utf-8', rotation='5 MB', compression='zip'
+        colorize=True, encoding='utf-8', rotation='10 MB', compression='zip'
     )
     logger.info("LAUNCHING BOT")
 

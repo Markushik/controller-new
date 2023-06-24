@@ -4,8 +4,8 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, Row, Calendar
 from aiogram_dialog.widgets.text import Jinja, Format, Const
 
-from app.tgbot.handlers.client import service_name_handler, months_count_handler, on_click_calendar_reminder, \
-    get_data, on_click_button_confirm, on_click_button_reject
+from app.tgbot.handlers.client import (service_name_handler, months_count_handler, on_click_calendar_reminder,
+                                       get_input_service_data, on_click_button_confirm, on_click_button_reject)
 from app.tgbot.states.user import SubscriptionSG
 
 dialog = Dialog(
@@ -38,5 +38,5 @@ dialog = Dialog(
         ),
         state=SubscriptionSG.CHECK,
     ),
-    getter=get_data
+    getter=get_input_service_data
 )

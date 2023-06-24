@@ -15,52 +15,6 @@ from app.tgbot.states.user import SubscriptionSG, UserSG
 router = Router()
 
 
-async def get_data(dialog_manager: DialogManager, **kwargs) -> None:
-    return {
-        "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
-        "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
-        "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
-    }
-
-
-async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs):
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    request = await session.execute(
-        select(Services)
-        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
-    )
-    result_all = request.fetchall()
-
-    match result_all:
-        case []:
-            return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
-        case _:
-            subs = [
-                (item.Services.title, str(item.Services.service_id), str(datetime.date(item.Services.reminder)))
-                for item in result_all
-            ]
-            return {"subs": subs}
-
-
-async def get_subs(dialog_manager: DialogManager, **kwargs) -> None:
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    request = await session.execute(
-        select(Services)
-        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
-    )
-    result_all = request.fetchall()
-
-    match result_all:
-        case []:
-            return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
-        case _:
-            subs = [
-                f"<b>{count + 1}. {item.Services.title}</b> – {datetime.date(item.Services.reminder)}\n"
-                async for count, item in asyncstdlib.enumerate(result_all)
-            ]
-            return {"subs": ''.join(subs)}
-
-
 @router.message(CommandStart(), StateFilter("*"))
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
@@ -76,6 +30,74 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
     await session.commit()
 
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
+
+
+async def on_click_get_subs_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+
+
+async def on_click_back_to_main_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
+
+
+async def on_click_get_settings_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.SETTINGS, mode=StartMode.RESET_STACK)
+
+
+async def on_click_get_help_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.HELP, mode=StartMode.RESET_STACK)
+
+
+async def on_click_get_delete_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
+
+
+async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    request = await session.execute(
+        select(Services)
+        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
+    )
+    result_all = request.all()
+    subs = [
+        f"<b>{count + 1}. {item.Services.title}</b> — {datetime.date(item.Services.reminder)}\n"
+        async for count, item in asyncstdlib.enumerate(result_all)
+    ]
+
+    match result_all:
+        case []:
+            return {
+                "subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"
+            }
+        case _:
+            return {
+                "subs": ''.join(subs)
+            }
+
+
+async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    request = await session.execute(
+        select(Services)
+        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
+    )
+    result_all = request.all()
+    subs = [
+        (item.Services.title, str(item.Services.service_id), str(datetime.date(item.Services.reminder)))
+        for item in result_all
+    ]
+
+    match result_all:
+        case []:
+            return {
+                "message": "<b>🤷‍♂️ Кажется</b>, нам здесь <b>нечего удалять</b>...",
+                "subs": subs
+            }
+        case _:
+            return {
+                "message": "<b>Выберите</b> подписку, которую <b>хотите удалить</b>:",
+                "subs": subs
+            }
 
 
 async def on_click_start_create_sub(query: CallbackQuery, dialog: DialogProtocol,
@@ -144,24 +166,12 @@ async def on_click_button_reject(query: CallbackQuery, button: Button, dialog_ma
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
-async def on_click_get_subs_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
-
-
-async def on_click_back_to_main_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
-
-
-async def on_click_get_settings_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.SETTINGS, mode=StartMode.RESET_STACK)
-
-
-async def on_click_get_help_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.HELP, mode=StartMode.RESET_STACK)
-
-
-async def on_click_get_delete_menu(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
+async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> None:
+    return {
+        "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
+        "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
+        "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
+    }
 
 
 async def on_click_sub_selected(query: CallbackQuery, button: Button, dialog_manager: DialogManager,
@@ -192,4 +202,4 @@ async def on_click_sub_delete(query: CallbackQuery, button: Button, dialog_manag
 async def on_click_sub_not_delete(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await query.message.edit_text("<b>❎ Отклонено:</b> Подписка не удалена")
     await dialog_manager.done()
-    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
