@@ -29,3 +29,10 @@
 [![draw-SQL-controller-new-export-2023-06-24.png](https://i.postimg.cc/dV4hPNdG/draw-SQL-controller-new-export-2023-06-24.png)](https://postimg.cc/fVSzYK8b)
 
 
+## 🐋 Deployment
+
+1. Clone the repository
+
+```angular2html
+git clone https://github.com/Markushik/controller-new.git
+```
