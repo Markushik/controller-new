@@ -7,7 +7,7 @@
 
 ## 🚀 Stack
 
-#### Technologies
+### Technologies
 
 - [Python](https://www.python.org/) – programming language
 - [Redis](https://redis.io/) – persistent storage
@@ -15,7 +15,7 @@
 - [NATS JetStream](https://nats.io/) – communications system for digital systems
 - [Docker](https://www.docker.com/) – containerization platform
 
-#### Frameworks & Libraries
+### Frameworks & Libraries
 
 - [aiogram](https://github.com/aiogram/aiogram) – async framework for Telegram Bot API
 - [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog) – developing interactive messages
@@ -32,16 +32,14 @@
 
 ## 🐋 Deployment
 
-1. Clone the repository
+**1. Clone the repository**
 ```angular2html
 git clone https://github.com/Markushik/controller-new.git
 ```
 
-2. Create file `.secrets.toml` in folder configs and fill data
+**2. Create file `.secrets.toml` in folder configs and fill data**
 
-3. Run the command
+**3. Run the command**
 ```angular2html
 docker-compose up
 ```
-
-## 💳 Credits
