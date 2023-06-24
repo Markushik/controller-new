@@ -5,14 +5,16 @@ from aiogram_dialog.widgets.kbd import Button, Row, Calendar
 from aiogram_dialog.widgets.text import Jinja, Format, Const
 
 from app.tgbot.handlers.client import (service_name_handler, months_count_handler, on_click_calendar_reminder,
-                                       get_input_service_data, on_click_button_confirm, on_click_button_reject)
+                                       get_input_service_data, on_click_button_confirm, on_click_button_reject,
+                                       on_click_get_subs_menu)
 from app.tgbot.states.user import SubscriptionSG
 
 dialog = Dialog(
     Window(
-        Jinja("Как называется <b>сервис</b> на который вы <b>подписались</b>?\n\n"
+        Jinja("Как называется <b>сервис</b> на который Вы <b>подписались</b>?\n\n"
               "<b>Пример:</b> <code>Tinkoff Premium</code>"),
         MessageInput(service_name_handler, content_types=[ContentType.TEXT]),
+        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_get_subs_menu),
         state=SubscriptionSG.SERVICE,
     ),
     Window(

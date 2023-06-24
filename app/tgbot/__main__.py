@@ -46,17 +46,18 @@ async def main() -> None:
     if settings['redis.USE_REDIS'] is True:
         storage = RedisStorage.from_url(
             url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
-            key_builder=DefaultKeyBuilder(with_destiny=True))
+            key_builder=DefaultKeyBuilder(with_destiny=True)
+        )
     else:
         storage = MemoryStorage()
 
     engine = create_async_engine(url=postgres_url, echo=False)
-    sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
+    session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp = Dispatcher(storage=storage)
 
-    disp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
+    disp.update.middleware(DbSessionMiddleware(session_pool=session_maker))
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 

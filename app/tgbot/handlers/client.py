@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import Any
 
 import asyncstdlib
 from aiogram import Router
@@ -76,7 +75,7 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[s
             }
 
 
-async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[str, str | list[tuple[Any, str, str]]]:
+async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[str, str | list[tuple[str, str, str]]]:
     session: AsyncSession = dialog_manager.middleware_data["session"]
     request = await session.execute(
         select(Services)
@@ -91,7 +90,7 @@ async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[s
     match result_all:
         case []:
             return {
-                "message": "<b>🤷‍♂️ Кажется</b>, нам <b>нечего удалять</b>...",
+                "message": "<b>🤷‍♂️ Кажется</b>, здесь <b>нечего удалять</b>...",
                 "subs": subs
             }
         case _:
@@ -119,8 +118,11 @@ async def on_click_start_create_sub(query: CallbackQuery, dialog: DialogProtocol
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
-    dialog_manager.dialog_data["service"] = message.text
-    await dialog_manager.switch_to(SubscriptionSG.MONTHS)
+    if len(message.text) <= 30:
+        dialog_manager.dialog_data["service"] = message.text
+        await dialog_manager.switch_to(SubscriptionSG.MONTHS)
+    else:
+        await message.answer(text="<b>🚫 Ошибка:</b> Достигнут лимит символов")
 
 
 async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -128,7 +130,7 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
         dialog_manager.dialog_data["months"] = int(message.text)
         await dialog_manager.switch_to(SubscriptionSG.REMINDER)
     else:
-        await message.answer(text="<b>🚫 Ошибка:</b> Недопустимые символы")
+        await message.answer(text="<b>🚫 Ошибка:</b> Введены недопустимые символы")
 
 
 async def on_click_calendar_reminder(query: CallbackQuery, button: Button, dialog_manager: DialogManager,
@@ -196,7 +198,7 @@ async def on_click_sub_delete(query: CallbackQuery, button: Button, dialog_manag
 
     await query.message.edit_text("<b>✅ Одобрено:</b> Подписка успешно удалена")
     await dialog_manager.done()
-    await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_not_delete(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
