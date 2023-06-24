@@ -17,6 +17,7 @@ from loguru import logger
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
+from app.infrastructure.utils.commands import set_commands
 from app.infrastructure.utils.config import settings
 from app.infrastructure.utils.logging import InterceptHandler
 from app.tgbot.dialogs.create import dialog
@@ -67,6 +68,7 @@ async def main() -> None:
     setup_dialogs(disp)
 
     try:
+        await set_commands(bot)
         await bot.delete_webhook(drop_pending_updates=True)
         await disp.start_polling(bot)
     finally:
