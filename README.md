@@ -25,7 +25,7 @@
 - [loguru](https://github.com/Delgan/loguru) – simple logging
 
 
-## Database Tables
+## 🐘 Database Models
 [![draw-SQL-controller-new-export-2023-06-24.png](https://i.postimg.cc/dV4hPNdG/draw-SQL-controller-new-export-2023-06-24.png)](https://postimg.cc/fVSzYK8b)
 
 
