@@ -10,7 +10,6 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Services, Users
-from app.tgbot.dialogs.format import I18N_FORMAT_KEY, default_format_text
 from app.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
