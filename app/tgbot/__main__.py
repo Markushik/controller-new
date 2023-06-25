@@ -5,16 +5,13 @@ The main file responsible for launching the bot
 
 import asyncio
 import logging
-import os
 
 from aiogram import Bot
 from aiogram import Dispatcher
 from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
-from fluent.runtime import FluentResourceLoader, FluentLocalization
 from loguru import logger
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
@@ -23,25 +20,10 @@ from app.infrastructure.utils.commands import set_commands
 from app.infrastructure.utils.config import settings
 from app.infrastructure.utils.logging import InterceptHandler
 from app.tgbot.dialogs.create import dialog
-from app.tgbot.middlewares.i18n import I18nMiddleware
 from app.tgbot.dialogs.menu import main_menu
 from app.tgbot.handlers import errors, client
 from app.tgbot.middlewares.database import DbSessionMiddleware
-
-
-def make_i18n_middleware(session_pool):
-    loader = FluentResourceLoader(os.path.join(
-        os.path.dirname(__file__),
-        "translations",
-        "{locale}",
-    ))
-    l10ns = {
-        locale: FluentLocalization(
-            [locale, "ru"], ["main.ftl"], loader,
-        )
-        for locale in ["en", "ru"]
-    }
-    return I18nMiddleware(l10ns, "ru", session_pool)
+from app.tgbot.middlewares.i18n import make_i18n_middleware
 
 
 async def main() -> None:
@@ -61,14 +43,10 @@ async def main() -> None:
         port=settings['postgres.POSTGRES_PORT'], username=settings['postgres.POSTGRES_USERNAME'],
         password=settings['postgres.POSTGRES_PASSWORD'], database=settings['postgres.POSTGRES_DATABASE']
     )
-
-    if settings['redis.USE_REDIS'] is True:
-        storage = RedisStorage.from_url(
-            url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
-            key_builder=DefaultKeyBuilder(with_destiny=True)
-        )
-    else:
-        storage = MemoryStorage()
+    storage = RedisStorage.from_url(
+        url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
+        key_builder=DefaultKeyBuilder(with_destiny=True)
+    )
 
     engine = create_async_engine(url=postgres_url, echo=False)
     session_maker = async_sessionmaker(engine, expire_on_commit=False)

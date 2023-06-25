@@ -892,6 +892,52 @@ fast-parse = ["fast-mail-parser"]
 nkeys = ["nkeys"]
 
 [[package]]
+name = "ormsgpack"
+version = "1.2.6"
+description = "Fast, correct Python msgpack library supporting dataclasses, datetimes, and numpy"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ormsgpack-1.2.6-cp310-cp310-macosx_10_7_x86_64.whl", hash = "sha256:9886c2d3941645937daa86abd609249f2aa317240f7fd184bfb86dfbb3481b1d"},
+    {file = "ormsgpack-1.2.6-cp310-cp310-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:02092e17ca83be8518d18dd42efde63fc589d19981df758e2823959aef3c2eae"},
+    {file = "ormsgpack-1.2.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e843de6c86579b7976c9b1ac870b6842191c12e7ed2f6ecf821dc914bd10f172"},
+    {file = "ormsgpack-1.2.6-cp310-none-win_amd64.whl", hash = "sha256:083776074d817213db6a960a8f84b74fd4c2edc402f276f9d87579bd4b53851c"},
+    {file = "ormsgpack-1.2.6-cp311-cp311-macosx_10_7_x86_64.whl", hash = "sha256:1521d640d342632d0ad8039f000ea1d9d9702a842d91df140ec020a5b30dd5f4"},
+    {file = "ormsgpack-1.2.6-cp311-cp311-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:417e6b68f778db2cf8eed5770b3a778c027d93dc1547b6c98793e2ff21791514"},
+    {file = "ormsgpack-1.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:500033f746d676a3d676e110aa71abe4e6328c8651afb9ee5500e6040508de51"},
+    {file = "ormsgpack-1.2.6-cp311-none-win_amd64.whl", hash = "sha256:9e71a2344265fdd2531265cf257518917549c2096014bacfea6b829330cfe08c"},
+    {file = "ormsgpack-1.2.6-cp37-cp37m-macosx_10_7_x86_64.whl", hash = "sha256:ea4cc6224b4eb8d0d5741ecbd74c0211831cead7b39ac9541f244db7d8ee8c9d"},
+    {file = "ormsgpack-1.2.6-cp37-cp37m-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:dbeb2320c154b3facc8580d73dbf9ec173c734daa830dbc1321ecfcda3d7fd33"},
+    {file = "ormsgpack-1.2.6-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9f88174ae82c4dee684867af0dcc3a3ff7227e33fc7f211b3d9b7fd7099db982"},
+    {file = "ormsgpack-1.2.6-cp37-none-win_amd64.whl", hash = "sha256:2e3e3afc80c896318de12e9dc8c762860b9f26a1f0422469f7f6623328b66a7a"},
+    {file = "ormsgpack-1.2.6-cp38-cp38-macosx_10_7_x86_64.whl", hash = "sha256:3853dae43c174ff3dddcd1d5bb9f4f57ddd0d75eab76f73682a743126efb3026"},
+    {file = "ormsgpack-1.2.6-cp38-cp38-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:2482388c4c54c854a15d192fd1dcd1be4322915fc0a882936ecd56102ecbb243"},
+    {file = "ormsgpack-1.2.6-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8ba4888df11f8b5f9e899ef9bdcee057cb163a5ef06bf5ceb28fc5babca9260b"},
+    {file = "ormsgpack-1.2.6-cp38-none-win_amd64.whl", hash = "sha256:bcb87efc45cf5b4fb8da0bc0ce73b79daf5ee9fc4d2bbed8e1c2530e13b82ace"},
+    {file = "ormsgpack-1.2.6-cp39-cp39-macosx_10_7_x86_64.whl", hash = "sha256:1f58ef360ffdec32be68c8764d2de6a69eaa309baf344c67b0e1b3098aa3605a"},
+    {file = "ormsgpack-1.2.6-cp39-cp39-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:5fffd4f8903b12cb820690317b68b0a57069a4bebfbc404f6dcec11a6cc10833"},
+    {file = "ormsgpack-1.2.6-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:87075235d945935cf54fc78c30bd446668321fb233f5ed53c71a4787ef503719"},
+    {file = "ormsgpack-1.2.6-cp39-none-win_amd64.whl", hash = "sha256:ad23a417b7155b4cc4e565fc55573eff4667cfbde84392076e139bf9fbcd2359"},
+    {file = "ormsgpack-1.2.6.tar.gz", hash = "sha256:7fba5f4a13a53f87b6ecf33d754b74bcd8acfacdecda322be0d3b6dd3d2f1388"},
+]
+
+[[package]]
+name = "pathvalidate"
+version = "3.0.0"
+description = "pathvalidate is a Python library to sanitize/validate a string such as filenames/file-paths/etc."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "pathvalidate-3.0.0-py3-none-any.whl", hash = "sha256:dcdb89f0bde6fd5eba6f2202a7863f657afbc810ef32f60e9258d58ede8155ac"},
+    {file = "pathvalidate-3.0.0.tar.gz", hash = "sha256:cfca1886f3cd8862b10bce18a87f4dc02d6418399e539ede2b010dc8588991ce"},
+]
+
+[package.extras]
+test = ["Faker (>=1.0.8)", "allpairspy (>=2)", "click (>=6.2)", "pytest (>=6.0.1)", "pytest-discord (>=0.1.2)", "pytest-md-report (>=0.3)"]
+
+[[package]]
 name = "pydantic"
 version = "1.10.9"
 description = "Data validation and settings management using python type hints"
@@ -1199,4 +1245,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "956b2f693d97060bc6b17c579ab74962b92e925164be0659ce99aec43abcc546"
+content-hash = "cff50662e1bf1c469cf9c7365457dce368cba9a2fc196fa153df5808b07a6eb5"

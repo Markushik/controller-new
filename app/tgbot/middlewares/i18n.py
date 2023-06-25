@@ -1,14 +1,31 @@
+import os
 from typing import Dict, Callable, Any, Awaitable, Union
 
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import CallbackQuery, Message
-from fluent.runtime import FluentLocalization
+from fluent.runtime import FluentLocalization, FluentResourceLoader
 from sqlalchemy import select
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app.infrastructure.database.models import Users
 from app.tgbot.dialogs.format import I18N_FORMAT_KEY
+
+
+def make_i18n_middleware(session_pool: async_sessionmaker):
+    loader = FluentResourceLoader(os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "translations",
+        "{locale}"
+    ))
+    l10ns = {
+        locale: FluentLocalization(
+            [locale, "ru"], ["main.ftl"], loader,
+        )
+        for locale in ["en", "ru"]
+    }
+    return I18nMiddleware(l10ns, "ru", session_pool)
 
 
 class I18nMiddleware(BaseMiddleware):
@@ -46,7 +63,7 @@ class I18nMiddleware(BaseMiddleware):
 
         l10n = self.l10ns[lang]
 
-        data["locales"] = l10n.locales
+        data["l10n"] = l10n
         data[I18N_FORMAT_KEY] = l10n.format_value
 
         return await handler(event, data)

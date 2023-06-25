@@ -10,6 +10,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Services, Users
+from app.tgbot.dialogs.format import I18N_FORMAT_KEY
 from app.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
@@ -207,9 +208,9 @@ async def on_click_sub_not_delete(query: CallbackQuery, button: Button, dialog_m
 
 
 async def on_click_change_lang_to_ru(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    print(dialog_manager.middleware_data.get("locales"))
-    dialog_manager.middleware_data.update({"locales": ["ru", "ru"]})
-    print(dialog_manager.middleware_data.get("locales"))
+    l10n = dialog_manager.middleware_data["l10n"]
+    l10n.locales = ["ru", "ru"]
+    dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
     session: AsyncSession = dialog_manager.middleware_data["session"]
     await session.merge(
@@ -224,7 +225,9 @@ async def on_click_change_lang_to_ru(query: CallbackQuery, button: Button, dialo
 
 
 async def on_click_change_lang_to_en(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    dialog_manager.middleware_data.update({"locales": ["en", "ru"]})
+    l10n = dialog_manager.middleware_data["l10n"]
+    l10n.locales = ["en", "ru"]
+    dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
     session: AsyncSession = dialog_manager.middleware_data["session"]
     await session.merge(
