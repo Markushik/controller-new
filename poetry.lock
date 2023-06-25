@@ -459,25 +459,23 @@ vault = ["hvac"]
 yaml = ["ruamel.yaml"]
 
 [[package]]
-name = "fluent-compiler"
-version = "0.3"
-description = "Blazing fast implementation of Fluent localization language."
+name = "fluent-runtime"
+version = "0.4.0"
+description = "Localization library for expressive translations."
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "fluent_compiler-0.3-py2-none-any.whl", hash = "sha256:9789dfb89024cf9161580697ce72ee7aac30a74d146ec5122c876fe30c4885d5"},
-    {file = "fluent_compiler-0.3-py3-none-any.whl", hash = "sha256:8d7ebb23d8778f0f8dff994e7e9c7779155a8614945465b1b93fd7ad8eba8738"},
-    {file = "fluent_compiler-0.3.tar.gz", hash = "sha256:a0006c833d902d6c5d277dccd3c6f26047d30a5c880865dc8594e9543ff58488"},
+    {file = "fluent.runtime-0.4.0-py2.py3-none-any.whl", hash = "sha256:51fd02582c2363e1106d7051642967a1b7f406dd9c317bd4600a73ede40c5146"},
+    {file = "fluent.runtime-0.4.0.tar.gz", hash = "sha256:cb5ef96a58a3f67acaaca046d1201d202a1ebf2823e5e664370f359bae20574d"},
 ]
 
 [package.dependencies]
-attrs = ">=19.3.0"
-babel = ">=2.8.0"
-"fluent.syntax" = ">=0.14"
+attrs = "*"
+babel = "*"
+"fluent.syntax" = ">=0.17,<0.20"
 pytz = "*"
-singledispatch = ">=3.4"
-six = "*"
+typing-extensions = ">=3.7,<5"
 
 [[package]]
 name = "fluent-syntax"
@@ -493,21 +491,6 @@ files = [
 
 [package.dependencies]
 typing-extensions = ">=3.7,<5"
-
-[[package]]
-name = "fluentogram"
-version = "1.1.6"
-description = "A proper way to use an i18n mechanism with Aiogram3."
-category = "main"
-optional = false
-python-versions = ">=3.9,<4.0"
-files = [
-    {file = "fluentogram-1.1.6-py3-none-any.whl", hash = "sha256:ea9c9ed0a72e7a0b7ebc9d6ff902290734ffc43eefa4c92b34e73675aa886723"},
-    {file = "fluentogram-1.1.6.tar.gz", hash = "sha256:0fc4ebd4eec38272ff86eb9984873abf7447ac6708a02a36f81c79ef6f6de711"},
-]
-
-[package.dependencies]
-fluent-compiler = ">=0.3,<0.4"
 
 [[package]]
 name = "frozenlist"
@@ -1020,34 +1003,6 @@ files = [
 ]
 
 [[package]]
-name = "singledispatch"
-version = "4.0.0"
-description = "Backport functools.singledispatch to older Pythons."
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "singledispatch-4.0.0-py2.py3-none-any.whl", hash = "sha256:b8f69397a454b45b91e2f949fcc87896c53718ca59aab6367966e8b3f010ec77"},
-    {file = "singledispatch-4.0.0.tar.gz", hash = "sha256:f3c327a968651a7f4b03586eab7d90a07b05ff3ef7942d1967036eb9f75ab8fc"},
-]
-
-[package.extras]
-docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
-testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
-
-[[package]]
-name = "six"
-version = "1.16.0"
-description = "Python 2 and 3 compatibility utilities"
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
-files = [
-    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
-    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
-]
-
-[[package]]
 name = "sqlalchemy"
 version = "2.0.17"
 description = "Database Abstraction Library"
@@ -1244,4 +1199,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "baf1356f674f2805081f029854f9b3847c0e0b8d4ef4b32c9a1a22dcf4f99792"
+content-hash = "956b2f693d97060bc6b17c579ab74962b92e925164be0659ce99aec43abcc546"

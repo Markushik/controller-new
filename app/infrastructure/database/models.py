@@ -17,7 +17,7 @@ class Users(Base):
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     user_name: Mapped[str] = mapped_column(VARCHAR(length=32))
     chat_id: Mapped[int] = mapped_column(BigInteger)
-    language: Mapped[str] = mapped_column(VARCHAR(length=2))
+    language: Mapped[str] = mapped_column(VARCHAR(length=2), nullable=True)
     count_subs: Mapped[int] = mapped_column(SmallInteger)
 
 

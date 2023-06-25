@@ -5,6 +5,7 @@ The main file responsible for launching the bot
 
 import asyncio
 import logging
+import os
 
 from aiogram import Bot
 from aiogram import Dispatcher
@@ -13,6 +14,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
+from fluent.runtime import FluentResourceLoader, FluentLocalization
 from loguru import logger
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
@@ -21,9 +23,25 @@ from app.infrastructure.utils.commands import set_commands
 from app.infrastructure.utils.config import settings
 from app.infrastructure.utils.logging import InterceptHandler
 from app.tgbot.dialogs.create import dialog
+from app.tgbot.middlewares.i18n import I18nMiddleware
 from app.tgbot.dialogs.menu import main_menu
 from app.tgbot.handlers import errors, client
 from app.tgbot.middlewares.database import DbSessionMiddleware
+
+
+def make_i18n_middleware(session_pool):
+    loader = FluentResourceLoader(os.path.join(
+        os.path.dirname(__file__),
+        "translations",
+        "{locale}",
+    ))
+    l10ns = {
+        locale: FluentLocalization(
+            [locale, "ru"], ["main.ftl"], loader,
+        )
+        for locale in ["en", "ru"]
+    }
+    return I18nMiddleware(l10ns, "ru", session_pool)
 
 
 async def main() -> None:
@@ -57,6 +75,11 @@ async def main() -> None:
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp = Dispatcher(storage=storage)
+
+    i18n_middleware = make_i18n_middleware(session_pool=session_maker)
+
+    disp.message.middleware(i18n_middleware)
+    disp.callback_query.middleware(i18n_middleware)
 
     disp.update.middleware(DbSessionMiddleware(session_pool=session_maker))
 

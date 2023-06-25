@@ -10,6 +10,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Services, Users
+from app.tgbot.dialogs.format import I18N_FORMAT_KEY, default_format_text
 from app.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
@@ -23,7 +24,6 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
             user_id=message.from_user.id,
             user_name=message.from_user.first_name,
             chat_id=message.chat.id,
-            language=message.from_user.language_code,
             count_subs=0,
         )
     )
@@ -205,3 +205,35 @@ async def on_click_sub_not_delete(query: CallbackQuery, button: Button, dialog_m
     await query.message.edit_text("<b>❎ Отклонено:</b> Подписка не удалена")
     await dialog_manager.done()
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
+
+
+async def on_click_change_lang_to_ru(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    print(dialog_manager.middleware_data.get("locales"))
+    dialog_manager.middleware_data.update({"locales": ["ru", "ru"]})
+    print(dialog_manager.middleware_data.get("locales"))
+
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    await session.merge(
+        Users(
+            user_id=query.from_user.id,
+            language="ru"
+        )
+    )
+    await session.commit()
+
+    await query.answer("Вы сменили язык на 🇷🇺 Русский")
+
+
+async def on_click_change_lang_to_en(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    dialog_manager.middleware_data.update({"locales": ["en", "ru"]})
+
+    session: AsyncSession = dialog_manager.middleware_data["session"]
+    await session.merge(
+        Users(
+            user_id=query.from_user.id,
+            language="en"
+        )
+    )
+    await session.commit()
+
+    await query.answer("You switched language to 🇬🇧 English")

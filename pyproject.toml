@@ -15,10 +15,10 @@ dynaconf = "^3.1.12"
 redis = "^4.5.5"
 aiogram-dialog = "^2.0.0b20"
 loguru = "^0.7.0"
-fluentogram = "^1.1.6"
 alembic = "^1.11.1"
 asyncstdlib = "^3.10.8"
 nats-py = "^2.3.1"
+fluent-runtime = "^0.4.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.272"
