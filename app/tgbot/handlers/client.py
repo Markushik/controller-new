@@ -208,8 +208,9 @@ async def on_click_sub_not_delete(query: CallbackQuery, button: Button, dialog_m
 
 
 async def on_click_change_lang_to_ru(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    l10n = dialog_manager.middleware_data["l10n"]
-    l10n.locales = ["ru", "ru"]
+    l10ns = dialog_manager.middleware_data["l10ns"]
+    lang = "ru"
+    l10n = l10ns[lang]
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
     session: AsyncSession = dialog_manager.middleware_data["session"]
@@ -225,8 +226,9 @@ async def on_click_change_lang_to_ru(query: CallbackQuery, button: Button, dialo
 
 
 async def on_click_change_lang_to_en(query: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    l10n = dialog_manager.middleware_data["l10n"]
-    l10n.locales = ["en", "ru"]
+    l10ns = dialog_manager.middleware_data["l10ns"]
+    lang = "en"
+    l10n = l10ns[lang]
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
     session: AsyncSession = dialog_manager.middleware_data["session"]

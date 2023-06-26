@@ -25,6 +25,7 @@ def make_i18n_middleware(session_pool: async_sessionmaker):
         )
         for locale in ["en", "ru"]
     }
+    print(l10ns)
     return I18nMiddleware(l10ns, "ru", session_pool)
 
 
@@ -63,7 +64,7 @@ class I18nMiddleware(BaseMiddleware):
 
         l10n = self.l10ns[lang]
 
-        data["l10n"] = l10n
+        data["l10ns"] = self.l10ns
         data[I18N_FORMAT_KEY] = l10n.format_value
 
         return await handler(event, data)
