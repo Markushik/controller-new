@@ -5,7 +5,7 @@ from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 from sqlalchemy import select
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app.infrastructure.database.models import Users
@@ -25,7 +25,6 @@ def make_i18n_middleware(session_pool: async_sessionmaker):
         )
         for locale in ["en", "ru"]
     }
-    print(l10ns)
     return I18nMiddleware(l10ns, "ru", session_pool)
 
 
@@ -59,8 +58,11 @@ class I18nMiddleware(BaseMiddleware):
                 )
                 result_all = request.one()
                 lang = result_all.Users.language
-        except InvalidRequestError:
+        except NoResultFound:
             lang = "ru"
+
+        if lang is None:
+            lang = "ru"  # TODO: rewrite
 
         l10n = self.l10ns[lang]
 
