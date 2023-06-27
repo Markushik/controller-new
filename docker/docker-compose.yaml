@@ -23,8 +23,8 @@ services:
   app:
     container_name: app
     build:
-      context: docker
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '443:443'
     stop_signal: SIGINT

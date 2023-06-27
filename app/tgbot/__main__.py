@@ -52,7 +52,7 @@ async def main() -> None:
     session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
-    disp = Dispatcher(storage=storage)
+    disp = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
 
     i18n_middleware = make_i18n_middleware(session_pool=session_maker)
 

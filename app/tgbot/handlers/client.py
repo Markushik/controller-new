@@ -6,7 +6,7 @@ from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Services, Users
@@ -107,23 +107,28 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[s
 
     :param dialog_manager: DialogManager: Access the dialog manager
     :return: A dictionary with the subs key and a string value
-    :doc-author: Trelent
     """
     session: AsyncSession = dialog_manager.middleware_data["session"]
-    request = await session.execute(
+    request: Result = await session.execute(
         select(Services)
         .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
     )
-    result_all = request.all()
-    subs = [
-        f"<b>{count + 1}. {item.Services.title}</b> — {datetime.date(item.Services.reminder)}\n"
-        async for count, item in asyncstdlib.enumerate(result_all)
-    ]
+    result_all = request.scalars().all()
+
+    request1 = await session.execute(
+        select(Users)
+        .where(Users.user_id == dialog_manager.event.from_user.id)
+    )
+    result_all2 = request1.scalars().one()
+    print(result_all2.language)
+
+    subs = [f"<b>{count + 1}. {item.title}</b> — {datetime.date(item.reminder)}\n"
+            async for count, item in asyncstdlib.enumerate(result_all)]
 
     match result_all:
         case []:
             return {
-                "subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"
+                "subs": "some text"
             }
         case _:
             return {
@@ -163,14 +168,14 @@ async def on_click_start_create_sub(callback: CallbackQuery, dialog: DialogProto
         select(Users)
         .where(Users.user_id == dialog_manager.event.from_user.id)
     )
-    result_all = request.one()
+    result = request.one()
 
-    if int(result_all.Users.count_subs) <= 7:
-        await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
-    else:
+    if result.Users.count_subs >= 7:
         await callback.message.edit_text("<b>🚫 Ошибка:</b> Достигнут лимит подписок")
         await dialog_manager.done()
         await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+    else:
+        await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -226,9 +231,9 @@ async def on_click_button_reject(callback: CallbackQuery, button: Button, dialog
 
 async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> dict[str, str, str]:
     return {
-        "service": f"<b>Сервис:</b> <code>{dialog_manager.dialog_data.get('service')}</code>\n",
-        "months": f"<b>Длительность:</b> <code>{dialog_manager.dialog_data.get('months')} (мес.)</code>\n",
-        "reminder": f"<b>Оповестить: </b> <code>{dialog_manager.dialog_data.get('reminder')}</code>"
+        "service": dialog_manager.dialog_data.get("service"),
+        "months": dialog_manager.dialog_data.get("months"),
+        "reminder": dialog_manager.dialog_data.get("reminder")
     }
 
 

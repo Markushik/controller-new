@@ -24,9 +24,15 @@ ormsgpack = "^1.2.6"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.272"
+mypy = "^1.4.1"
 
 [tool.ruff]
 line-length = 120
+
+[tool.mypy]
+ignore_missing_imports = true
+plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
+
 
 [build-system]
 requires = ["poetry-core"]
