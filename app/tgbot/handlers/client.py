@@ -100,7 +100,8 @@ async def on_click_get_delete_menu(callback: CallbackQuery, button: Button, dial
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
-async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[str, str]:
+async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[
+    str, str]:  # FIXME: DON'T USE THIS! I will rewrite soon
     """
     The get_subs_for_output function is used to get all the subscriptions for a user.
     It returns a dictionary with one key, which contains the text of all the subscriptions.
@@ -136,7 +137,8 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[s
             }
 
 
-async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[str, str | list[tuple[str, str, str]]]:
+async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[
+    str, str | list[tuple[str, str, str]]]:  # FIXME: DON'T USE THIS! I will rewrite soon
     session: AsyncSession = dialog_manager.middleware_data["session"]
     request = await session.execute(
         select(Services)
