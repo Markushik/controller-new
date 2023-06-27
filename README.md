@@ -1,11 +1,11 @@
-> **controller** — probably the best bot for a reminder of the end of the subscription.
-
 <p align="center">
 <img src="https://img.shields.io/badge/License-MIT-136F63.svg?style=flat-square" alt="https://opensource.org/licenses/MIT/">
 <img src="https://img.shields.io/github/last-commit/Markushik/controller-new.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/">
 <img src="https://github.com/Markushik/controller-new/actions/workflows/CI.yaml/badge.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/actions/">
 <img src="https://img.shields.io/badge/Docker%20Hub-controller--new-136F63?style=flat-square" alt="https://hub.docker.com/repository/docker/markushik/controller-new/">
 <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json?style=flat-square" alt="https://github.com/astral-sh/ruff/">
+
+> **controller** — probably the best bot for a reminder of the end of the subscription.
 
 ## 🚀 Stack
 
