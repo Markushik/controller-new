@@ -66,6 +66,7 @@ class I18nMiddleware(BaseMiddleware):
 
         l10n = self.l10ns[lang]
 
+        data["lang"] = lang
         data["l10ns"] = self.l10ns
         data[I18N_FORMAT_KEY] = l10n.format_value
 

@@ -14,7 +14,7 @@ dialog = Dialog(
     Window(
         I18NFormat("Add-service-title"),
         MessageInput(service_name_handler, content_types=[ContentType.TEXT]),
-        Button(Const("↩️ Назад"), id="back_id", on_click=on_click_get_subs_menu),
+        Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu),
         state=SubscriptionSG.SERVICE,
     ),
     Window(

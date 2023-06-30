@@ -100,8 +100,7 @@ async def on_click_get_delete_menu(callback: CallbackQuery, button: Button, dial
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
-async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[
-    str, str]:  # FIXME: DON'T USE THIS! I will rewrite soon
+async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
     """
     The get_subs_for_output function is used to get all the subscriptions for a user.
     It returns a dictionary with one key, which contains the text of all the subscriptions.
@@ -110,74 +109,87 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> dict[
     :return: A dictionary with the subs key and a string value
     """
     session: AsyncSession = dialog_manager.middleware_data["session"]
+    language: str = dialog_manager.middleware_data["lang"]
+
     request: Result = await session.execute(
         select(Services)
         .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
     )
-    result_all = request.scalars().all()
-
-    request1 = await session.execute(
-        select(Users)
-        .where(Users.user_id == dialog_manager.event.from_user.id)
-    )
-    result_all2 = request1.scalars().one()
-    print(result_all2.language)
+    services_result = request.scalars().all()
 
     subs = [f"<b>{count + 1}. {item.title}</b> — {datetime.date(item.reminder)}\n"
-            async for count, item in asyncstdlib.enumerate(result_all)]
+            async for count, item in asyncstdlib.enumerate(services_result)]
 
-    match result_all:
-        case []:
-            return {
-                "subs": "some text"
-            }
-        case _:
-            return {
-                "subs": ''.join(subs)
-            }
+    match language:
+        case "ru":
+            match services_result:
+                case []:
+                    return {"subs": "<b>🤷‍♂️ Кажется</b>, мы ничего <b>не нашли...</b>"}
+                case _:
+                    return {"subs": ''.join(subs)}
+        case "en":
+            match services_result:
+                case []:
+                    return {"subs": "<b>🤷‍♂️ It seems</b> that we <b>haven't found anything...</b>"}
+                case _:
+                    return {"subs": ''.join(subs)}
 
 
-async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> dict[
-    str, str | list[tuple[str, str, str]]]:  # FIXME: DON'T USE THIS! I will rewrite soon
+async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
-    request = await session.execute(
+    language: str = dialog_manager.middleware_data["lang"]
+
+    request: Result = await session.execute(
         select(Services)
         .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
     )
-    result_all = request.all()
-    subs = [
-        (item.Services.title, str(item.Services.service_id), str(datetime.date(item.Services.reminder)))
-        for item in result_all
-    ]
+    services_result = request.fetchall()
 
-    match result_all:
-        case []:
-            return {
-                "message": "<b>🤷‍♂️ Кажется</b>, здесь <b>нечего удалять</b>...",
-                "subs": subs
-            }
-        case _:
-            return {
-                "message": "<b>Выберите</b> подписку, которую <b>хотите удалить</b>:",
-                "subs": subs
-            }
+    subs = [(item.Services.service_id, item.Services.title, datetime.date(item.Services.reminder).isoformat())
+            for item in services_result]
+
+    match language:
+        case "ru":
+            match services_result:
+                case []:
+                    return {"message": "<b>🤷‍♂️ Кажется</b>, здесь <b>нечего удалять</b>..", "subs": subs}
+                case _:
+                    return {"message": "<b>Выберите</b> подписку, которую <b>хотите удалить</b>:", "subs": subs}
+        case "en":
+            match services_result:
+                case []:
+                    return {"message": "<b>🤷‍♂️ It seems</b>, there is <b>nothing to delete</b>...", "subs": subs}
+                case _:
+                    return {"message": "<b>Select</b> the subscription that you <b>want to delete</b>:", "subs": subs}
 
 
-async def on_click_start_create_sub(callback: CallbackQuery, dialog: DialogProtocol,
-                                    dialog_manager: DialogManager) -> None:
+async def on_click_sub_selected(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
+                                item_id: str) -> None:
+    await dialog_manager.start(UserSG.CHECK_DELETE, mode=StartMode.RESET_STACK)
+    dialog_manager.dialog_data["service_id"] = int(item_id)
+
+
+async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
-    request = await session.execute(
-        select(Users)
-        .where(Users.user_id == dialog_manager.event.from_user.id)
-    )
-    result = request.one()
 
-    if result.Users.count_subs >= 7:
-        await callback.message.edit_text("<b>🚫 Ошибка:</b> Достигнут лимит подписок")
-        await dialog_manager.done()
-        await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
-    else:
-        await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
+    request = await session.execute(select(Users).where(Users.user_id == dialog_manager.event.from_user.id))
+    result = request.scalar()
+
+    match result.language:
+        case "ru":
+            if result.count_subs >= 7:
+                await callback.message.edit_text(text="<b>🚫 Ошибка:</b> Достигнут лимит подписок")
+                await dialog_manager.done()
+                await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+            else:
+                await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
+        case "en":
+            if result.count_subs >= 7:
+                await callback.message.edit_text(text="<b>🚫 Error:</b> Subscription limit reached")
+                await dialog_manager.done()
+                await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
+            else:
+                await dialog_manager.start(SubscriptionSG.SERVICE, mode=StartMode.RESET_STACK)
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -212,12 +224,7 @@ async def on_click_button_confirm(callback: CallbackQuery, button: Button, dialo
             service_by_user_id=callback.from_user.id
         )
     )
-    await session.merge(
-        Users(
-            user_id=callback.from_user.id,
-            count_subs=Users.count_subs + 1
-        )
-    )
+    await session.merge(Users(user_id=callback.from_user.id, count_subs=Users.count_subs + 1))
     await session.commit()
 
     await callback.message.edit_text("<b>✅ Одобрено:</b> Данные успешно записаны")
@@ -231,18 +238,12 @@ async def on_click_button_reject(callback: CallbackQuery, button: Button, dialog
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
-async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> dict[str, str, str]:
+async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> None:
     return {
         "service": dialog_manager.dialog_data.get("service"),
         "months": dialog_manager.dialog_data.get("months"),
         "reminder": dialog_manager.dialog_data.get("reminder")
     }
-
-
-async def on_click_sub_selected(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
-                                item_id: str) -> None:
-    await dialog_manager.start(UserSG.CHECK_DELETE, mode=StartMode.RESET_STACK)
-    dialog_manager.dialog_data["service_id"] = int(item_id)
 
 
 async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
@@ -254,10 +255,9 @@ async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_ma
     :param callback: CallbackQuery: Get information about the user that triggered the callback
     :param button: Button: Get the button object that was clicked
     :param dialog_manager: DialogManager: Access the dialog manager
-    :doc-author: Trelent
     """
     session: AsyncSession = dialog_manager.middleware_data["session"]
-    await session.execute(delete(Services).where(Services.service_id == dialog_manager.dialog_data.get('service_id')))
+    await session.execute(delete(Services).where(Services.service_id == dialog_manager.dialog_data['service_id']))
     await session.merge(Users(user_id=callback.from_user.id, count_subs=Users.count_subs - 1))
     await session.commit()
 
@@ -270,6 +270,10 @@ async def on_click_sub_not_delete(callback: CallbackQuery, button: Button, dialo
     await callback.message.edit_text("<b>❎ Отклонено:</b> Подписка не удалена")
     await dialog_manager.done()
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
+
+
+async def on_click_change_lang(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+    ...
 
 
 async def on_click_change_lang_to_ru(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:

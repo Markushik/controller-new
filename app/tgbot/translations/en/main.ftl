@@ -48,3 +48,10 @@ Check-form = 📩 Check <b>correctness</b> of the entered data:
              <b>Service:</b> <code>{ $service }</code>
              <b>Duration:</b> <code>{ $months } (mon.)</code>
              <b>Notify: </b> <code>{ $reminder }</code>
+
+Start-menu = <b>CONTROLLER</b> — <b>probably</b>, <b>best way</b> to <b>remind</b> about <b>subscription expiration</b>.
+
+            📣 <i><b>Required</b> add your <b>subscriptions</b> to our service. We
+            we will take care of <b>You</b> and <b>send you</b> a notification about the next <b>charge</b></i>
+
+Nothing-delete = <b>🤷‍♂️ It seems</b>, there is <b>nothing to delete here</b>...

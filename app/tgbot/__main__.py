@@ -21,7 +21,7 @@ from app.infrastructure.utils.config import settings
 from app.infrastructure.utils.logging import InterceptHandler
 from app.tgbot.dialogs.create import dialog
 from app.tgbot.dialogs.menu import main_menu
-from app.tgbot.handlers import errors, client
+from app.tgbot.handlers import client
 from app.tgbot.middlewares.database import DbSessionMiddleware
 from app.tgbot.middlewares.i18n import make_i18n_middleware
 
@@ -63,7 +63,7 @@ async def main() -> None:
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_routers(client.router, errors.router)
+    disp.include_routers(client.router)
     disp.include_routers(dialog, main_menu)
 
     setup_dialogs(disp)
