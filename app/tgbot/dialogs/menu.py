@@ -9,7 +9,7 @@ from app.tgbot.handlers.client import (get_subs_for_output, on_click_get_subs_me
                                        on_click_get_help_menu, on_click_back_to_main_menu, on_click_get_delete_menu,
                                        on_click_sub_create, get_subs_for_delete, on_click_sub_selected,
                                        on_click_sub_delete, on_click_sub_not_delete, on_click_change_lang_to_ru,
-                                       on_click_change_lang_to_en, on_click_change_lang)
+                                       on_click_change_lang_to_en)
 from app.tgbot.states.user import UserSG
 
 main_menu = Dialog(
@@ -39,8 +39,7 @@ main_menu = Dialog(
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu),
         ),
-        state=UserSG.HELP,
-        disable_web_page_preview=True
+        state=UserSG.HELP
     ),
     Window(
         I18NFormat("Catalog-add"),

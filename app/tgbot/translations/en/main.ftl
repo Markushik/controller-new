@@ -51,7 +51,19 @@ Check-form = 📩 Check <b>correctness</b> of the entered data:
 
 Start-menu = <b>CONTROLLER</b> — <b>probably</b>, <b>best way</b> to <b>remind</b> about <b>subscription expiration</b>.
 
-            📣 <i><b>Required</b> add your <b>subscriptions</b> to our service. We
-            we will take care of <b>You</b> and <b>send you</b> a notification about the next <b>charge</b></i>
+            📣 <i><b>Required</b> add your <b>subscriptions</b> to our service. We we will take care of <b>You</b> and <b>send you</b> a notification about the next <b>charge</b></i>
 
 Nothing-delete = <b>🤷‍♂️ It seems</b>, there is <b>nothing to delete here</b>...
+Nothing-output = <b>🤷‍♂️ It seems</b> that we <b>haven't found anything...</b>
+
+Set-for-delete = <b>Select</b> the subscription that you <b>want to delete</b>:
+
+Error-subs-limit = <b>🚫 Error:</b> Subscription limit reached
+Error-len-limit = <b>🚫 Error:</b> Character limit reached
+Error-char-limit = <b>🚫 Error:</b> Invalid characters entered
+
+Approve-sub-add = <b>✅ Approved:</b> Data written successfully
+Error-sub-add = <b>❎ Rejected:</b> Data not recorded
+
+Approve-sub-delete = <b>✅ Approved:</b> Subscription successfully deleted
+Reject-sub-delete = <b>❎ Rejected:</b> Subscription not deleted

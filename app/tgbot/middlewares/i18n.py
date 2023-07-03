@@ -68,7 +68,7 @@ class I18nMiddleware(BaseMiddleware):
                     )
                 )
                 await session.commit()
-                lang = "ru"
+                lang = event.from_user.language_code
 
         l10n = self.l10ns[lang]
 
