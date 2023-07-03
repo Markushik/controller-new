@@ -10,7 +10,7 @@ from sqlalchemy import select, delete, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Services, Users
-from app.tgbot.dialogs.format import I18N_FORMAT_KEY
+from app.tgbot.dialogs.format import I18N_FORMAT_KEY, I18NFormat
 from app.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
@@ -31,7 +31,7 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
     await session.merge(
         Users(
             user_id=message.from_user.id, user_name=message.from_user.first_name,
-            chat_id=message.chat.id, count_subs=0,
+            chat_id=message.chat.id, count_subs=0,  # FIXME: count cubs == 0, when press "start"
         )
     )
     await session.commit()
@@ -135,6 +135,12 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
                     return {"subs": ''.join(subs)}
 
 
+# async def get_langs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
+#     langs = [" 🇷🇺 Русский", " 🇬🇧 English"]
+#
+#     return {"langs": langs}
+
+
 async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
     language: str = dialog_manager.middleware_data["lang"]
@@ -171,11 +177,12 @@ async def on_click_sub_selected(callback: CallbackQuery, button: Button, dialog_
 
 async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
     session: AsyncSession = dialog_manager.middleware_data["session"]
+    language: str = dialog_manager.middleware_data["lang"]
 
     request = await session.execute(select(Users).where(Users.user_id == dialog_manager.event.from_user.id))
     result = request.scalar()
 
-    match result.language:
+    match language:
         case "ru":
             if result.count_subs >= 7:
                 await callback.message.edit_text(text="<b>🚫 Ошибка:</b> Достигнут лимит подписок")
@@ -193,11 +200,13 @@ async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, d
 
 
 async def service_name_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
+    language: str = dialog_manager.middleware_data["lang"]
+
     if len(message.text) <= 30:
         dialog_manager.dialog_data["service"] = message.text
         await dialog_manager.switch_to(SubscriptionSG.MONTHS)
     else:
-        await message.answer(text="<b>🚫 Ошибка:</b> Достигнут лимит символов")
+        await message.answer(I18NFormat("Back"))
 
 
 async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
@@ -272,8 +281,9 @@ async def on_click_sub_not_delete(callback: CallbackQuery, button: Button, dialo
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
-async def on_click_change_lang(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    ...
+async def on_click_change_lang(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
+                               item_id: str) -> None:
+    print(item_id)
 
 
 async def on_click_change_lang_to_ru(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:

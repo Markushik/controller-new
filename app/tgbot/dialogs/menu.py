@@ -9,7 +9,7 @@ from app.tgbot.handlers.client import (get_subs_for_output, on_click_get_subs_me
                                        on_click_get_help_menu, on_click_back_to_main_menu, on_click_get_delete_menu,
                                        on_click_sub_create, get_subs_for_delete, on_click_sub_selected,
                                        on_click_sub_delete, on_click_sub_not_delete, on_click_change_lang_to_ru,
-                                       on_click_change_lang_to_en)
+                                       on_click_change_lang_to_en, on_click_change_lang)
 from app.tgbot.states.user import UserSG
 
 main_menu = Dialog(
@@ -26,17 +26,19 @@ main_menu = Dialog(
     ),
     Window(
         I18NFormat("Q-A"),
-        Row(
-            Url(
-                I18NFormat("Administrator"),
-                Const("tg://user?id=878406427")
+        Group(
+            Row(
+                Url(
+                    I18NFormat("Administrator"),
+                    Const("tg://user?id=878406427")
+                ),
+                Url(
+                    Const("🐈 GitHub"),
+                    Const("https://github.com/Markushik/controller-new/")
+                )
             ),
-            Url(
-                Const("🐈 GitHub"),
-                Const("https://github.com/Markushik/controller-new/")
-            )
+            Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu),
         ),
-        Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu),
         state=UserSG.HELP,
         disable_web_page_preview=True
     ),
@@ -72,18 +74,19 @@ main_menu = Dialog(
     # Window(
     #     I18NFormat("Set-lang"),
     #     Group(
-    #         Column(
+    #         Row(
     #             Select(
-    #                 I18NFormat("..."),
+    #                 I18NFormat("Items"),
     #                 id="lang_id",
-    #                 item_id_getter=operator.itemgetter(1),
+    #                 item_id_getter=operator.itemgetter(0),
     #                 items="langs",
     #                 on_click=on_click_change_lang,
-    #             )
+    #             ),
     #         ),
     #         Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)
     #     ),
-    #     state=UserSG.SETTINGS
+    #     state=UserSG.SETTINGS,
+    #     getter=get_langs_for_output
     # ),
     Window(
         I18NFormat("Set-lang"),

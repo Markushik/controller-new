@@ -9,6 +9,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app.infrastructure.database.models import Users
+from app.tgbot.constants import DEFAULT_LOCALE, LOCALES
 from app.tgbot.dialogs.format import I18N_FORMAT_KEY
 
 
@@ -21,11 +22,11 @@ def make_i18n_middleware(session_pool: async_sessionmaker):
     ))
     l10ns = {
         locale: FluentLocalization(
-            [locale, "ru"], ["main.ftl"], loader,
+            [locale, DEFAULT_LOCALE], ["main.ftl"], loader,
         )
-        for locale in ["en", "ru"]
+        for locale in LOCALES
     }
-    return I18nMiddleware(l10ns, "ru", session_pool)
+    return I18nMiddleware(l10ns, DEFAULT_LOCALE, session_pool)
 
 
 class I18nMiddleware(BaseMiddleware):
@@ -50,24 +51,28 @@ class I18nMiddleware(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
 
-        try:
-            async with self.session_pool() as session:
-                request = await session.execute(
-                    select(Users)
-                    .where(Users.user_id == event.from_user.id)
-                )
-                result_all = request.one()
-                lang = result_all.Users.language
-        except NoResultFound:
-            lang = "ru"
+        async with self.session_pool() as session:
+            try:
+                request = await session.execute(select(Users).where(Users.user_id == event.from_user.id))
+                result_all = request.scalar_one()
+                lang = result_all.language
 
-        if lang is None:
-            lang = "ru"  # TODO: rewrite
+                if lang is None:
+                    raise NoResultFound
+
+            except NoResultFound:
+                await session.merge(
+                    Users(
+                        user_id=event.from_user.id, user_name=event.from_user.first_name,
+                        chat_id=event.chat.id, language="ru"
+                    )
+                )
+                await session.commit()
+                lang = "ru"
 
         l10n = self.l10ns[lang]
 
-        data["lang"] = lang
-        data["l10ns"] = self.l10ns
-        data[I18N_FORMAT_KEY] = l10n.format_value
+        data_middleware = dict(zip(["lang", "l10ns", I18N_FORMAT_KEY], [lang, self.l10ns, l10n.format_value]))
+        data.update(data_middleware)
 
         return await handler(event, data)

@@ -7,7 +7,6 @@ class UserSG(StatesGroup):
     HELP = State()
     SETTINGS = State()
     DELETE = State()
-
     CHECK_DELETE = State()
 
 
