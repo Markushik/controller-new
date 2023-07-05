@@ -1,3 +1,4 @@
+from aiogram.utils.token import validate_token
 from dynaconf import Dynaconf, Validator
 
 settings = Dynaconf(
@@ -10,6 +11,8 @@ settings = Dynaconf(
 
 settings.validators.register(
     validators=[
+        Validator("BOT_TOKEN", must_exist=True, condition=validate_token),
+        
         Validator("redis.REDIS_HOST", must_exist=True),
         Validator("redis.REDIS_PORT", len_eq=4, cast=str, must_exist=True),
         Validator("redis.REDIS_DATABASE", gte=7, cast=int),
