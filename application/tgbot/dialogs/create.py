@@ -4,11 +4,11 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, Row, Calendar
 from aiogram_dialog.widgets.text import Const
 
-from app.tgbot.dialogs.format import I18NFormat
-from app.tgbot.handlers.client import (service_name_handler, months_count_handler, on_click_calendar_reminder,
-                                       get_input_service_data, on_click_button_confirm, on_click_button_reject,
-                                       on_click_get_subs_menu)
-from app.tgbot.states.user import SubscriptionSG
+from application.tgbot.dialogs.format import I18NFormat
+from application.tgbot.handlers.client import (service_name_handler, months_count_handler, on_click_calendar_reminder,
+                                               get_input_service_data, on_click_button_confirm, on_click_button_reject,
+                                               on_click_get_subs_menu)
+from application.tgbot.states.user import SubscriptionSG
 
 dialog = Dialog(
     Window(

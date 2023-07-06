@@ -16,13 +16,15 @@ from loguru import logger
 from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from app.infrastructure.utils.config import settings
-from app.infrastructure.utils.logging import InterceptHandler
-from app.tgbot.dialogs.create import dialog
-from app.tgbot.dialogs.menu import main_menu
-from app.tgbot.handlers import client
-from app.tgbot.middlewares.database import DbSessionMiddleware
-from app.tgbot.middlewares.i18n import make_i18n_middleware
+from application.core.config.config import settings
+from application.core.misc.logging import InterceptHandler
+from application.infrastructure.stream.worker import poll_nats
+
+from application.tgbot.dialogs.create import dialog
+from application.tgbot.dialogs.menu import main_menu
+from application.tgbot.handlers import client
+from application.tgbot.middlewares.database import DbSessionMiddleware
+from application.tgbot.middlewares.i18n import make_i18n_middleware
 
 
 async def main() -> None:
@@ -69,7 +71,7 @@ async def main() -> None:
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
-        await disp.start_polling(bot)
+        await asyncio.gather(disp.start_polling(bot), poll_nats(bot))
     finally:
         await disp.storage.close()
         await bot.session.close()

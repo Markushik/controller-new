@@ -8,9 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from app.infrastructure.database.models import Users
-from app.tgbot.constants import DEFAULT_LOCALE, LOCALES
-from app.tgbot.dialogs.format import I18N_FORMAT_KEY
+from application.core.config.constants import DEFAULT_LOCALE, LOCALES
+from application.infrastructure.database.models import Users
+
+from application.tgbot.dialogs.format import I18N_FORMAT_KEY
 
 
 def make_i18n_middleware(session_pool: async_sessionmaker):

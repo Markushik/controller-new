@@ -4,13 +4,14 @@ from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.kbd import Row, Button, Url, Select, Column, Group
 from aiogram_dialog.widgets.text import Const, Format
 
-from app.tgbot.dialogs.format import I18NFormat
-from app.tgbot.handlers.client import (get_subs_for_output, on_click_get_subs_menu, on_click_get_settings_menu,
-                                       on_click_get_help_menu, on_click_back_to_main_menu, on_click_get_delete_menu,
-                                       on_click_sub_create, get_subs_for_delete, on_click_sub_selected,
-                                       on_click_sub_delete, on_click_sub_not_delete, on_click_change_lang_to_ru,
-                                       on_click_change_lang_to_en)
-from app.tgbot.states.user import UserSG
+from application.tgbot.dialogs.format import I18NFormat
+from application.tgbot.handlers.client import (get_subs_for_output, on_click_get_subs_menu, on_click_get_settings_menu,
+                                               on_click_get_help_menu, on_click_back_to_main_menu,
+                                               on_click_get_delete_menu,
+                                               on_click_sub_create, get_subs_for_delete, on_click_sub_selected,
+                                               on_click_sub_delete, on_click_sub_not_delete, on_click_change_lang_to_ru,
+                                               on_click_change_lang_to_en)
+from application.tgbot.states.user import UserSG
 
 main_menu = Dialog(
     Window(

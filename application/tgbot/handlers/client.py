@@ -10,9 +10,9 @@ from aiogram_dialog.widgets.kbd import Button
 from sqlalchemy import select, delete, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.infrastructure.database.models import Services, Users
-from app.tgbot.dialogs.format import I18N_FORMAT_KEY
-from app.tgbot.states.user import SubscriptionSG, UserSG
+from application.infrastructure.database.models import Services, Users
+from application.tgbot.dialogs.format import I18N_FORMAT_KEY
+from application.tgbot.states.user import SubscriptionSG, UserSG
 
 router = Router()
 

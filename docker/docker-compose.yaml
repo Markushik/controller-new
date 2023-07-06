@@ -21,7 +21,7 @@ services:
     volumes:
       - '~/${VOLUMES_DIR}/pg-assets:/var/lib/postgresql/assets'
   app:
-    container_name: app
+    container_name: application
     build:
       context: .
       dockerfile: Dockerfile

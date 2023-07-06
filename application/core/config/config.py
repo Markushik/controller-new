@@ -11,11 +11,11 @@ settings = Dynaconf(
 
 settings.validators.register(
     validators=[
-        Validator("BOT_TOKEN", must_exist=True, condition=validate_token),
+        Validator("API_TOKEN", condition=validate_token, must_exist=True),
         
-        Validator("redis.REDIS_HOST", must_exist=True),
+        Validator("redis.REDIS_HOST", cast=str, must_exist=True),
         Validator("redis.REDIS_PORT", len_eq=4, cast=str, must_exist=True),
-        Validator("redis.REDIS_DATABASE", gte=7, cast=int),
+        Validator("redis.REDIS_DATABASE", is_type_of=int, gte=7, cast=int),
 
         Validator("postgres.POSTGRES_HOST", must_exist=True),
         Validator("postgres.POSTGRES_PORT", len_eq=4, cast=str, must_exist=True),
