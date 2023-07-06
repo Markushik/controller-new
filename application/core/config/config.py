@@ -12,16 +12,19 @@ settings = Dynaconf(
 settings.validators.register(
     validators=[
         Validator("API_TOKEN", condition=validate_token, must_exist=True),
-        
-        Validator("redis.REDIS_HOST", cast=str, must_exist=True),
-        Validator("redis.REDIS_PORT", len_eq=4, cast=str, must_exist=True),
-        Validator("redis.REDIS_DATABASE", is_type_of=int, gte=7, cast=int),
 
-        Validator("postgres.POSTGRES_HOST", must_exist=True),
-        Validator("postgres.POSTGRES_PORT", len_eq=4, cast=str, must_exist=True),
-        Validator("postgres.POSTGRES_USERNAME", cast=str, must_exist=True),
-        Validator("postgres.POSTGRES_PASSWORD", cast=str, must_exist=True),
-        Validator("postgres.POSTGRES_DATABASE", cast=str, must_exist=True),
+        Validator("redis.REDIS_HOST", is_type_of=str, must_exist=True),
+        Validator("redis.REDIS_PORT", is_type_of=int, cast=str, must_exist=True),
+        Validator("redis.REDIS_DATABASE", is_type_of=int, cast=str),
+
+        Validator("postgres.POSTGRES_HOST", is_type_of=str, must_exist=True),
+        Validator("postgres.POSTGRES_PORT", is_type_of=int, must_exist=True),
+        Validator("postgres.POSTGRES_USERNAME", is_type_of=str, must_exist=True),
+        Validator("postgres.POSTGRES_PASSWORD", is_type_of=str, must_exist=True),
+        Validator("postgres.POSTGRES_DATABASE", is_type_of=str, must_exist=True),
+
+        Validator("nats.NATS_HOST", is_type_of=str, must_exist=True),
+        Validator("nats.NATS_PORT", is_type_of=int, cast=str, must_exist=True),
     ]
 )
 
