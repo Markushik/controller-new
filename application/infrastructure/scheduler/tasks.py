@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import logging
 
@@ -14,8 +13,8 @@ from taskiq_redis import RedisAsyncResultBackend
 from application.core.misc.logging import InterceptHandler
 from application.infrastructure.database.models import Services, Users
 
-# taskiq worker script:broker
-# taskiq scheduler script:scheduler
+# taskiq worker application.infrastructure.scheduler.tasks:broker
+# taskiq scheduler application.infrastructure.scheduler.tasks:scheduler
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
@@ -25,7 +24,7 @@ broker = NatsBroker("nats://127.0.0.1:4222", queue="i_am_queue").with_result_bac
 scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)])
 
 
-@broker.task(schedule=[{"cron": "*/2 * * * *"}])
+@broker.task(schedule=[{"cron": "*/1 * * * *"}])
 async def heavy_task():
     nc = await nats.connect('nats://127.0.0.1:4222')
     js = nc.jetstream()
@@ -44,7 +43,7 @@ async def heavy_task():
                 if item.reminder.date() == datetime.datetime.utcnow().date():
                     await js.publish(
                         subject="service_notify.message",
-                        payload=packb(list((item.service_by_user_id, item.title, item.reminder.date())))
+                        payload=packb(list((item.service_by_user_id, item.title)))
                     )
                     await session.execute(delete(Services).where(Services.service_id == item.service_id))  # noqa: E501
                     await session.merge(
@@ -53,11 +52,3 @@ async def heavy_task():
                             count_subs=Users.count_subs - 1
                         )
                     )
-
-
-async def main():
-    await heavy_task()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

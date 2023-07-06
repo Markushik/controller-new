@@ -18,7 +18,7 @@ Catalog-remove = <b>🗂️ Subscription removal catalog:</b>
 { $message }
 
 Are-you-sure = <b>Are you sure</b> you want to <b>delete</b> the subscription?
-Q-A = <b>❓ FAQ</b>
+Q-A = <b>❓ Q&A</b>
 
           <b>1. What is this bot for?</b>
           <i>— The bot was created to remind the user
@@ -28,11 +28,9 @@ Q-A = <b>❓ FAQ</b>
           <i>— It doesn't matter where you subscribed, you can add any services.</i>
 
           <b>3. How to add a service?</b>
-          <i>— Go to the My Subscriptions section and click the Add button. Fill in
-          the data strictly following the instructions: first enter the name,
-          next step enter the quantity. months (number), then select on the
-          calendar when remind you to write off. Confirm that the subscription
-          is correct and the subscription will be added.</i>
+          <i>— Go to the My Subscriptions section and click the Add button. Fill in the data strictly following the instructions: first enter the name,
+          next step enter the quantity. months (number), then select on the calendar when remind you to write off. Confirm that the
+          subscription is correct and the subscription will be added.</i>
 
 Add-service-title = What is the name of the <b>service</b> that you <b>subscribed to</b>?
 

@@ -15,7 +15,6 @@ async def poll_nats(bot: Bot):
             await msg.ack()
 
             data = unpackb(msg.data)
-            print(data)
             await bot.send_message(data[0], data[1])
         except TimeoutError:
             pass
