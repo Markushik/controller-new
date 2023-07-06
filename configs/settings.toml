@@ -2,16 +2,16 @@
 
     [development.redis]
         REDIS_HOST = "127.0.0.1"
-        REDIS_PORT = "6379"
+        REDIS_PORT = 6379
         REDIS_DATABASE = 7
 
     [development.postgres]
         POSTGRES_HOST = "127.0.0.1"
-        POSTGRES_PORT = "5432"
+        POSTGRES_PORT = 5432
         POSTGRES_USERNAME = "postgres"
         POSTGRES_PASSWORD = "postgres"
         POSTGRES_DATABASE = "postgres"
 
     [development.nats]
         NATS_HOST = "127.0.0.1"
-        NATS_PORT = "4222"
+        NATS_PORT = 4222
