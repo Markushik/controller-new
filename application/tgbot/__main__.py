@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.makers import makers
+from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import poll_nats
 from application.tgbot.dialogs.create import dialog
 from application.tgbot.dialogs.menu import main_menu
@@ -39,11 +39,11 @@ async def main() -> None:
     logger.info("LAUNCHING BOT")
 
     storage = RedisStorage.from_url(
-        url=str(makers.redis_url),
+        url=str(maker.redis_url),
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    engine = create_async_engine(url=str(makers.database_url), echo=False)
+    engine = create_async_engine(url=str(maker.database_url), echo=False)
     session_maker = async_sessionmaker(engine, expire_on_commit=True)
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)

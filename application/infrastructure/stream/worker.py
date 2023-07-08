@@ -4,11 +4,11 @@ import nats
 from aiogram import Bot
 from ormsgpack.ormsgpack import unpackb
 
-from application.core.config.config import settings
+from application.core.misc.makers import maker
 
 
 async def poll_nats(bot: Bot):
-    nc = await nats.connect(f'nats://{settings["nats.NATS_HOST"]}:{settings["nats.NATS_PORT"]}')
+    nc = await nats.connect(str(maker.nats_url))
     js = nc.jetstream()
 
     sub = await js.subscribe("service_notify.message")

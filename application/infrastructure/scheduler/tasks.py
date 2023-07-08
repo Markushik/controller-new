@@ -3,14 +3,15 @@ import logging
 
 import nats
 from ormsgpack.ormsgpack import packb
-from sqlalchemy import URL, select, delete
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from taskiq import TaskiqScheduler
+from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession, AsyncEngine
+from taskiq import TaskiqScheduler, TaskiqState, TaskiqEvents, Context, TaskiqDepends
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
 from taskiq_redis import RedisAsyncResultBackend
 
 from application.core.misc.logging import InterceptHandler
+from application.core.misc.makers import maker
 from application.infrastructure.database.models import Service, User
 
 # taskiq worker application.infrastructure.scheduler.tasks:broker
@@ -18,21 +19,34 @@ from application.infrastructure.database.models import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
-broker = NatsBroker("nats://127.0.0.1:4222", queue="i_am_queue").with_result_backend(
+broker = NatsBroker(str(maker.nats_url), queue="i_am_queue").with_result_backend(
     RedisAsyncResultBackend("redis://localhost/1")
 )
 scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)])
 
 
-@broker.task(schedule=[{"cron": "*/1 * * * *"}])
-async def heavy_task():
-    nc = await nats.connect('nats://127.0.0.1:4222')
-    js = nc.jetstream()
+@broker.on_event(TaskiqEvents.WORKER_STARTUP)
+async def startup(state: TaskiqState) -> None:
+    nc = await nats.connect(str(maker.nats_url))
 
-    postgres_url = URL.create(drivername='postgresql+asyncpg', host="localhost", port="5432",
-                              username="postgres", password="postgres", database="postgres")
-    engine = create_async_engine(url=postgres_url, echo=False)
-    session_maker = async_sessionmaker(engine, expire_on_commit=False)
+    engine: AsyncEngine = create_async_engine(url=str(maker.database_url), echo=False)
+    session_maker: AsyncSession = async_sessionmaker(engine, expire_on_commit=True)
+
+    state.nats = nc
+    state.database = session_maker
+
+
+@broker.on_event(TaskiqEvents.WORKER_SHUTDOWN)
+async def shutdown(state: TaskiqState) -> None:
+    await state.nats.drain()
+
+
+@broker.task(schedule=[{"cron": "*/1 * * * *"}])
+async def polling_base_task(context: Context = TaskiqDepends()):
+    nc = context.state.nats
+    session_maker = context.state.database
+
+    js = nc.jetstream()
 
     async with session_maker() as session:
         async with session.begin():
@@ -45,10 +59,6 @@ async def heavy_task():
                         subject="service_notify.message",
                         payload=packb(list((item.service_by_user_id, item.title)))
                     )
-                    await session.execute(delete(Service).where(Service.service_id == item.service_id))  # noqa: E501
-                    await session.merge(
-                        User(
-                            user_id=item.service_by_user_id,
-                            count_subs=User.count_subs - 1
-                        )
-                    )
+
+                    await session.execute(delete(Service).where(Service.service_id == item.service_id))
+                    await session.merge(User(user_id=item.service_by_user_id, count_subs=User.count_subs - 1))

@@ -1,7 +1,7 @@
 import operator
 
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Row, Button, Url, Select, Column, Group
+from aiogram_dialog.widgets.kbd import (Row, Button, Url, Select, Column, Group)
 from aiogram_dialog.widgets.text import Const, Format
 
 from application.tgbot.dialogs.format import I18NFormat
@@ -82,7 +82,7 @@ main_menu = Dialog(
                     on_click=on_click_change_lang,
                 ),
             ),
-            Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)
+            Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu)
         ),
         state=UserSG.SETTINGS,
         getter=get_langs_for_output
