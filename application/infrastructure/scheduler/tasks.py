@@ -11,7 +11,7 @@ from taskiq_nats import NatsBroker
 from taskiq_redis import RedisAsyncResultBackend
 
 from application.core.misc.logging import InterceptHandler
-from application.infrastructure.database.models import Services, Users
+from application.infrastructure.database.models import Service, User
 
 # taskiq worker application.infrastructure.scheduler.tasks:broker
 # taskiq scheduler application.infrastructure.scheduler.tasks:scheduler
@@ -36,7 +36,7 @@ async def heavy_task():
 
     async with session_maker() as session:
         async with session.begin():
-            request = await session.execute(select(Services))
+            request = await session.execute(select(Service))
             result = request.scalars()
 
             for item in result:
@@ -45,10 +45,10 @@ async def heavy_task():
                         subject="service_notify.message",
                         payload=packb(list((item.service_by_user_id, item.title)))
                     )
-                    await session.execute(delete(Services).where(Services.service_id == item.service_id))  # noqa: E501
+                    await session.execute(delete(Service).where(Service.service_id == item.service_id))  # noqa: E501
                     await session.merge(
-                        Users(
+                        User(
                             user_id=item.service_by_user_id,
-                            count_subs=Users.count_subs - 1
+                            count_subs=User.count_subs - 1
                         )
                     )

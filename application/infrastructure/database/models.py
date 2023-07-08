@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .base import Base
 
 
-class Users(Base):
+class User(Base):
     __tablename__ = "users"
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -20,7 +20,7 @@ class Users(Base):
     count_subs: Mapped[int] = mapped_column(SmallInteger, nullable=True)
 
 
-class Services(Base):
+class Service(Base):
     __tablename__ = "services"
 
     service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

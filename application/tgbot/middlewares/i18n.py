@@ -4,12 +4,9 @@ from typing import Dict, Callable, Any, Awaitable, Union
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization, FluentResourceLoader
-from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
-from application.infrastructure.database.models import Users
 
 from application.tgbot.dialogs.format import I18N_FORMAT_KEY
 
@@ -52,25 +49,25 @@ class I18nMiddleware(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
 
-        async with self.session_pool() as session:
-            try:
-                request = await session.execute(select(Users).where(Users.user_id == event.from_user.id))
-                result_all = request.scalar_one()
-                lang = result_all.language
-
-                if lang is None:
-                    raise NoResultFound
-
-            except NoResultFound:
-                await session.merge(
-                    Users(
-                        user_id=event.from_user.id, user_name=event.from_user.first_name,
-                        chat_id=event.chat.id, language="ru"
-                    )
-                )
-                await session.commit()
-                lang = event.from_user.language_code
-
+        # async with self.session_pool() as session:
+        #     try:
+        #         request = await session.execute(select(Users).where(Users.user_id == event.from_user.id))
+        #         result_all = request.scalar_one()
+        #         lang = result_all.language
+        #
+        #         if lang is None:
+        #             raise NoResultFound
+        #
+        #     except NoResultFound:
+        #         await session.merge(
+        #             Users(
+        #                 user_id=event.from_user.id, user_name=event.from_user.first_name,
+        #                 chat_id=event.chat.id, language="ru"
+        #             )
+        #         )
+        #         await session.commit()
+        #         lang = event.from_user.language_code
+        lang = "ru"
         l10n = self.l10ns[lang]
 
         data_middleware = dict(zip(["lang", "l10ns", I18N_FORMAT_KEY], [lang, self.l10ns, l10n.format_value]))

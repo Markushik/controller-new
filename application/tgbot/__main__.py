@@ -13,13 +13,12 @@ from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
 from loguru import logger
-from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
+from application.core.misc.makers import makers
 from application.infrastructure.stream.worker import poll_nats
-
 from application.tgbot.dialogs.create import dialog
 from application.tgbot.dialogs.menu import main_menu
 from application.tgbot.handlers import client
@@ -39,18 +38,13 @@ async def main() -> None:
     )
     logger.info("LAUNCHING BOT")
 
-    postgres_url = URL.create(
-        drivername='postgresql+asyncpg', host=settings['postgres.POSTGRES_HOST'],
-        port=settings['postgres.POSTGRES_PORT'], username=settings['postgres.POSTGRES_USERNAME'],
-        password=settings['postgres.POSTGRES_PASSWORD'], database=settings['postgres.POSTGRES_DATABASE']
-    )
     storage = RedisStorage.from_url(
-        url=f"redis://{settings['redis.REDIS_HOST']}:{settings['redis.REDIS_PORT']}/{settings['redis.REDIS_DATABASE']}",
+        url=str(makers.redis_url),
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    engine = create_async_engine(url=postgres_url, echo=False)
-    session_maker = async_sessionmaker(engine, expire_on_commit=False)
+    engine = create_async_engine(url=str(makers.database_url), echo=False)
+    session_maker = async_sessionmaker(engine, expire_on_commit=True)
 
     bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp = Dispatcher(storage=storage, events_isolation=storage.create_isolation())

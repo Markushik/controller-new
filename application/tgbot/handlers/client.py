@@ -1,16 +1,11 @@
 from datetime import date, datetime
-from typing import Any
 
-import asyncstdlib
 from aiogram import Router
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
-from sqlalchemy import select, delete, Result
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.infrastructure.database.models import Services, Users
 from application.tgbot.dialogs.format import I18N_FORMAT_KEY
 from application.tgbot.states.user import SubscriptionSG, UserSG
 
@@ -19,137 +14,67 @@ router = Router()
 
 @router.message(CommandStart(), StateFilter("*"))
 async def command_start(message: Message, dialog_manager: DialogManager) -> None:
-    """
-    The command_start function is called when the user sends a /start command to the bot.
-    It creates a new row in the Users table of our database, and then starts a dialog with
-    the user using DialogManager.start(). The StartMode parameter tells DialogManager that
-    we want to reset any previous dialogs.
+    session = dialog_manager.middleware_data["session"]
+    user = await session.get_user(user_id=message.from_user.id)
 
-    :param message: Message: Access the message data
-    :param dialog_manager: DialogManager: Start a new dialog
-    """
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    await session.merge(
-        Users(
+    if user is None:
+        await session.add_user(
             user_id=message.from_user.id, user_name=message.from_user.first_name,
-            chat_id=message.chat.id, count_subs=0,  # FIXME: count cubs == 0, when press "start"
+            chat_id=message.chat.id, language=message.from_user.language_code, count_subs=0
         )
-    )
-    await session.commit()
+        await session.commit()
+
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_subs_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    """
-    The on_click_get_subs_menu function is a callback function that handles the user's click on the Get Subs button.
-    It starts a new dialog with the UserSG.SUBS state group, resetting any previous dialog stack.
-
-    :param callback: CallbackQuery: Get the callback data of the button that was clicked
-    :param button: Button: Get the button object that was clicked
-    :param dialog_manager: DialogManager: Start a new dialog
-    """
     await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
 
 
 async def on_click_back_to_main_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    """
-    The on_click_back_to_main_menu function is a callback function that handles the user's
-    click on the back to main menu button.
-    It resets the dialog stack and starts a new dialog with UserSG.MAIN as its starting state.
-
-    :param callback: CallbackQuery:  Get the callback data of the button that was clicked
-    :param button: Button: Get the button object that was clicked
-    :param dialog_manager: DialogManager: Start a new dialog
-    """
     await dialog_manager.start(UserSG.MAIN, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_settings_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    """
-    The on_click_get_settings_menu function is a callback function that handles the user's click on the settings button.
-    It starts a new dialog with UserSG.SETTINGS as its root state group, and resets the stack of states in this dialog.
-
-    :param callback: CallbackQuery: Get the callback data of the button that was clicked
-    :param button: Button: Get the button object that was clicked
-    :param dialog_manager: DialogManager: Start a new dialog
-    """
     await dialog_manager.start(UserSG.SETTINGS, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_help_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    """
-    The on_click_get_help_menu function is a callback function that handles the user's click on the help button.
-    It starts a new dialog with the UserSG.HELP state graph, resetting any previous dialogs.
-
-    :param callback: CallbackQuery: Get the callback data of the button that was clicked
-    :param button: Button: Get the button object that was clicked
-    :param dialog_manager: DialogManager: Start a new dialog
-    """
     await dialog_manager.start(UserSG.HELP, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_delete_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    """
-    The on_click_get_delete_menu function is a callback function that handles the user's click on the Delete button.
-    It starts a new dialog with UserSG.DELETE as its first state, and resets the stack of states in order to avoid any
-    conflicts with other dialogs.
-
-    :param callback: CallbackQuery: Get the callback data of the button that was clicked
-    :param button: Button: Get the button object that was clicked
-    :param dialog_manager: DialogManager: Start the dialog
-    """
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
 async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
-    """
-    The get_subs_for_output function is used to get all the subscriptions for a user.
-    It returns a dictionary with one key, which contains the text of all the subscriptions.
-
-    :param dialog_manager: DialogManager: Access the dialog manager
-    :return: A dictionary with the subs key and a string value
-    """
     l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
     l10n = l10ns[lang]
 
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    request: Result = await session.execute(
-        select(Services)
-        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
-    )
-    services_result = request.scalars().all()
+    session = dialog_manager.middleware_data["session"]
+    services = await session.get_services(user_id=dialog_manager.event.from_user.id)
 
-    subs = [f"<b>{count + 1}. {item.title}</b> — {datetime.date(item.reminder)}\n"
-            async for count, item in asyncstdlib.enumerate(services_result)]
+    subs = [f"<b>{count + 1}. {item.Service.title}</b> — {datetime.date(item.Service.reminder)}\n"
+            for count, item in enumerate(services)]
 
-    match services_result:
+    match subs:
         case []:
             return {"subs": l10n.format_value("Nothing-output")}
         case _:
             return {"subs": ''.join(subs)}
 
 
-# async def get_langs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
-#     langs = [" 🇷🇺 Русский", " 🇬🇧 English"]
-#
-#     return {"langs": langs}
-
-
 async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
     l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
     l10n = l10ns[lang]
 
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    request: Result = await session.execute(
-        select(Services)
-        .where(Services.service_by_user_id == dialog_manager.event.from_user.id)
-    )
-    services_result = request.fetchall()
+    session = dialog_manager.middleware_data["session"]
+    services = await session.get_services(user_id=dialog_manager.event.from_user.id)
 
-    subs = [(item.Services.service_id, item.Services.title, datetime.date(item.Services.reminder).isoformat())
-            for item in services_result]
+    subs = [(item.Service.service_id, item.Service.title, datetime.date(item.Service.reminder).isoformat())
+            for item in services]
 
-    match services_result:
+    match subs:
         case []:
             return {"message": l10n.format_value("Nothing-output"), "subs": subs}
         case _:
@@ -159,6 +84,7 @@ async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
 async def on_click_sub_selected(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
                                 item_id: str) -> None:
     await dialog_manager.start(UserSG.CHECK_DELETE, mode=StartMode.RESET_STACK)
+    print(int(item_id))
     dialog_manager.dialog_data["service_id"] = int(item_id)
 
 
@@ -166,11 +92,11 @@ async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, d
     l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
     l10n = l10ns[lang]
 
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    request: Result = await session.execute(select(Users).where(Users.user_id == dialog_manager.event.from_user.id))
-    result: Any | None = request.scalar()
+    session = dialog_manager.middleware_data["session"]
+    request = await session.get_all_positions(user_id=dialog_manager.event.from_user.id)
+    count = request.scalar()
 
-    if result.count_subs >= 7:
+    if count.count_subs >= 7:
         await callback.message.edit_text(l10n.format_value("Error-subs-limit"))
         await dialog_manager.done()
         await dialog_manager.start(UserSG.SUBS, mode=StartMode.RESET_STACK)
@@ -210,16 +136,13 @@ async def on_click_button_confirm(callback: CallbackQuery, button: Button, dialo
     l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
     l10n = l10ns[lang]
 
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    await session.merge(
-        Services(
-            title=dialog_manager.dialog_data['service'],
-            months=dialog_manager.dialog_data['months'],
-            reminder=datetime.fromisoformat(dialog_manager.dialog_data['reminder']),
-            service_by_user_id=callback.from_user.id
-        )
-    )
-    await session.merge(Users(user_id=callback.from_user.id, count_subs=Users.count_subs + 1))
+    session = dialog_manager.middleware_data["session"]
+
+    await session.add_subscription(title=dialog_manager.dialog_data['service'],
+                                   months=dialog_manager.dialog_data['months'],
+                                   reminder=datetime.fromisoformat(dialog_manager.dialog_data['reminder']),
+                                   service_by_user_id=callback.from_user.id)
+    await session.increment_count(user_id=dialog_manager.event.from_user.id)
     await session.commit()
 
     await callback.message.edit_text(l10n.format_value("Approve-sub-add"))
@@ -257,9 +180,9 @@ async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_ma
     l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
     l10n = l10ns[lang]
 
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    await session.execute(delete(Services).where(Services.service_id == dialog_manager.dialog_data['service_id']))
-    await session.merge(Users(user_id=callback.from_user.id, count_subs=Users.count_subs - 1))
+    session = dialog_manager.middleware_data["session"]
+    await session.delete_subscription(service_id=dialog_manager.dialog_data['service_id'])
+    await session.decrement_count(user_id=dialog_manager.event.from_user.id)
     await session.commit()
 
     await callback.message.edit_text(l10n.format_value("Approve-sub-delete"))
@@ -276,42 +199,26 @@ async def on_click_sub_not_delete(callback: CallbackQuery, button: Button, dialo
     await dialog_manager.start(UserSG.DELETE, mode=StartMode.RESET_STACK)
 
 
-# async def on_click_change_lang(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
-#                                item_id: str) -> None:
-#     print(item_id)
-
-
-async def on_click_change_lang_to_ru(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_change_lang(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
+                               item_id: str) -> None:
+    session = dialog_manager.middleware_data["session"]
     l10ns = dialog_manager.middleware_data["l10ns"]
-    lang = "ru"
+
+    match item_id:
+        case "0":
+            await callback.answer("Вы сменили язык на 🇷🇺 Русский")
+            lang = "ru"
+            await session.update_language(user_id=dialog_manager.event.from_user.id, language="ru")
+            await session.commit()
+        case "1":
+            await callback.answer("You switched language to 🇬🇧 English")
+            lang = "en"
+            await session.update_language(user_id=dialog_manager.event.from_user.id, language="en")
+            await session.commit()
+
     l10n = l10ns[lang]
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    await session.merge(
-        Users(
-            user_id=callback.from_user.id,
-            language="ru"
-        )
-    )
-    await session.commit()
 
-    await callback.answer("Вы сменили язык на 🇷🇺 Русский")
-
-
-async def on_click_change_lang_to_en(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    l10ns = dialog_manager.middleware_data["l10ns"]
-    lang = "en"
-    l10n = l10ns[lang]
-    dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
-
-    session: AsyncSession = dialog_manager.middleware_data["session"]
-    await session.merge(
-        Users(
-            user_id=callback.from_user.id,
-            language="en"
-        )
-    )
-    await session.commit()
-
-    await callback.answer("You switched language to 🇬🇧 English")  # TODO: 210-244 - rewrite
+async def get_langs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
+    return {"langs": [item for item in enumerate([" 🇷🇺 Русский", " 🇬🇧 English"])]}

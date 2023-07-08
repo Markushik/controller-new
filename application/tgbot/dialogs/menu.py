@@ -7,10 +7,9 @@ from aiogram_dialog.widgets.text import Const, Format
 from application.tgbot.dialogs.format import I18NFormat
 from application.tgbot.handlers.client import (get_subs_for_output, on_click_get_subs_menu, on_click_get_settings_menu,
                                                on_click_get_help_menu, on_click_back_to_main_menu,
-                                               on_click_get_delete_menu,
-                                               on_click_sub_create, get_subs_for_delete, on_click_sub_selected,
-                                               on_click_sub_delete, on_click_sub_not_delete, on_click_change_lang_to_ru,
-                                               on_click_change_lang_to_en)
+                                               on_click_get_delete_menu, on_click_sub_create, get_subs_for_delete,
+                                               on_click_sub_selected, on_click_sub_delete, on_click_sub_not_delete,
+                                               get_langs_for_output, on_click_change_lang)
 from application.tgbot.states.user import UserSG
 
 main_menu = Dialog(
@@ -71,33 +70,22 @@ main_menu = Dialog(
         state=UserSG.DELETE,
         getter=get_subs_for_delete,
     ),
-    # Window(
-    #     I18NFormat("Set-lang"),
-    #     Group(
-    #         Row(
-    #             Select(
-    #                 I18NFormat("Items"),
-    #                 id="lang_id",
-    #                 item_id_getter=operator.itemgetter(0),
-    #                 items="langs",
-    #                 on_click=on_click_change_lang,
-    #             ),
-    #         ),
-    #         Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)
-    #     ),
-    #     state=UserSG.SETTINGS,
-    #     getter=get_langs_for_output
-    # ),
     Window(
         I18NFormat("Set-lang"),
         Group(
             Row(
-                Button(I18NFormat("Russian"), id="ru_lang_id", on_click=on_click_change_lang_to_ru),
-                Button(I18NFormat("English"), id="en_lang_id", on_click=on_click_change_lang_to_en)
+                Select(
+                    Format("{item[1]}"),
+                    id="lang_id",
+                    item_id_getter=operator.itemgetter(0),
+                    items="langs",
+                    on_click=on_click_change_lang,
+                ),
             ),
-            Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu)
+            Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)
         ),
         state=UserSG.SETTINGS,
+        getter=get_langs_for_output
     ),
     Window(
         I18NFormat("Are-you-sure"),
