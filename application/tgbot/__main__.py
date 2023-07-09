@@ -36,7 +36,6 @@ async def main() -> None:
         '../../debug.log', format='{time} {level} {message}', level='INFO',
         colorize=True, encoding='utf-8', rotation='10 MB', compression='zip'
     )
-    logger.info("LAUNCHING BOT")
 
     storage: RedisStorage = RedisStorage.from_url(
         url=maker.redis_url.human_repr(),
@@ -55,13 +54,14 @@ async def main() -> None:
     disp.callback_query.middleware(i18n_middleware)
 
     disp.update.middleware(DbSessionMiddleware(session_pool=session_maker))
-
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
     disp.include_router(user.router)
     disp.include_routers(services_create, main_menu)
 
     setup_dialogs(disp)
+
+    logger.info("LAUNCHING BOT")
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)

@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "controller-new"
+version = "0.1.0"
+description = ""
+authors = ["Mark <74201924+Markushik@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "controller_new"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.0.0b7"
+aiogram-dialog = "^2.0.0b20"
+sqlalchemy = "^2.0.18"
+taskiq = "^0.7.2"
+taskiq-nats = "^0.3.0"
+loguru = "^0.7.0"
+nats-py = "^2.3.1"
+alembic = "^1.11.1"
+fluent-runtime = "^0.4.0"
+dynaconf = {extras = ["redis"], version = "^3.1.12"}
+ormsgpack = "^1.2.6"
+psycopg = {extras = ["binary"], version = "^3.1.9"}
+asyncpg = "^0.28.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.277"
+
+[tool.ruff]
+line-length = 120
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
