@@ -1,2 +1,2 @@
-DEFAULT_LOCALE = "ru"
-LOCALES = ["ru", "en"]
+DEFAULT_LOCALE = "ru_RU"
+LOCALES = ["ru_RU", "en_GB"]

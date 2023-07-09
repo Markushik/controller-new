@@ -8,15 +8,19 @@ from application.core.misc.makers import maker
 
 
 async def poll_nats(bot: Bot):
-    nc = await nats.connect(str(maker.nats_url))
-    js = nc.jetstream()
+    nats_connect = await nats.connect(maker.nats_url.human_repr())
+    js = nats_connect.jetstream()
 
-    sub = await js.subscribe("service_notify.message")
+    subscribe = await js.subscribe("service_notify.message")
 
     while True:
         with suppress(TimeoutError):
-            msg = await sub.next_msg()
-            await msg.ack()
+            message = await subscribe.next_msg()
+            await message.ack()
 
-            data = unpackb(msg.data)
-            await bot.send_message(data[0], data[1])
+            data = unpackb(message.data)
+            await bot.send_message(
+                chat_id=data["user_id"],
+                text=f'<b>🔔 Уведомление</b>\n<b>Напоминаем Вам</b>, что ваша подписка <b>{data["service"]}</b> '
+                     f'скоро <b>закончится</b>!'
+            )

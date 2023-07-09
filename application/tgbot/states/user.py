@@ -2,16 +2,16 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class UserSG(StatesGroup):
-    MAIN = State()
-    SUBS = State()
-    HELP = State()
-    SETTINGS = State()
-    DELETE = State()
-    CHECK_DELETE = State()
+    main = State()
+    subs = State()
+    help = State()
+    settings = State()
+    delete = State()
+    check_delete = State()
 
 
 class SubscriptionSG(StatesGroup):
-    SERVICE = State()
-    MONTHS = State()
-    REMINDER = State()
-    CHECK = State()
+    service = State()
+    months = State()
+    reminder = State()
+    check = State()

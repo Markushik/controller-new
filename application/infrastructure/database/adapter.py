@@ -22,11 +22,11 @@ class DbAdapter:
     async def get_all_positions(self, user_id: int):
         return await self.session.execute(select(User).where(User.user_id == user_id))
 
-    async def add_user(self, user_id: int, user_name: str, chat_id: int, language: str, count_subs: int):
+    async def add_user(self, user_id: int, user_name: str, chat_id: int, language: str):
         return self.session.add(
             User(
-                user_id=user_id, user_name=user_name, chat_id=chat_id,
-                language=language, count_subs=count_subs
+                user_id=user_id, user_name=user_name,
+                chat_id=chat_id, language=language
             )
         )
 

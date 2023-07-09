@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
 
-from application.tgbot.dialogs.format import I18N_FORMAT_KEY
+from application.tgbot.dialogs.render.format import I18N_FORMAT_KEY
 
 
 def make_i18n_middleware(session_pool: async_sessionmaker):
@@ -62,12 +62,12 @@ class I18nMiddleware(BaseMiddleware):
         #         await session.merge(
         #             Users(
         #                 user_id=event.from_user.id, user_name=event.from_user.first_name,
-        #                 chat_id=event.chat.id, language="ru"
+        #                 chat_id=event.chat.id, language="ru_RU"
         #             )
         #         )
         #         await session.commit()
         #         lang = event.from_user.language_code
-        lang = "ru"
+        lang = "ru_RU"
         l10n = self.l10ns[lang]
 
         data_middleware = dict(zip(["lang", "l10ns", I18N_FORMAT_KEY], [lang, self.l10ns, l10n.format_value]))

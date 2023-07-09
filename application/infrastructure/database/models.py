@@ -17,7 +17,7 @@ class User(Base):
     user_name: Mapped[str] = mapped_column(String(length=32))
     chat_id: Mapped[int] = mapped_column(BigInteger)
     language: Mapped[str] = mapped_column(String(length=2), nullable=True)
-    count_subs: Mapped[int] = mapped_column(SmallInteger, nullable=True)
+    count_subs: Mapped[int] = mapped_column(SmallInteger, default=0, nullable=True)
 
 
 class Service(Base):

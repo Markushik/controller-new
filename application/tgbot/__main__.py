@@ -13,15 +13,15 @@ from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
 from loguru import logger
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import (create_async_engine, async_sessionmaker, AsyncEngine, AsyncSession)
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import poll_nats
-from application.tgbot.dialogs.create import dialog
-from application.tgbot.dialogs.menu import main_menu
-from application.tgbot.handlers import client
+from application.tgbot.dialogs.create_menu.dialog import services_create
+from application.tgbot.dialogs.main_menu.dialog import main_menu
+from application.tgbot.handlers import user
 from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import make_i18n_middleware
 
@@ -38,16 +38,16 @@ async def main() -> None:
     )
     logger.info("LAUNCHING BOT")
 
-    storage = RedisStorage.from_url(
-        url=str(maker.redis_url),
+    storage: RedisStorage = RedisStorage.from_url(
+        url=maker.redis_url.human_repr(),
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    engine = create_async_engine(url=str(maker.database_url), echo=False)
-    session_maker = async_sessionmaker(engine, expire_on_commit=True)
+    asyncio_engine: AsyncEngine = create_async_engine(url=maker.database_url.human_repr(), echo=False)
+    session_maker: AsyncSession = async_sessionmaker(asyncio_engine, expire_on_commit=True)
 
-    bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
-    disp = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
+    bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
+    disp: Dispatcher = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
 
     i18n_middleware = make_i18n_middleware(session_pool=session_maker)
 
@@ -58,8 +58,8 @@ async def main() -> None:
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_routers(client.router)
-    disp.include_routers(dialog, main_menu)
+    disp.include_router(user.router)
+    disp.include_routers(services_create, main_menu)
 
     setup_dialogs(disp)
 
@@ -68,6 +68,7 @@ async def main() -> None:
         await asyncio.gather(disp.start_polling(bot), poll_nats(bot))
     finally:
         await disp.storage.close()
+        await asyncio_engine.dispose()
         await bot.session.close()
 
 
