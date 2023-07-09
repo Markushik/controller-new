@@ -21,7 +21,7 @@ from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import poll_nats
 from application.tgbot.dialogs.create_menu.dialog import services_create
 from application.tgbot.dialogs.main_menu.dialog import main_menu
-from application.tgbot.handlers import user
+from application.tgbot.handlers import client
 from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import make_i18n_middleware
 
@@ -48,7 +48,7 @@ async def main() -> None:
     bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp: Dispatcher = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
 
-    i18n_middleware = make_i18n_middleware(session_pool=session_maker)
+    i18n_middleware = make_i18n_middleware()
 
     disp.message.middleware(i18n_middleware)
     disp.callback_query.middleware(i18n_middleware)
@@ -56,7 +56,7 @@ async def main() -> None:
     disp.update.middleware(DbSessionMiddleware(session_pool=session_maker))
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
-    disp.include_router(user.router)
+    disp.include_router(client.router)
     disp.include_routers(services_create, main_menu)
 
     setup_dialogs(disp)
