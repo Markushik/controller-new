@@ -26,7 +26,7 @@ async def months_count_handler(message: Message, dialog: DialogProtocol, dialog_
         dialog_manager.dialog_data["months"] = int(message.text)
         await dialog_manager.switch_to(SubscriptionSG.reminder)
     else:
-        await message.answer(l10n.format_value("Error-char-limit"))
+        await message.answer(l10n.format_value("Error-unsupported-char"))
 
 
 async def on_click_calendar_reminder(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,

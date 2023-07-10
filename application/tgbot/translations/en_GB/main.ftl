@@ -5,8 +5,6 @@ Back = ↩️ Back
 Administrator = 👨‍💻 Administrator
 Add = Add
 Delete = Delete
-Russian = 🇷🇺 Russian
-English = 🇬🇧 English
 Set-lang = 🌍 <b>Select</b> the language in which <b>the bot will communicate</b>:
 
 Catalog-add = <b>🗂️ Subscriptions add catalog:</b>
@@ -58,7 +56,7 @@ Set-for-delete = <b>Select</b> the subscription that you <b>want to delete</b>:
 
 Error-subs-limit = <b>🚫 Error:</b> Subscription limit reached
 Error-len-limit = <b>🚫 Error:</b> Character limit reached
-Error-char-limit = <b>🚫 Error:</b> Invalid characters entered
+Error-unsupported-char = <b>🚫 Error:</b> Invalid characters entered
 
 Approve-sub-add = <b>✅ Approved:</b> Data written successfully
 Error-sub-add = <b>❎ Rejected:</b> Data not recorded

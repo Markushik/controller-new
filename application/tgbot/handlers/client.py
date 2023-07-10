@@ -1,4 +1,3 @@
-
 from aiogram import Router
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message
@@ -16,8 +15,9 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
 
     if user is None:
         await session.add_user(
-            user_id=message.from_user.id, user_name=message.from_user.first_name,
-            chat_id=message.chat.id, language=message.from_user.language_code,
+            user_id=message.from_user.id,
+            user_name=message.from_user.first_name,
+            chat_id=message.chat.id
         )
         await session.commit()
 

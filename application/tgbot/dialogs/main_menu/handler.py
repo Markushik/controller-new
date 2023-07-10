@@ -44,8 +44,8 @@ async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, d
         await callback.message.edit_text(l10n.format_value("Error-subs-limit"))
         await dialog_manager.done()
         await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
-
-    await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
+    else:
+        await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
