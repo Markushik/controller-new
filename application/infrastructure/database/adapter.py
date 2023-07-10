@@ -22,6 +22,10 @@ class DbAdapter:
     async def get_all_positions(self, user_id: int):
         return await self.session.execute(select(User).where(User.user_id == user_id))
 
+    async def get_user_language(self, user_id: int):
+        user = await self.session.execute(select(User).where(User.user_id == user_id))
+        return user.scalar()
+
     async def add_user(self, user_id: int, user_name: str, chat_id: int):
         return self.session.add(
             User(

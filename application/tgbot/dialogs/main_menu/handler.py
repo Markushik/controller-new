@@ -6,6 +6,12 @@ from application.tgbot.dialogs.render.format import I18N_FORMAT_KEY
 from application.tgbot.states.user import UserSG, SubscriptionSG
 
 
+async def update_key(dialog_manager: DialogManager, lang: str) -> None:
+    l10ns = dialog_manager.middleware_data["l10ns"]
+    l10n = l10ns[lang]
+    dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
+
+
 async def on_click_get_subs_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
 
@@ -33,10 +39,9 @@ async def on_click_sub_selected(callback: CallbackQuery, button: Button, dialog_
 
 
 async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
-    l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
-    l10n = l10ns[lang]
-
+    l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
+
     request = await session.get_all_positions(user_id=dialog_manager.event.from_user.id)
     count = request.scalar()
 
@@ -49,10 +54,9 @@ async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, d
 
 
 async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
-    l10n = l10ns[lang]
-
+    l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
+
     await session.delete_subscription(service_id=dialog_manager.dialog_data['service_id'])
     await session.decrement_count(user_id=dialog_manager.event.from_user.id)
     await session.commit()
@@ -63,8 +67,7 @@ async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_ma
 
 
 async def on_click_sub_not_delete(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
-    l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
-    l10n = l10ns[lang]
+    l10n = dialog_manager.middleware_data["l10n"]
 
     await callback.message.edit_text(l10n.format_value("Reject-sub-delete"))
     await dialog_manager.done()
@@ -78,7 +81,6 @@ async def on_click_change_lang(
         item_id: str
 ) -> None:
     session = dialog_manager.middleware_data["session"]
-    l10ns = dialog_manager.middleware_data["l10ns"]
 
     match item_id:
         case "0":
@@ -92,5 +94,4 @@ async def on_click_change_lang(
             await session.update_language(user_id=dialog_manager.event.from_user.id, language="en_GB")
             await session.commit()
 
-    l10n = l10ns[lang]
-    dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
+    await update_key(dialog_manager, lang)

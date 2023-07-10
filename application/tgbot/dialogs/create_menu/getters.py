@@ -4,10 +4,9 @@ from aiogram_dialog import DialogManager
 
 
 async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
-    l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
-    l10n = l10ns[lang]
-
+    l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
+
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
 
     subs = [f"<b>{count + 1}. {item.Service.title}</b> — {datetime.date(item.Service.reminder)}\n"
@@ -21,10 +20,9 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
 
 
 async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
-    l10ns, lang = dialog_manager.middleware_data["l10ns"], dialog_manager.middleware_data["lang"]
-    l10n = l10ns[lang]
-
+    l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
+
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
 
     subs = [(item.Service.service_id, item.Service.title, datetime.date(item.Service.reminder).isoformat())

@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
+from application.infrastructure.database.adapter import DbAdapter
 from application.tgbot.dialogs.render.format import I18N_FORMAT_KEY
 
 
@@ -45,24 +46,16 @@ class I18nMiddleware(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
 
-        session = data["session"]
-        request = await session.get_all_positions(user_id=event.from_user.id)
-        result = request.scalar()
+        session: DbAdapter = data["session"]
+        user = await session.get_user_language(user_id=event.from_user.id)
 
-        try:
-            match result.language:
-                case "ru_RU":
-                    lang = "ru_RU"
-                case "en_GB":
-                    lang = "en_GB"
-                case _:
-                    lang = "ru_RU"
-        except AttributeError:
-            lang = "ru_RU"
+        lang = "ru_RU"
+
+        if user and user.language == "en_GB":
+            lang = "en_GB"
 
         l10n = self.l10ns[lang]
-
-        data_middleware = dict(zip(["lang", "l10ns", I18N_FORMAT_KEY], [lang, self.l10ns, l10n.format_value]))
+        data_middleware = dict(zip(["l10n", "l10ns", I18N_FORMAT_KEY], [l10n, self.l10ns, l10n.format_value]))
         data.update(data_middleware)
 
         return await handler(event, data)
