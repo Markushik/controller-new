@@ -13,7 +13,7 @@ from application.tgbot.dialogs.create_menu.handlers import (
 )
 from application.tgbot.dialogs.main_menu.getters import get_input_service_data
 from application.tgbot.dialogs.main_menu.handler import on_click_get_subs_menu
-from application.tgbot.dialogs.render.format import I18NFormat
+from application.tgbot.dialogs.required_extras.format import I18NFormat
 from application.tgbot.states.user import SubscriptionSG
 
 services_create = Dialog(

@@ -8,7 +8,7 @@ from application.tgbot.dialogs.create_menu.getters import get_subs_for_output, g
 from application.tgbot.dialogs.main_menu.handler import on_click_get_subs_menu, on_click_get_settings_menu, \
     on_click_get_help_menu, on_click_back_to_main_menu, on_click_sub_create, on_click_get_delete_menu, \
     on_click_sub_selected, on_click_change_lang, on_click_sub_delete, on_click_sub_not_delete
-from application.tgbot.dialogs.render.format import I18NFormat
+from application.tgbot.dialogs.required_extras.format import I18NFormat
 from application.tgbot.dialogs.main_menu.getters import get_langs_for_output
 
 from application.tgbot.states.user import UserSG
