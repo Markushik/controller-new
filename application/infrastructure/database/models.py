@@ -7,10 +7,10 @@ from datetime import datetime
 from sqlalchemy import BigInteger, Integer, SmallInteger, ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import Base
+from .base import BaseModel
 
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = "users"
 
     user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -20,7 +20,7 @@ class User(Base):
     count_subs: Mapped[int] = mapped_column(SmallInteger, default=0)
 
 
-class Service(Base):
+class Service(BaseModel):
     __tablename__ = "services"
 
     service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

@@ -65,7 +65,7 @@ async def main() -> None:
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
-        await asyncio.gather(disp.start_polling(bot), poll_nats(bot))
+        await asyncio.gather(poll_nats(bot), disp.start_polling(bot))
     finally:
         await disp.storage.close()
         await asyncio_engine.dispose()

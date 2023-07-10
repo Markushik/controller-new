@@ -15,5 +15,5 @@ convention = {
 meta = MetaData(naming_convention=convention)
 
 
-class Base(DeclarativeBase):
+class BaseModel(DeclarativeBase):
     metadata = meta

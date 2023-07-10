@@ -49,13 +49,16 @@ class I18nMiddleware(BaseMiddleware):
         request = await session.get_all_positions(user_id=event.from_user.id)
         result = request.scalar()
 
-        match result.language:
-            case "ru_RU":
-                lang = "ru_RU"
-            case "en_GB":
-                lang = "en_GB"
-            case _:
-                lang = "ru_RU"
+        try:
+            match result.language:
+                case "ru_RU":
+                    lang = "ru_RU"
+                case "en_GB":
+                    lang = "en_GB"
+                case _:
+                    lang = "ru_RU"
+        except AttributeError:
+            lang = "ru_RU"
 
         l10n = self.l10ns[lang]
 

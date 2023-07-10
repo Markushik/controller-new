@@ -11,7 +11,10 @@ async def poll_nats(bot: Bot):
     nats_connect = await nats.connect(maker.nats_url.human_repr())
     js = nats_connect.jetstream()
 
-    subscribe = await js.subscribe("service_notify.message")
+    subscribe = await js.subscribe(
+        subject="service_notify.message",
+        durable="get_message"
+    )
 
     while True:
         with suppress(TimeoutError):
