@@ -5,7 +5,7 @@ from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization
 
 from application.infrastructure.database.adapter import DbAdapter
-from application.tgbot.dialogs.required_extras.format import I18N_FORMAT_KEY
+from application.tgbot.dialogs.require_extras.format import I18N_FORMAT_KEY
 
 
 class I18nMiddleware(BaseMiddleware):

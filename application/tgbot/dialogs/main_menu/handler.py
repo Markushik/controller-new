@@ -2,7 +2,7 @@ from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
 
-from application.tgbot.dialogs.required_extras.format import I18N_FORMAT_KEY
+from application.tgbot.dialogs.require_extras.format import I18N_FORMAT_KEY
 from application.tgbot.states.user import UserSG, SubscriptionSG
 
 
