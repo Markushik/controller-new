@@ -23,7 +23,7 @@ class User(BaseModel):
 class Service(BaseModel):
     __tablename__ = "services"
 
-    service_id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True, autoincrement=True)
+    service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(length=30))
     months: Mapped[int] = mapped_column(SmallInteger)
     reminder: Mapped[datetime] = mapped_column(DateTime)

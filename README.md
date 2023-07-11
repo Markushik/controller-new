@@ -1,8 +1,11 @@
 <p align="center">
-<img src="https://img.shields.io/badge/License-MIT-136F63.svg?style=flat-square" alt="https://opensource.org/licenses/MIT/">
+<img src="https://img.shields.io/badge/Telegram-%40sub__controller__bot-blue?style=flat-square" alt="https://t.me/sub_controller_bot">
+<img src="https://img.shields.io/badge/Docker%20Hub-controller--new-green?style=flat-square" alt="https://hub.docker.com/repository/docker/markushik/controller-new/">
+<img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="https://opensource.org/licenses/MIT/">
+<img src="https://img.shields.io/github/stars/Markushik/controller-new.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/stargazers">
 <img src="https://img.shields.io/github/last-commit/Markushik/controller-new.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/">
+<img src="https://img.shields.io/github/repo-size/Markushik/controller-new.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/">
 <img src="https://github.com/Markushik/controller-new/actions/workflows/CI.yaml/badge.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/actions/">
-<img src="https://img.shields.io/badge/Docker%20Hub-controller--new-136F63?style=flat-square" alt="https://hub.docker.com/repository/docker/markushik/controller-new/">
 <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json?style=flat-square" alt="https://github.com/astral-sh/ruff/">
 
 > **controller** — probably the best bot for a reminder of the end of the subscription.
@@ -30,7 +33,7 @@
 
 ## 🐘 Database Models
 
-[![draw-SQL-controller-new-export-2023-06-24.png](https://i.postimg.cc/dV4hPNdG/draw-SQL-controller-new-export-2023-06-24.png)](https://postimg.cc/fVSzYK8b)
+[![draw-SQL-controller-new-export-2023-07-11.png](https://i.postimg.cc/mrJwFkqj/draw-SQL-controller-new-export-2023-07-11.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
 
 ## 🐋 Deployment
 
