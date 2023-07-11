@@ -1,34 +1,38 @@
-version: '3.9'
-
 services:
   redis:
-    container_name: redis
-    image: 'redis:7.0.11-alpine'
-    ports:
-      - '6379:6379'
-    restart: unless-stopped
-    volumes:
-      - '~/${VOLUMES_DIR}/redis-assets:/assets'
+      image: 'redis:7.0.12-alpine'
+      ports:
+        - '6379:6379'
+      restart: unless-stopped
+      volumes:
+        - '~/${VOLUMES_DIR}/redis-assets:/assets'
   postgres:
-    container_name: postgres
-    image: 'postgres:15.3-alpine'
-    ports:
-      - '5432:5432'
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - '~/${VOLUMES_DIR}/pg-assets:/var/lib/postgresql/assets'
-  app:
-    container_name: application
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '443:443'
-    stop_signal: SIGINT
-    restart: unless-stopped
-    depends_on:
-      - redis
-      - postgres
+      image: 'postgres:15.3-alpine'
+      ports:
+        - '5432:5432'
+      restart: unless-stopped
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      volumes:
+        - '~/${VOLUMES_DIR}/pg-assets:/var/lib/postgresql/assets'
+  nats:
+      image: 'nats:2.9.19-alpine'
+      restart: unless-stopped
+      ports:
+        - '4222:4222'
+        - '6222:6222'
+        - '8222:8222'
+      command: 'nats-server -js -sd /nats-assets/assets'
+  application:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - '443:443'
+      stop_signal: SIGTERM
+      restart: unless-stopped
+      depends_on:
+        - nats
+        - redis
+        - postgres

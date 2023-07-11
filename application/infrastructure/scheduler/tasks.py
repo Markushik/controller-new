@@ -3,7 +3,7 @@ import logging
 
 import nats
 from ormsgpack.ormsgpack import packb
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, func
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession, AsyncEngine
 from taskiq import TaskiqScheduler, TaskiqState, TaskiqEvents, Context, TaskiqDepends
 from taskiq.schedule_sources import LabelScheduleSource
@@ -44,18 +44,21 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
 
     async with session_maker() as session:
         async with session.begin():
-            request = await session.execute(select(Service))
+            request = await session.execute(
+                select(Service).
+                where(func.date(Service.reminder) == datetime.datetime.utcnow().date())
+            )
             result = request.scalars()
 
             for item in result:
-                if item.reminder.date() == datetime.datetime.utcnow().date():
-                    await js.publish(
-                        stream="service_notify",
-                        subject="service_notify.message",
-                        payload=packb({"user_id": item.service_by_user_id, "service": item.title})
-                    )
+                await js.publish(
+                    stream="service_notify",
+                    timeout=30,
+                    subject="service_notify.message",
+                    payload=packb({"user_id": item.service_by_user_id, "service": item.title})
+                )
 
-                    await session.execute(delete(Service).where(Service.service_id == item.service_id))
-                    await session.merge(User(user_id=item.service_by_user_id, count_subs=User.count_subs - 1))
+                await session.execute(delete(Service).where(Service.service_id == item.service_id))
+                await session.merge(User(user_id=item.service_by_user_id, count_subs=User.count_subs - 1))
 
         await session.close()

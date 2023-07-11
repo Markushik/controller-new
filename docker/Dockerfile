@@ -1,9 +1,9 @@
-FROM python:3.11.1-slim-buster as builder
+FROM python:3.11.4-slim-buster AS builder
 
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=off \
+    PIP_NO_CACHE_DIR=on \
     PIP_ROOT_USER_ACTION=ignore
 
 ENV \
@@ -12,15 +12,21 @@ ENV \
 
 WORKDIR .
 
-COPY app ./app/
-COPY configs ./configs/
 COPY poetry.lock pyproject.toml ./
 
 RUN pip3 install --upgrade pip \
  && pip3 install  setuptools wheel \
  && pip3 install poetry
-
 RUN poetry install --only main --no-root
 
+
+FROM builder AS runtime
+
+WORKDIR ./application/
+
+COPY application ./application/
+COPY configs ./configs/
+COPY alembic.ini ./alembic.ini/
+
 EXPOSE 443
-ENTRYPOINT ["poetry", "run", "python", "-m", "app.tgbot"]
+ENTRYPOINT ["poetry", "run", "python3", "-m", "application.tgbot"]

@@ -21,9 +21,9 @@ from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import poll_nats
 from application.tgbot.dialogs.create_menu.dialog import services_create
 from application.tgbot.dialogs.main_menu.dialog import main_menu
-from application.tgbot.dialogs.require_extras.make_i18n import make_i18n_middleware
 from application.tgbot.handlers import client
 from application.tgbot.middlewares.database import DbSessionMiddleware
+from application.tgbot.middlewares.i18n import make_i18n_middleware
 
 
 async def main() -> None:
@@ -75,5 +75,5 @@ async def main() -> None:
 if __name__ == "__main__":
     try:
         asyncio.run(main())
-    except (SystemExit, KeyboardInterrupt, ConnectionRefusedError):
+    except (SystemExit, KeyboardInterrupt):
         logger.warning("SHUTDOWN BOT")

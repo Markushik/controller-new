@@ -1,11 +1,29 @@
+import os
 from typing import Dict, Callable, Any, Awaitable, Union
 
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import CallbackQuery, Message
-from fluent.runtime import FluentLocalization
+from fluent.runtime import FluentLocalization, FluentResourceLoader
 
+from application.core.config.constants import DEFAULT_LOCALE, LOCALES
 from application.infrastructure.database.adapter import DbAdapter
 from application.tgbot.dialogs.require_extras.format import I18N_FORMAT_KEY
+
+
+def make_i18n_middleware():
+    loader = FluentResourceLoader(os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "translations",
+        "{locale}"
+    ))
+    l10ns = {
+        locale: FluentLocalization(
+            [locale, DEFAULT_LOCALE], ["main.ftl"], loader,
+        )
+        for locale in LOCALES
+    }
+    return I18nMiddleware(l10ns, DEFAULT_LOCALE)
 
 
 class I18nMiddleware(BaseMiddleware):
