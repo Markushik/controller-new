@@ -2,14 +2,15 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Literal, Optional, cast
 
 import lz4.frame
-import ormsgpack
 from aiogram import Bot
 from aiogram.fsm.state import State
-from aiogram.fsm.storage.base import DEFAULT_DESTINY, BaseStorage, StateType, StorageKey
+from aiogram.fsm.storage.base import (DEFAULT_DESTINY, BaseStorage, StateType, StorageKey)
 from nats.js.errors import KeyNotFoundError
 from ormsgpack.ormsgpack import packb, unpackb
 
 from .adapter import NatsAdapter
+
+DEFAULT_REDIS_LOCK_KWARGS = {"timeout": 60}
 
 
 class KeyBuilder(ABC):
@@ -60,6 +61,9 @@ class NatsStorage(BaseStorage):
         self.adapter = adapter
         self.key_builder = key_builder
 
+    def create_isolation(self, **kwargs: Any):
+        return ...
+
     async def close(self) -> None:
         await self.adapter.close()
 
@@ -70,7 +74,7 @@ class NatsStorage(BaseStorage):
         else:
             if isinstance(state, State):
                 state = state.state
-            await self.adapter.state_kv.put(nats_key, ormsgpack.packb(state))
+            await self.adapter.state_kv.put(nats_key, lz4.frame.compress(packb(state)))
 
     async def get_state(self, bot: Bot, key: StorageKey) -> Optional[str]:
         nats_key = self.key_builder.build(key, "state")
@@ -81,14 +85,14 @@ class NatsStorage(BaseStorage):
         else:
             value = entry.value
         if value is not None:
-            return cast(str, ormsgpack.unpackb(value))
+            return cast(str, unpackb(lz4.frame.decompress(value)))
         return value
 
     async def set_data(self, bot: Bot, key: StorageKey, data: Dict[str, Any]) -> None:
         nats_key = self.key_builder.build(key, "data")
         if not data:
             await self.adapter.data_kv.delete(nats_key)
-        await self.adapter.data_kv.put(nats_key, ormsgpack.packb(data))
+        await self.adapter.data_kv.put(nats_key, lz4.frame.compress(packb(data)))
 
     async def get_data(self, bot: Bot, key: StorageKey) -> Dict[str, Any]:
         nats_key = self.key_builder.build(key, "data")
@@ -100,4 +104,4 @@ class NatsStorage(BaseStorage):
             value = entry.value
         if value is None:
             return {}
-        return cast(Dict[str, Any], ormsgpack.unpackb(value))
+        return cast(Dict[str, Any], unpackb(lz4.frame.decompress(value)))

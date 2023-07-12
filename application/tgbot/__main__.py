@@ -45,8 +45,15 @@ async def main() -> None:
     asyncio_engine: AsyncEngine = create_async_engine(url=maker.database_url.human_repr(), echo=False)
     session_maker: AsyncSession = async_sessionmaker(asyncio_engine, expire_on_commit=True)
 
+    # nc_client = await nats.connect("nats://localhost:4222")
+    # adapter = NatsAdapter(client=nc_client)
+    # await adapter.create_kv()
+    #
+    # storage = NatsStorage(adapter=adapter, key_builder=DefaultKeyBuilder(with_destiny=True))
+
     bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp: Dispatcher = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
+    # events_isolation=storage.create_isolation()
 
     i18n_middleware = make_i18n_middleware()
 

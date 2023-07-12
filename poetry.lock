@@ -973,6 +973,17 @@ files = [
 ]
 
 [[package]]
+name = "packaging"
+version = "23.1"
+description = "Core utilities for Python packages"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "packaging-23.1-py3-none-any.whl", hash = "sha256:994793af429502c4ea2ebf6bf664629d07c1a9fe974af92966e4b8d2df7edc61"},
+    {file = "packaging-23.1.tar.gz", hash = "sha256:a392980d2b6cffa644431898be54b0045151319d1e7ec34f0cfed48767dd334f"},
+]
+
+[[package]]
 name = "pathvalidate"
 version = "3.0.0"
 description = "pathvalidate is a Python library to sanitize/validate a string such as filenames/file-paths/etc."
@@ -1281,20 +1292,21 @@ sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
 name = "taskiq"
-version = "0.7.2"
+version = "0.8.2"
 description = "Distributed task queue with full async support"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "taskiq-0.7.2-py3-none-any.whl", hash = "sha256:1e3124440e42400eedae524afafd532f4ad10b4188044f32a634b382c694afb9"},
-    {file = "taskiq-0.7.2.tar.gz", hash = "sha256:3d6911b2679518d85dba8e09939581fe610c38dd32c9c0625917e35fa239a49c"},
+    {file = "taskiq-0.8.2-py3-none-any.whl", hash = "sha256:19ed9871b6dfda9dd492c7f378768f503b5ec0b93b672155e9ecc68ba4d7cfd1"},
+    {file = "taskiq-0.8.2.tar.gz", hash = "sha256:74fc90244e173ce8ad522b921f63d8a0c804bab02ea514c7a40295f2aee011ff"},
 ]
 
 [package.dependencies]
 anyio = ">=3,<4"
 importlib-metadata = "*"
+packaging = ">=19"
 pycron = ">=3.0.0,<4.0.0"
-pydantic = ">=1.6.2,<2.0.0"
+pydantic = ">=1.0,<=3.0"
 taskiq_dependencies = ">=1,<2"
 typing-extensions = ">=3.10.0.0"
 
@@ -1471,4 +1483,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c20b846270191734a812e62f0591bb1179429548c4eec1b0badddd4d10c6170e"
+content-hash = "2e777eaefca984d3c60ec53231291918bf93ee9fe332085b714b2fb5e3311de4"
