@@ -23,6 +23,7 @@ alembic = "^1.11.1"
 pathvalidate = "^3.0.0"
 lz4 = "^4.3.2"
 taskiq = "^0.8.2"
+asyncstdlib = "^3.10.8"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.277"

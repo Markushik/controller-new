@@ -13,7 +13,12 @@ from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
 from loguru import logger
-from sqlalchemy.ext.asyncio import (create_async_engine, async_sessionmaker, AsyncEngine, AsyncSession)
+from sqlalchemy.ext.asyncio import (
+    create_async_engine,
+    async_sessionmaker,
+    AsyncEngine,
+    AsyncSession
+)
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
@@ -47,13 +52,11 @@ async def main() -> None:
         pool_pre_ping=True,
         echo=False
     )
-    session_maker: AsyncSession = async_sessionmaker(asyncio_engine, expire_on_commit=True)
-
-    # nc_client = await nats.connect("nats://localhost:4222")
-    # adapter = NatsAdapter(client=nc_client)
-    # await adapter.create_kv()
-    #
-    # storage = NatsStorage(adapter=adapter, key_builder=DefaultKeyBuilder(with_destiny=True))
+    session_maker: AsyncSession = async_sessionmaker(
+        bind=asyncio_engine,
+        class_=AsyncSession,
+        expire_on_commit=True
+    )
 
     bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp: Dispatcher = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
@@ -63,8 +66,8 @@ async def main() -> None:
     disp.message.middleware(i18n_middleware)
     disp.callback_query.middleware(i18n_middleware)
 
-    disp.update.middleware(DbSessionMiddleware(session_pool=session_maker))
     disp.callback_query.middleware(CallbackAnswerMiddleware())
+    disp.update.outer_middleware(DbSessionMiddleware(session_pool=session_maker))
 
     disp.include_router(client.router)
     disp.include_routers(
@@ -78,9 +81,9 @@ async def main() -> None:
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
-        await asyncio.gather(poll_nats(bot, i18n_middleware), disp.start_polling(bot))
+        await asyncio.gather(poll_nats(bot), disp.start_polling(bot))
     finally:
-        await disp.storage.close()
+        await storage.close()
         await asyncio_engine.dispose()
         await bot.session.close()
 

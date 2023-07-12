@@ -284,6 +284,21 @@ docs = ["Sphinx (>=5.3.0,<5.4.0)", "sphinx-rtd-theme (>=1.2.2)", "sphinxcontrib-
 test = ["flake8 (>=5.0,<6.0)", "uvloop (>=0.15.3)"]
 
 [[package]]
+name = "asyncstdlib"
+version = "3.10.8"
+description = "The missing async toolbox"
+optional = false
+python-versions = "~=3.6"
+files = [
+    {file = "asyncstdlib-3.10.8-py3-none-any.whl", hash = "sha256:eb0dbc697a238fe1ef141e29b3396ead816aaf8a28f07e584e05d1d9fb26841a"},
+    {file = "asyncstdlib-3.10.8.tar.gz", hash = "sha256:e18b67de483dfbfec3c17ec2121a8a3fa9b950874ff03802819bd3b1af56148f"},
+]
+
+[package.extras]
+doc = ["sphinx", "sphinxcontrib-trio"]
+test = ["black", "coverage", "flake8", "flake8-2020", "flake8-bugbear", "mypy", "pytest", "pytest-cov"]
+
+[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -1483,4 +1498,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2e777eaefca984d3c60ec53231291918bf93ee9fe332085b714b2fb5e3311de4"
+content-hash = "3754084c00b1e75df7f5a6b6a9f1fa184ceb0143045db6ba7ebf9a37965e38e0"

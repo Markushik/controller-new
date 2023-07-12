@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import asyncstdlib
 from aiogram_dialog import DialogManager
 
 
@@ -8,8 +9,10 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
     session = dialog_manager.middleware_data["session"]
 
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
+    print(services)
     subs = [f"<b>{count + 1}. {item.title}</b> — {datetime.date(item.reminder)}\n"
-            for count, item in enumerate(services)]
+            async for count, item in asyncstdlib.enumerate(services)]
+    print(subs)
 
     match subs:
         case []:
@@ -23,7 +26,7 @@ async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
     session = dialog_manager.middleware_data["session"]
 
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
-    subs = [(item.Service.service_id, item.Service.title, datetime.date(item.Service.reminder).isoformat())
+    subs = [(item.service_id, item.title, datetime.date(item.reminder).isoformat())
             for item in services]
 
     match subs:

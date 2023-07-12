@@ -4,14 +4,22 @@ import logging
 import nats
 from ormsgpack.ormsgpack import packb
 from sqlalchemy import select, delete, func
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncEngine
-from taskiq import TaskiqScheduler, TaskiqState, TaskiqEvents, Context, TaskiqDepends
+from sqlalchemy.ext.asyncio import (
+    create_async_engine,
+    async_sessionmaker,
+    AsyncEngine
+)
+from taskiq import (
+    TaskiqState,
+    TaskiqEvents, TaskiqDepends,
+    Context, TaskiqScheduler
+)
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
 
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
-from application.infrastructure.database.models import Service, User
+from application.infrastructure.database.models.tables import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
@@ -47,26 +55,26 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
 
     async with session_maker() as session:
         async with session.begin():
-            result = await session.scalars(
+            services = await session.scalars(
                 select(Service).
                 where(func.date(Service.reminder) == datetime.datetime.utcnow().date())
             )
 
-            for item in result:
+            for service in services:
                 await js.publish(
                     stream="service_notify",
                     timeout=10,
                     subject="service_notify.message",
                     payload=packb(
                         {
-                            "user_id": item.service_by_user_id,
-                            "service": item.title,
+                            "user_id": service.service_by_user_id,
+                            "service_name": service.title,
                         }
                     )
                 )
 
-                await session.execute(delete(Service).where(Service.service_id == item.service_id))
-                await session.merge(User(user_id=item.service_by_user_id, count_subs=User.count_subs - 1))
+                await session.execute(delete(Service).where(Service.service_id == service.service_id))
+                await session.merge(User(user_id=service.service_by_user_id, count_subs=User.count_subs - 1))
 
     await session.commit()
     await session.close()

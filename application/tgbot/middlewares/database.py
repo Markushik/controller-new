@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from application.infrastructure.database.adapter import Repo
+from application.infrastructure.database.repositories.adapter import Repo
 
 
 class DbSessionMiddleware(BaseMiddleware):

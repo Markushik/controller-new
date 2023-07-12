@@ -7,7 +7,7 @@ from ormsgpack.ormsgpack import unpackb
 from application.core.misc.makers import maker
 
 
-async def poll_nats(bot: Bot, i18n_middleware):
+async def poll_nats(bot: Bot):
     nats_connect = await nats.connect(maker.nats_url.human_repr())
     js = nats_connect.jetstream()
 
@@ -16,8 +16,6 @@ async def poll_nats(bot: Bot, i18n_middleware):
         subject='service_notify.message',
         durable='get_message'
     )
-
-    # print(i18n_middleware.l10ns)
 
     while True:
         with suppress(TimeoutError):  # FIXME: а если юзер заблокал бота?
@@ -28,6 +26,6 @@ async def poll_nats(bot: Bot, i18n_middleware):
             await bot.send_message(
                 chat_id=data["user_id"],
                 text=f'<b>🔔 Уведомление</b>\n'
-                     f'<b>Напоминаем Вам</b>, что ваша подписка <code>{data["service"]}</code> '
+                     f'<b>Напоминаем Вам</b>, что ваша подписка <code>{data["service_name"]}</code> '
                      f'скоро <b>закончится</b>!'
             )

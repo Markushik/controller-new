@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.infrastructure.database.models import User, Service
+from application.infrastructure.database.models.tables import Service, User
 
 
 class Repo:
@@ -37,8 +37,10 @@ class Repo:
     async def add_subscription(self, title: str, months: str, reminder: datetime, service_by_user_id: int):
         return self.session.add(
             Service(
-                title=title, months=months,
-                reminder=reminder, service_by_user_id=service_by_user_id
+                title=title,
+                months=months,
+                reminder=reminder,
+                service_by_user_id=service_by_user_id
             )
         )
 

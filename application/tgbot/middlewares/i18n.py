@@ -6,8 +6,8 @@ from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
-from application.infrastructure.database.adapter import Repo
-from application.tgbot.dialogs.require_extras.format import I18N_FORMAT_KEY
+from application.infrastructure.database.repositories.adapter import Repo
+from application.tgbot.dialogs.format import I18N_FORMAT_KEY
 
 
 def make_i18n_middleware():
