@@ -8,8 +8,7 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
     session = dialog_manager.middleware_data["session"]
 
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
-
-    subs = [f"<b>{count + 1}. {item.Service.title}</b> — {datetime.date(item.Service.reminder)}\n"
+    subs = [f"<b>{count + 1}. {item.title}</b> — {datetime.date(item.reminder)}\n"
             for count, item in enumerate(services)]
 
     match subs:
@@ -24,7 +23,6 @@ async def get_subs_for_delete(dialog_manager: DialogManager, **kwargs) -> None:
     session = dialog_manager.middleware_data["session"]
 
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
-
     subs = [(item.Service.service_id, item.Service.title, datetime.date(item.Service.reminder).isoformat())
             for item in services]
 

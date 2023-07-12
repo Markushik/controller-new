@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from application.infrastructure.database.models import User, Service
 
 
-class DbAdapter:
+class Repo:
     def __init__(self, session: AsyncSession):
         self.session = session
 
@@ -17,14 +17,13 @@ class DbAdapter:
         return await self.session.get(User, user_id)
 
     async def get_services(self, user_id: int):
-        return await self.session.execute(select(Service).where(Service.service_by_user_id == user_id))
+        return await self.session.scalars(select(Service).where(Service.service_by_user_id == user_id))
 
-    async def get_all_positions(self, user_id: int):
-        return await self.session.execute(select(User).where(User.user_id == user_id))
+    async def get_user_count_subs(self, user_id: int):
+        return await self.session.scalar(select(User.count_subs).where(User.user_id == user_id))
 
     async def get_user_language(self, user_id: int):
-        user = await self.session.execute(select(User).where(User.user_id == user_id))
-        return user.scalar()
+        return await self.session.scalar(select(User).where(User.user_id == user_id))
 
     async def add_user(self, user_id: int, user_name: str, chat_id: int):
         return self.session.add(
@@ -43,6 +42,9 @@ class DbAdapter:
             )
         )
 
+    async def update_language(self, user_id: int, language: str):
+        return await self.session.merge(User(user_id=user_id, language=language))
+
     async def delete_subscription(self, service_id: int):
         return await self.session.execute(delete(Service).where(Service.service_id == service_id))
 
@@ -51,6 +53,3 @@ class DbAdapter:
 
     async def decrement_count(self, user_id: int):
         return await self.session.merge(User(user_id=user_id, count_subs=User.count_subs - 1))
-
-    async def update_language(self, user_id: int, language: str):
-        return await self.session.merge(User(user_id=user_id, language=language))

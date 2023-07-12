@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
-from application.infrastructure.database.adapter import DbAdapter
+from application.infrastructure.database.adapter import Repo
 from application.tgbot.dialogs.require_extras.format import I18N_FORMAT_KEY
 
 
@@ -45,7 +45,7 @@ class I18nMiddleware(BaseMiddleware):
             event: Union[Message, CallbackQuery],
             data: Dict[str, Any],
     ) -> Any:
-        session: DbAdapter = data["session"]
+        session: Repo = data["session"]
         user = await session.get_user_language(user_id=event.from_user.id)
 
         lang = "ru_RU"

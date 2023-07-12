@@ -37,7 +37,11 @@ async def on_click_calendar_reminder(
     await dialog_manager.switch_to(SubscriptionSG.check)
 
 
-async def on_click_button_confirm(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_button_confirm(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
 

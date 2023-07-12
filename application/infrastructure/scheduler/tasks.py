@@ -55,12 +55,18 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
             for item in result:
                 await js.publish(
                     stream="service_notify",
-                    timeout=30,
+                    timeout=10,
                     subject="service_notify.message",
-                    payload=packb({"user_id": item.service_by_user_id, "service": item.title})
+                    payload=packb(
+                        {
+                            "user_id": item.service_by_user_id,
+                            "service": item.title,
+                        }
+                    )
                 )
 
                 await session.execute(delete(Service).where(Service.service_id == item.service_id))
                 await session.merge(User(user_id=item.service_by_user_id, count_subs=User.count_subs - 1))
 
+    await session.commit()
     await session.close()

@@ -63,3 +63,5 @@ Error-sub-add = <b>❎ Rejected:</b> Data not recorded
 
 Approve-sub-delete = <b>✅ Approved:</b> Subscription successfully deleted
 Reject-sub-delete = <b>❎ Rejected:</b> Subscription not deleted
+
+Notification = ...

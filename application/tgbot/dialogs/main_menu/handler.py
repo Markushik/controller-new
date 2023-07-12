@@ -9,43 +9,71 @@ from application.tgbot.states.user import UserSG, SubscriptionSG
 async def update_key(dialog_manager: DialogManager, lang: str) -> None:
     l10ns = dialog_manager.middleware_data["l10ns"]
     l10n = l10ns[lang]
+
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
 
-async def on_click_get_subs_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_get_subs_menu(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
 
 
-async def on_click_back_to_main_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_back_to_main_menu(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
 
 
-async def on_click_get_settings_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_get_settings_menu(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     await dialog_manager.start(UserSG.settings, mode=StartMode.RESET_STACK)
 
 
-async def on_click_get_help_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_get_help_menu(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     await dialog_manager.start(UserSG.help, mode=StartMode.RESET_STACK)
 
 
-async def on_click_get_delete_menu(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_get_delete_menu(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     await dialog_manager.start(UserSG.delete, mode=StartMode.RESET_STACK)
 
 
-async def on_click_sub_selected(callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
-                                item_id: str) -> None:
+async def on_click_sub_selected(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
+        item_id: str
+) -> None:
     await dialog_manager.start(UserSG.check_delete, mode=StartMode.RESET_STACK)
     dialog_manager.dialog_data["service_id"] = int(item_id)
 
 
-async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, dialog_manager: DialogManager) -> None:
+async def on_click_sub_create(
+        callback: CallbackQuery,
+        dialog: DialogProtocol,
+        dialog_manager: DialogManager
+) -> None:
     l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
 
-    request = await session.get_all_positions(user_id=dialog_manager.event.from_user.id)
-    count = request.scalar()
+    count_subs = await session.get_user_count_subs(user_id=dialog_manager.event.from_user.id)
 
-    if count.count_subs >= 7:
+    if count_subs >= 7:
         await callback.message.edit_text(l10n.format_value("Error-subs-limit"))
         await dialog_manager.done()
         await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
@@ -53,7 +81,11 @@ async def on_click_sub_create(callback: CallbackQuery, dialog: DialogProtocol, d
         await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
 
 
-async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_sub_delete(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
     l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
 
@@ -66,7 +98,11 @@ async def on_click_sub_delete(callback: CallbackQuery, button: Button, dialog_ma
     await dialog_manager.start(UserSG.delete, mode=StartMode.RESET_STACK)
 
 
-async def on_click_sub_not_delete(callback: CallbackQuery, button: Button, dialog_manager: DialogManager) -> None:
+async def on_click_sub_not_delete(
+        callback: CallbackQuery,
+        button: Button, dialog_manager:
+        DialogManager
+) -> None:
     l10n = dialog_manager.middleware_data["l10n"]
 
     await callback.message.edit_text(l10n.format_value("Reject-sub-delete"))

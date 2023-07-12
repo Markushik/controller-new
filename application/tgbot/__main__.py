@@ -42,7 +42,11 @@ async def main() -> None:
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
-    asyncio_engine: AsyncEngine = create_async_engine(url=maker.database_url.human_repr(), echo=False)
+    asyncio_engine: AsyncEngine = create_async_engine(
+        url=maker.database_url.human_repr(),
+        pool_pre_ping=True,
+        echo=False
+    )
     session_maker: AsyncSession = async_sessionmaker(asyncio_engine, expire_on_commit=True)
 
     # nc_client = await nats.connect("nats://localhost:4222")
@@ -53,7 +57,6 @@ async def main() -> None:
 
     bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp: Dispatcher = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
-    # events_isolation=storage.create_isolation()
 
     i18n_middleware = make_i18n_middleware()
 
@@ -64,7 +67,10 @@ async def main() -> None:
     disp.callback_query.middleware(CallbackAnswerMiddleware())
 
     disp.include_router(client.router)
-    disp.include_routers(services_create, main_menu)
+    disp.include_routers(
+        services_create,
+        main_menu
+    )
 
     setup_dialogs(disp)
 
@@ -72,7 +78,7 @@ async def main() -> None:
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
-        await asyncio.gather(poll_nats(bot), disp.start_polling(bot))
+        await asyncio.gather(poll_nats(bot, i18n_middleware), disp.start_polling(bot))
     finally:
         await disp.storage.close()
         await asyncio_engine.dispose()
