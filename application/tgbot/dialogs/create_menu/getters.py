@@ -9,10 +9,8 @@ async def get_subs_for_output(dialog_manager: DialogManager, **kwargs) -> None:
     session = dialog_manager.middleware_data["session"]
 
     services = await session.get_services(user_id=dialog_manager.event.from_user.id)
-    print(services)
     subs = [f"<b>{count + 1}. {item.title}</b> — {datetime.date(item.reminder)}\n"
             async for count, item in asyncstdlib.enumerate(services)]
-    print(subs)
 
     match subs:
         case []:

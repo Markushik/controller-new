@@ -9,9 +9,11 @@ import logging
 from aiogram import Bot
 from aiogram import Dispatcher
 from aiogram.enums import ParseMode
+from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
+from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
 from loguru import logger
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
@@ -27,6 +29,7 @@ from application.infrastructure.stream.worker import poll_nats
 from application.tgbot.dialogs.create_menu.dialog import services_create
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
+from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
 from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import make_i18n_middleware
 
@@ -69,11 +72,13 @@ async def main() -> None:
     disp.callback_query.middleware(CallbackAnswerMiddleware())
     disp.update.outer_middleware(DbSessionMiddleware(session_pool=session_maker))
 
-    disp.include_router(client.router)
     disp.include_routers(
+        client.router,
         services_create,
-        main_menu
+        main_menu,
     )
+    disp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
+    disp.errors.register(on_unknown_state, ExceptionTypeFilter(UnknownState))
 
     setup_dialogs(disp)
 
