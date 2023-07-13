@@ -5,13 +5,22 @@ from aiogram_dialog.widgets.kbd import (Row, Button, Url, Select, Column, Group)
 from aiogram_dialog.widgets.text import Const, Format
 
 from application.tgbot.dialogs.create_menu.getters import get_subs_for_output, get_subs_for_delete
-from application.tgbot.dialogs.main_menu.handler import on_click_get_subs_menu, on_click_get_settings_menu, \
-    on_click_get_help_menu, on_click_back_to_main_menu, on_click_sub_create, on_click_get_delete_menu, \
-    on_click_sub_selected, on_click_change_lang, on_click_sub_delete, on_click_sub_not_delete
-from application.tgbot.dialogs.format import I18NFormat
+from application.tgbot.dialogs.main_menu.handler import (
+    on_click_get_subs_menu,
+    on_click_get_settings_menu,
+    on_click_get_help_menu,
+    on_click_back_to_main_menu,
+    on_click_sub_create,
+    on_click_get_delete_menu,
+    on_click_sub_selected,
+    on_click_change_lang,
+    on_click_sub_delete,
+    on_click_sub_not_delete
+)
+from application.tgbot.dialogs._extras.i18n_format import I18NFormat
 from application.tgbot.dialogs.main_menu.getters import get_langs_for_output
 
-from application.tgbot.states.user import UserSG
+from application.tgbot.states.user import MainMenu
 
 main_menu = Dialog(
     Window(
@@ -23,7 +32,7 @@ main_menu = Dialog(
                 Button(I18NFormat("Support"), id="help_id", on_click=on_click_get_help_menu),
             )
         ),
-        state=UserSG.main,
+        state=MainMenu.main,
     ),
     Window(
         I18NFormat("Q-A"),
@@ -40,7 +49,7 @@ main_menu = Dialog(
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu),
         ),
-        state=UserSG.help
+        state=MainMenu.help
     ),
     Window(
         I18NFormat("Catalog-add"),
@@ -51,7 +60,7 @@ main_menu = Dialog(
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu)
         ),
-        state=UserSG.subs,
+        state=MainMenu.subs,
         getter=get_subs_for_output
     ),
     Window(
@@ -68,7 +77,7 @@ main_menu = Dialog(
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)
         ),
-        state=UserSG.delete,
+        state=MainMenu.delete,
         getter=get_subs_for_delete,
     ),
     Window(
@@ -85,7 +94,7 @@ main_menu = Dialog(
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu)
         ),
-        state=UserSG.settings,
+        state=MainMenu.settings,
         getter=get_langs_for_output
     ),
     Window(
@@ -94,6 +103,6 @@ main_menu = Dialog(
             Button(Const("✅"), id="confirm_delete_id", on_click=on_click_sub_delete),
             Button(Const("❎"), id="reject_delete_id", on_click=on_click_sub_not_delete),
         ),
-        state=UserSG.check_delete
+        state=MainMenu.check_delete
     )
 )

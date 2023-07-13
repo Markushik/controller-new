@@ -1,7 +1,7 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class UserSG(StatesGroup):
+class MainMenu(StatesGroup):
     main = State()
     subs = State()
     help = State()
@@ -10,8 +10,8 @@ class UserSG(StatesGroup):
     check_delete = State()
 
 
-class SubscriptionSG(StatesGroup):
+class SubscriptionMenu(StatesGroup):
     service = State()
     months = State()
     reminder = State()
-    check = State()
+    result = State()

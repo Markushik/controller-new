@@ -27,6 +27,7 @@ asyncstdlib = "^3.10.8"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.277"
+mypy = "^1.4.1"
 
 [tool.ruff]
 line-length = 120

@@ -7,7 +7,7 @@ from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
 from application.infrastructure.database.repositories.adapter import Repo
-from application.tgbot.dialogs.format import I18N_FORMAT_KEY
+from application.tgbot.dialogs._extras.i18n_format import I18N_FORMAT_KEY
 
 
 def make_i18n_middleware():

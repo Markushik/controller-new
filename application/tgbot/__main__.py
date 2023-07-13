@@ -26,7 +26,7 @@ from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import poll_nats
-from application.tgbot.dialogs.create_menu.dialog import services_create
+from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
 from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
@@ -74,7 +74,7 @@ async def main() -> None:
 
     disp.include_routers(
         client.router,
-        services_create,
+        create_menu,
         main_menu,
     )
     disp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))

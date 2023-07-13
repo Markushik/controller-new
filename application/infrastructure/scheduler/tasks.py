@@ -23,7 +23,7 @@ from application.infrastructure.database.models.tables import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
-broker = NatsBroker([maker.nats_url.human_repr()], queue="send_service")
+broker = NatsBroker([maker.nats_url.human_repr(), ], queue="send_service")
 scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)])
 
 

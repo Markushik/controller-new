@@ -2,8 +2,8 @@ from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, StartMode, DialogProtocol
 from aiogram_dialog.widgets.kbd import Button
 
-from application.tgbot.dialogs.format import I18N_FORMAT_KEY
-from application.tgbot.states.user import UserSG, SubscriptionSG
+from application.tgbot.dialogs._extras.i18n_format import I18N_FORMAT_KEY
+from application.tgbot.states.user import MainMenu, SubscriptionMenu
 
 
 async def update_key(dialog_manager: DialogManager, lang: str) -> None:
@@ -18,7 +18,7 @@ async def on_click_get_subs_menu(
         button: Button,
         dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.subs, mode=StartMode.RESET_STACK)
 
 
 async def on_click_back_to_main_menu(
@@ -26,7 +26,7 @@ async def on_click_back_to_main_menu(
         button: Button,
         dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(UserSG.main, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.main, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_settings_menu(
@@ -34,7 +34,7 @@ async def on_click_get_settings_menu(
         button: Button,
         dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(UserSG.settings, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.settings, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_help_menu(
@@ -42,7 +42,7 @@ async def on_click_get_help_menu(
         button: Button,
         dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(UserSG.help, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.help, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_delete_menu(
@@ -50,7 +50,7 @@ async def on_click_get_delete_menu(
         button: Button,
         dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(UserSG.delete, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.delete, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_selected(
@@ -59,7 +59,7 @@ async def on_click_sub_selected(
         dialog_manager: DialogManager,
         item_id: str
 ) -> None:
-    await dialog_manager.start(UserSG.check_delete, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.check_delete, mode=StartMode.RESET_STACK)
     dialog_manager.dialog_data["service_id"] = int(item_id)
 
 
@@ -76,9 +76,9 @@ async def on_click_sub_create(
     if count_subs >= 7:
         await callback.message.edit_text(l10n.format_value("Error-subs-limit"))
         await dialog_manager.done()
-        await dialog_manager.start(UserSG.subs, mode=StartMode.RESET_STACK)
+        await dialog_manager.start(MainMenu.subs, mode=StartMode.RESET_STACK)
     else:
-        await dialog_manager.start(SubscriptionSG.service, mode=StartMode.RESET_STACK)
+        await dialog_manager.start(SubscriptionMenu.service, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_delete(
@@ -95,7 +95,7 @@ async def on_click_sub_delete(
 
     await callback.message.edit_text(l10n.format_value("Approve-sub-delete"))
     await dialog_manager.done()
-    await dialog_manager.start(UserSG.delete, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.delete, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_not_delete(
@@ -107,7 +107,7 @@ async def on_click_sub_not_delete(
 
     await callback.message.edit_text(l10n.format_value("Reject-sub-delete"))
     await dialog_manager.done()
-    await dialog_manager.start(UserSG.delete, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(MainMenu.delete, mode=StartMode.RESET_STACK)
 
 
 async def on_click_change_lang(
