@@ -50,30 +50,39 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
     nats_connect = context.state.nats
     asyncio_engine = context.state.database
 
-    js = nats_connect.jetstream()
+    jetstream = nats_connect.jetstream()
     session_maker = async_sessionmaker(asyncio_engine, expire_on_commit=True)
 
     async with session_maker() as session:
         async with session.begin():
-            services = await session.scalars(
-                select(Service).
-                where(func.date(Service.reminder) == datetime.datetime.utcnow().date())
+            request = await session.execute(
+                select(
+                    Service.service_id,
+                    Service.service_by_user_id,
+                    User.language,
+                    Service.title,
+                    Service.reminder
+                )
+                .join(User, User.user_id == Service.service_by_user_id)
+                .where(func.date(Service.reminder) == datetime.datetime.utcnow().date())
             )
+            services = request.all()
 
             for service in services:
-                await js.publish(
+                await jetstream.publish(
                     stream="service_notify",
                     timeout=10,
                     subject="service_notify.message",
                     payload=packb(
                         {
-                            "user_id": service.service_by_user_id,
-                            "service_name": service.title,
+                            "user_id": service[1],
+                            "language": service[2],
+                            "service_name": service[3],
                         }
                     )
                 )
 
-                await session.execute(delete(Service).where(Service.service_id == service.service_id))
+                await session.execute(delete(Service).where(Service.service_id == service[0]))
                 await session.merge(User(user_id=service.service_by_user_id, count_subs=User.count_subs - 1))
 
     await session.commit()

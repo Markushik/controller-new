@@ -6,6 +6,7 @@ The main file responsible for launching the bot
 import asyncio
 import logging
 
+import nats
 from aiogram import Bot
 from aiogram import Dispatcher
 from aiogram.enums import ParseMode
@@ -15,6 +16,8 @@ from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
 from loguru import logger
+from nats.aio.client import Client
+from nats.js import JetStreamContext
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
@@ -34,7 +37,7 @@ from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import make_i18n_middleware
 
 
-async def main() -> None:
+async def _main() -> None:
     """
     The main function responsible for launching the bot
     :return:
@@ -49,6 +52,11 @@ async def main() -> None:
         url=maker.redis_url.human_repr(),
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
+
+    nats_connect: Client = await nats.connect(
+        servers=[maker.nats_url.human_repr(), ]
+    )
+    jetstream: JetStreamContext = nats_connect.jetstream()
 
     asyncio_engine: AsyncEngine = create_async_engine(
         url=maker.database_url.human_repr(),
@@ -70,13 +78,11 @@ async def main() -> None:
     disp.callback_query.middleware(i18n_middleware)
 
     disp.callback_query.middleware(CallbackAnswerMiddleware())
-    disp.update.outer_middleware(DbSessionMiddleware(session_pool=session_maker))
+    disp.update.outer_middleware(DbSessionMiddleware(session_maker=session_maker))
 
-    disp.include_routers(
-        client.router,
-        create_menu,
-        main_menu,
-    )
+    disp.include_router(client.router)
+    disp.include_routers(create_menu, main_menu)
+
     disp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
     disp.errors.register(on_unknown_state, ExceptionTypeFilter(UnknownState))
 
@@ -86,7 +92,10 @@ async def main() -> None:
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
-        await asyncio.gather(poll_nats(bot), disp.start_polling(bot))
+        await asyncio.gather(
+            poll_nats(bot, i18n_middleware, jetstream),
+            disp.start_polling(bot)
+        )
     finally:
         await storage.close()
         await asyncio_engine.dispose()
@@ -95,6 +104,6 @@ async def main() -> None:
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        asyncio.run(_main())
     except (SystemExit, KeyboardInterrupt):
         logger.warning("SHUTDOWN BOT")

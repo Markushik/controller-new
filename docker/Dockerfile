@@ -20,7 +20,7 @@ RUN pip3 install --upgrade pip \
 RUN poetry install --only main --no-root
 
 
-FROM debian AS runtime
+FROM builder AS runtime
 
 WORKDIR ./application/
 
@@ -29,4 +29,4 @@ COPY configs ./configs/
 COPY alembic.ini alembic.ini
 
 EXPOSE 443
-ENTRYPOINT ["poetry", "run", "python3", "-m", "application.tgbot"]
+ENTRYPOINT ["/usr/bin/env", "poetry", "run", "python3", "-m", "application.tgbot"]

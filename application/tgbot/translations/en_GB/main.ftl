@@ -64,5 +64,5 @@ Error-sub-add = <b>❎ Rejected:</b> Data not recorded
 Approve-sub-delete = <b>✅ Approved:</b> Subscription successfully deleted
 Reject-sub-delete = <b>❎ Rejected:</b> Subscription not deleted
 
-Notification = <b>🔔 Notification</b>
-               <b>We remind you</b> that your <code>{ $data["service"] }</code> subscription will soon <b>end</b>!
+Notification-message = <b>🔔 Notification</b>
+                       <b>We remind you</b> that your <code>{ $service }</code> subscription will soon <b>end</b>!

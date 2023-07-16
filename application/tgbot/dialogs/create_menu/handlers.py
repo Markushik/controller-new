@@ -1,7 +1,11 @@
 from datetime import datetime, date
 
 from aiogram.types import Message, CallbackQuery
-from aiogram_dialog import DialogProtocol, DialogManager, StartMode
+from aiogram_dialog import (
+    DialogProtocol,
+    DialogManager,
+    StartMode
+)
 from aiogram_dialog.widgets.kbd import Button
 
 from application.tgbot.states.user import SubscriptionMenu, MainMenu

@@ -1,16 +1,17 @@
-import nats
+import asyncio
+
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError
+from nats.js import JetStreamContext
 from ormsgpack.ormsgpack import unpackb
 
-from application.core.misc.makers import maker
 
-
-async def poll_nats(bot: Bot):
-    nats_connect = await nats.connect([maker.nats_url.human_repr(), ])
-    js = nats_connect.jetstream()
-
-    subscribe = await js.subscribe(
+async def poll_nats(
+        bot: Bot,
+        i18n_middleware,
+        jetstream: JetStreamContext
+) -> None:
+    subscribe = await jetstream.subscribe(
         stream="service_notify",
         subject='service_notify.message',
         durable='get_message'
@@ -22,13 +23,17 @@ async def poll_nats(bot: Bot):
             await message.ack()
 
             data = unpackb(message.data)
+
+            l10ns = i18n_middleware.l10ns
+            l10n = l10ns[data["language"]]
+
             await bot.send_message(
                 chat_id=data["user_id"],
-                text=f'<b>🔔 Уведомление</b>\n'
-                     f'<b>Напоминаем Вам</b>, что ваша подписка <code>{data["service_name"]}</code>'
-                     f'скоро <b>закончится</b>!'
+                text=l10n.format_value(
+                    "Notification-message", {"service": data["service_name"]}
+                )
             )
         except TelegramForbiddenError:  # if user blocked bot
             pass
-        except TimeoutError:
+        except asyncio.TimeoutError:
             pass

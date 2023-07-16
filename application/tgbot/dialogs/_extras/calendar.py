@@ -40,8 +40,8 @@ class CustomCalendar(Calendar):
                 self._item_callback_data, self.config,
                 header_text=Month(),
                 weekday_text=WeekDay(),
-                next_month_text=Month() + " »",
-                prev_month_text="« " + Month(),
+                next_month_text=Month() + " →",
+                prev_month_text="← " + Month(),
             ),
             CalendarScope.MONTHS: CalendarMonthView(
                 self._item_callback_data, self.config,
