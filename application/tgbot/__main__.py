@@ -12,7 +12,6 @@ from aiogram import Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
-from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
 from loguru import logger
@@ -77,7 +76,6 @@ async def _main() -> None:
     disp.message.middleware(i18n_middleware)
     disp.callback_query.middleware(i18n_middleware)
 
-    disp.callback_query.middleware(CallbackAnswerMiddleware())
     disp.update.outer_middleware(DbSessionMiddleware(session_maker=session_maker))
 
     disp.include_router(client.router)

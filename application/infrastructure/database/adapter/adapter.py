@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from application.infrastructure.database.models.tables import Service, User
 
 
-class Repo:
+class DbAdapter:
     def __init__(self, session: AsyncSession):
         self.session = session
 
