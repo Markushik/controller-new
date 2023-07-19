@@ -1,10 +1,9 @@
-from pydantic import BaseSettings
 from yarl import URL
 
 from application.core.config.config import settings
 
 
-class URLMakers(BaseSettings):
+class URLMakers:
     # Variables for PostgreSQL
     database_host: str = settings['postgres.POSTGRES_HOST']
     database_port: int = settings['postgres.POSTGRES_PORT']

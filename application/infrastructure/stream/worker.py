@@ -6,11 +6,7 @@ from nats.js import JetStreamContext
 from ormsgpack.ormsgpack import unpackb
 
 
-async def poll_nats(
-        bot: Bot,
-        i18n_middleware,
-        jetstream: JetStreamContext
-) -> None:
+async def poll_nats(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -> None:
     subscribe = await jetstream.subscribe(
         stream="service_notify",
         subject='service_notify.message',

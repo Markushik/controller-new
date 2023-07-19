@@ -34,7 +34,7 @@ from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
 from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
 from application.tgbot.middlewares.database import DbSessionMiddleware
-from application.tgbot.middlewares.i18n import make_i18n_middleware
+from application.tgbot.middlewares.i18n import make_i18n_middleware, I18nMiddleware
 
 
 async def _main() -> None:
@@ -45,7 +45,7 @@ async def _main() -> None:
     logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
     logger.add(
         '../../debug.log', format='{time} {level} {message}', level='INFO',
-        colorize=True, encoding='utf-8', rotation='10 MB', compression='zip'
+        enqueue=True, colorize=True, encoding='utf-8', rotation='10 MB', compression='zip'
     )
 
     storage: RedisStorage = RedisStorage.from_url(
@@ -72,7 +72,7 @@ async def _main() -> None:
     bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
     disp: Dispatcher = Dispatcher(storage=storage, events_isolation=storage.create_isolation())
 
-    i18n_middleware = make_i18n_middleware()
+    i18n_middleware: I18nMiddleware = make_i18n_middleware()
 
     disp.message.middleware(i18n_middleware)
     disp.callback_query.middleware(i18n_middleware)
@@ -100,6 +100,7 @@ async def _main() -> None:
         await storage.close()
         await asyncio_engine.dispose()
         await bot.session.close()
+        await logger.complete()
 
 
 if __name__ == "__main__":
