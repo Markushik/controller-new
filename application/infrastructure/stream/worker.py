@@ -1,5 +1,3 @@
-import asyncio
-
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError
 from nats.js import JetStreamContext
@@ -13,23 +11,23 @@ async def poll_nats(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -> N
         durable='get_message'
     )
 
-    while True:
+    async for message in subscribe.messages:
         try:
-            message = await subscribe.next_msg()
-            await message.ack()
-
             data = unpackb(message.data)
 
+            user_id = data["user_id"]
+            service = data["service_name"]
+            language = data["language"]
+
             l10ns = i18n_middleware.l10ns
-            l10n = l10ns[data["language"]]
+            l10n = l10ns[language]
 
             await bot.send_message(
-                chat_id=data["user_id"],
-                text=l10n.format_value(
-                    "Notification-message", {"service": data["service_name"]}
-                )
+                chat_id=user_id,
+                text=l10n.format_value("Notification-message", {"service": service})
             )
-        except TelegramForbiddenError:  # if user blocked bot
+            await message.ack()
+        except TelegramForbiddenError:
             pass
-        except asyncio.TimeoutError:
+        except TimeoutError:
             pass

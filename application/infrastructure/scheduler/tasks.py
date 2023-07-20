@@ -3,7 +3,11 @@ import logging
 
 import nats
 from ormsgpack.ormsgpack import packb
-from sqlalchemy import select, delete, func
+from sqlalchemy import (
+    select,
+    delete,
+    func
+)
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
@@ -11,8 +15,10 @@ from sqlalchemy.ext.asyncio import (
 )
 from taskiq import (
     TaskiqState,
-    TaskiqEvents, TaskiqDepends,
-    Context, TaskiqScheduler
+    TaskiqEvents,
+    TaskiqDepends,
+    TaskiqScheduler,
+    Context
 )
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
@@ -44,7 +50,7 @@ async def shutdown(state: TaskiqState) -> None:
 
 @broker.task(
     task_name="polling_base",
-    schedule=[{"cron": "*/1 * * * *"}]
+    schedule=[{"cron": "*/1 * * * *"}]  # 00 12 * * *
 )
 async def polling_base_task(context: Context = TaskiqDepends()) -> None:
     nats_connect = context.state.nats
@@ -68,7 +74,7 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
             )
             services = request.all()
 
-            for service in services:
+            async for service in services:
                 await jetstream.publish(
                     stream="service_notify",
                     timeout=10,
@@ -79,7 +85,10 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
                             "language": service[2],
                             "service_name": service[3],
                         }
-                    )
+                    ),
+                    headers={
+                        'Foo': 'Bar'
+                    }
                 )
 
                 await session.execute(delete(Service).where(Service.service_id == service[0]))
