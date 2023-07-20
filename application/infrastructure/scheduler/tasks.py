@@ -49,10 +49,10 @@ async def shutdown(state: TaskiqState) -> None:
 
 
 @broker.task(
-    task_name="polling_base",
+    task_name="base_polling",
     schedule=[{"cron": "*/1 * * * *"}]  # 00 12 * * *
 )
-async def polling_base_task(context: Context = TaskiqDepends()) -> None:
+async def base_polling_task(context: Context = TaskiqDepends()) -> None:
     nats_connect = context.state.nats
     asyncio_engine = context.state.database
 

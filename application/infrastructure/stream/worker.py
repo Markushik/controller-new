@@ -1,10 +1,13 @@
+import asyncio
+
 from aiogram import Bot
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
+from loguru import logger
 from nats.js import JetStreamContext
 from ormsgpack.ormsgpack import unpackb
 
 
-async def poll_nats(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -> None:
+async def nats_polling(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -> None:
     subscribe = await jetstream.subscribe(
         stream="service_notify",
         subject='service_notify.message',
@@ -27,7 +30,12 @@ async def poll_nats(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -> N
                 text=l10n.format_value("Notification-message", {"service": service})
             )
             await message.ack()
+        except TelegramRetryAfter as ex:
+            logger.info(f"LIMIT EXCEEDED, CONTINUE IN: {ex.retry_after}")
+            await asyncio.sleep(float(ex.retry_after))
+            continue
         except TelegramForbiddenError:
-            pass
+            await message.ack()
+            continue
         except TimeoutError:
             pass

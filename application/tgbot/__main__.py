@@ -27,7 +27,7 @@ from sqlalchemy.ext.asyncio import (
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
-from application.infrastructure.stream.worker import poll_nats
+from application.infrastructure.stream.worker import nats_polling
 from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
@@ -91,7 +91,7 @@ async def _main() -> None:
     try:
         await bot.delete_webhook(drop_pending_updates=True)
         await asyncio.gather(
-            poll_nats(bot, i18n_middleware, jetstream),
+            nats_polling(bot, i18n_middleware, jetstream),
             disp.start_polling(bot)
         )
     finally:
