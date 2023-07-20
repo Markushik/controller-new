@@ -45,16 +45,25 @@ class I18nMiddleware(BaseMiddleware):
             event: Union[Message, CallbackQuery],
             data: Dict[str, Any],
     ) -> Any:
+
         session: DbAdapter = data["session"]
-        user = await session.get_user_language(user_id=event.from_user.id)
+        language = await session.get_user_language(user_id=event.from_user.id)
 
-        lang = "ru_RU"
-
-        if user and user.language == "en_GB":
-            lang = "en_GB"
+        match language:
+            case "en_GB":
+                lang = "en_GB"
+            case "ru_RU":
+                lang = "ru_RU"
+            case _:
+                lang = "ru_RU"
 
         l10n = self.l10ns[lang]
-        data_middleware = dict(zip(["l10n", "l10ns", I18N_FORMAT_KEY], [l10n, self.l10ns, l10n.format_value]))
+        data_middleware = dict(
+            zip(
+                ["l10n", "l10ns", I18N_FORMAT_KEY],
+                [l10n, self.l10ns, l10n.format_value]
+            )
+        )
         data.update(data_middleware)
 
         return await handler(event, data)

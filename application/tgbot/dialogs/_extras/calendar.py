@@ -17,9 +17,9 @@ class WeekDay(Text):
     async def _render_text(self, data, dialog_manager: DialogManager) -> str:
         selected_date: date = data["date"]
         session = dialog_manager.middleware_data["session"]
-        user = await session.get_user_language(user_id=dialog_manager.event.from_user.id)
+        language = await session.get_user_language(user_id=dialog_manager.event.from_user.id)
         return get_day_names(
-            width="short", context='stand-alone', locale=user.language,
+            width="short", context='stand-alone', locale=language,
         )[selected_date.weekday()].title()
 
 
@@ -27,9 +27,9 @@ class Month(Text):
     async def _render_text(self, data, dialog_manager: DialogManager) -> str:
         selected_date: date = data["date"]
         session = dialog_manager.middleware_data["session"]
-        user = await session.get_user_language(user_id=dialog_manager.event.from_user.id)
+        language = await session.get_user_language(user_id=dialog_manager.event.from_user.id)
         return get_month_names(
-            'wide', context='stand-alone', locale=user.language,
+            'wide', context='stand-alone', locale=language,
         )[selected_date.month].title()
 
 

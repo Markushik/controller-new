@@ -23,7 +23,7 @@ class DbAdapter:
         return await self.session.scalar(select(User.count_subs).where(User.user_id == user_id))
 
     async def get_user_language(self, user_id: int) -> None:
-        return await self.session.scalar(select(User).where(User.user_id == user_id))
+        return await self.session.scalar(select(User.language).where(User.user_id == user_id))
 
     async def add_user(self, user_id: int, user_name: str, chat_id: int) -> None:
         return self.session.add(

@@ -74,7 +74,7 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
             )
             services = request.all()
 
-            async for service in services:
+            for service in services:
                 await jetstream.publish(
                     stream="service_notify",
                     timeout=10,
@@ -87,7 +87,7 @@ async def polling_base_task(context: Context = TaskiqDepends()) -> None:
                         }
                     ),
                     headers={
-                        'Foo': 'Bar'
+                        'Foo': 'Bar'  # FIXME: change headers
                     }
                 )
 
