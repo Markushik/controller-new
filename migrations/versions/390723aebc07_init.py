@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 53c4f229050f
+Revision ID: 390723aebc07
 Revises: 
-Create Date: 2023-07-10 18:52:29.831502
+Create Date: 2023-07-20 16:41:48.646153
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '53c4f229050f'
+revision = '390723aebc07'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,7 @@ def upgrade() -> None:
     sa.Column('chat_id', sa.BigInteger(), nullable=False),
     sa.Column('language', sa.String(length=5), nullable=False),
     sa.Column('count_subs', sa.SmallInteger(), nullable=False),
-    sa.PrimaryKeyConstraint('user_id')
+    sa.PrimaryKeyConstraint('user_id', name=op.f('pk_users'))
     )
     op.create_table('services',
     sa.Column('service_id', sa.Integer(), autoincrement=True, nullable=False),
@@ -32,9 +32,10 @@ def upgrade() -> None:
     sa.Column('months', sa.SmallInteger(), nullable=False),
     sa.Column('reminder', sa.DateTime(), nullable=False),
     sa.Column('service_by_user_id', sa.BigInteger(), nullable=False),
-    sa.ForeignKeyConstraint(['service_by_user_id'], ['users.user_id'], ),
-    sa.PrimaryKeyConstraint('service_id'),
-    sa.UniqueConstraint('service_id')
+    sa.ForeignKeyConstraint(
+        ['service_by_user_id'], ['users.user_id'], name=op.f('fk_services_service_by_user_id_users')
+    ),
+    sa.PrimaryKeyConstraint('service_id', name=op.f('pk_services'))
     )
     # ### end Alembic commands ###
 

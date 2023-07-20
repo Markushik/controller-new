@@ -31,7 +31,7 @@
 - [alembic](https://github.com/sqlalchemy/alembic) – migration tool
 - [taskiq](https://github.com/taskiq-python/taskiq) – distributed task queue
 - [dynaconf](https://github.com/dynaconf/dynaconf) – configuration management
-- [loguru](https://github.com/Delgan/loguru) – simple logging
+- [loguru](https://github.com/Delgan/loguru) – simple (stupid) logging
 
 ## 🐘 Database Models
 

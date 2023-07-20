@@ -14,11 +14,11 @@ from sqlalchemy.ext.asyncio import (
     AsyncEngine
 )
 from taskiq import (
+    Context,
     TaskiqState,
     TaskiqEvents,
     TaskiqDepends,
-    TaskiqScheduler,
-    Context
+    TaskiqScheduler
 )
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
