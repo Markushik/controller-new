@@ -25,7 +25,7 @@ from taskiq_nats import NatsBroker
 
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
-from application.infrastructure.database.models.tables import Service, User
+from application.infrastructure.database.models.base import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 

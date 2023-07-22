@@ -26,7 +26,7 @@ rich = "^13.4.2"
 colorama = "^0.4.6"
 dataclass-factory = "^2.16"
 diagrams = "^0.23.3"
-taskiq = "^0.8.4"
+taskiq = "0.8.2"
 taskiq-nats = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
