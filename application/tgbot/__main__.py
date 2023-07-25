@@ -26,7 +26,7 @@ from sqlalchemy.ext.asyncio import (
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.makers import maker
+from application.core.misc.makers import URLMakers
 from application.infrastructure.stream.worker import nats_polling
 from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
@@ -34,6 +34,8 @@ from application.tgbot.handlers import client
 from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
 from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import make_i18n_middleware, I18nMiddleware
+
+maker = URLMakers()
 
 
 async def _main() -> None:

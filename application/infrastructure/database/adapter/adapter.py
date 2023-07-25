@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.infrastructure.database.models.base import User, Service
@@ -17,7 +17,7 @@ class DbAdapter:
         return await self.session.get(User, user_id)
 
     async def get_services(self, user_id: int) -> None:
-        return await self.session.scalars(select(Service).where(Service.service_by_user_id == user_id))
+        return (await self.session.scalars(select(Service).where(Service.service_by_user_id == user_id))).all()
 
     async def get_user_count_subs(self, user_id: int) -> None:
         return await self.session.scalar(select(User.count_subs).where(User.user_id == user_id))
@@ -26,8 +26,9 @@ class DbAdapter:
         return await self.session.scalar(select(User.language).where(User.user_id == user_id))
 
     async def add_user(self, user_id: int, user_name: str, chat_id: int) -> None:
-        return self.session.add(
-            User(
+        return await self.session.execute(
+            insert(User)
+            .values(
                 user_id=user_id,
                 user_name=user_name,
                 chat_id=chat_id
@@ -35,8 +36,9 @@ class DbAdapter:
         )
 
     async def add_subscription(self, title: str, months: str, reminder: datetime, service_by_user_id: int) -> None:
-        return self.session.add(
-            Service(
+        return await self.session.execute(
+            insert(Service)
+            .values(
                 title=title,
                 months=months,
                 reminder=reminder,

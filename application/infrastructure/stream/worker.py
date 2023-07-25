@@ -8,11 +8,7 @@ from ormsgpack.ormsgpack import unpackb
 
 
 async def nats_polling(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -> None:
-    subscribe = await jetstream.subscribe(
-        stream="service_notify",
-        subject='service_notify.message',
-        durable='get_message'
-    )
+    subscribe = await jetstream.subscribe(subject='service_notify.message')
 
     async for message in subscribe.messages:
         try:

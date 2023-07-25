@@ -13,6 +13,14 @@ async def update_key(dialog_manager: DialogManager, lang: str) -> None:
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
 
+async def on_click_get_change_menu(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
+) -> None:
+    await dialog_manager.start(MainMenu.change, mode=StartMode.RESET_STACK)
+
+
 async def on_click_get_subs_menu(
         callback: CallbackQuery,
         button: Button,
@@ -48,9 +56,19 @@ async def on_click_get_help_menu(
 async def on_click_get_delete_menu(
         callback: CallbackQuery,
         button: Button,
-        dialog_manager: DialogManager
+        dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.start(MainMenu.delete, mode=StartMode.RESET_STACK)
+
+
+async def on_click_sub_change(
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
+        item_id: str
+) -> None:
+    await dialog_manager.start(MainMenu.parameters, mode=StartMode.RESET_STACK)
+    dialog_manager.dialog_data["service_id"] = int(item_id)
 
 
 async def on_click_sub_selected(

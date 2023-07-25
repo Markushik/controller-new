@@ -5,11 +5,17 @@ Back = ↩️ Back
 Administrator = 👨‍💻 Administrator
 Add = Add
 Delete = Delete
+Change = Change
+Title = Title
+Months = Months
+Date = Date
 Set-lang = 🌍 <b>Select</b> the language in which <b>the bot will communicate</b>:
 
 Catalog-add = <b>🗂️ Subscriptions add catalog:</b>
 
 { $subs }
+
+Catalog-change = Change
 
 Catalog-remove = <b>🗂️ Subscription removal catalog:</b>
 

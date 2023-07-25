@@ -48,5 +48,3 @@ class URLMakers:
             port=self.nats_port
         )
 
-
-maker: URLMakers = URLMakers()

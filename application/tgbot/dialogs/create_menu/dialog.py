@@ -1,7 +1,7 @@
 from aiogram.enums import ContentType
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.input import MessageInput
-from aiogram_dialog.widgets.kbd import Button, Row
+from aiogram_dialog.widgets.kbd import Button, Row, Group
 from aiogram_dialog.widgets.text import Const
 
 from application.tgbot.dialogs._extras.calendar import CustomCalendar
@@ -27,13 +27,17 @@ create_menu = Dialog(
     Window(
         I18NFormat("Add-service-months"),
         MessageInput(months_count_handler, content_types=[ContentType.TEXT]),
+        Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu),
         state=SubscriptionMenu.months,
     ),
     Window(
         I18NFormat("Add-calendar-date"),
-        CustomCalendar(
-            id="select_date_id",
-            on_click=on_click_calendar_reminder,
+        Group(
+            CustomCalendar(
+                id="select_date_id",
+                on_click=on_click_calendar_reminder,
+            ),
+            Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)
         ),
         state=SubscriptionMenu.reminder,
     ),

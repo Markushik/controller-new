@@ -21,5 +21,4 @@ async def command_start(message: Message, dialog_manager: DialogManager) -> None
         )
         await session.commit()
 
-    await message.answer("🤖")
     await dialog_manager.start(MainMenu.main, mode=StartMode.RESET_STACK)
