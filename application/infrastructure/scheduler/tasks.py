@@ -29,14 +29,14 @@ from application.infrastructure.database.models.base import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
-broker = NatsBroker([maker.nats_url.human_repr(), ], queue="send_service")
+broker = NatsBroker([maker.create_nats_url.human_repr(), ], queue="send_service")
 scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)])
 
 
 @broker.on_event(TaskiqEvents.WORKER_STARTUP)
 async def startup(state: TaskiqState) -> None:
-    nats_connect = await nats.connect(maker.nats_url.human_repr())
-    asyncio_engine: AsyncEngine = create_async_engine(url=maker.database_url.human_repr(), echo=True)
+    nats_connect = await nats.connect(maker.create_nats_url.human_repr())
+    asyncio_engine: AsyncEngine = create_async_engine(url=maker.create_postgres_url.human_repr(), echo=True)
 
     state.nats = nats_connect
     state.database = asyncio_engine

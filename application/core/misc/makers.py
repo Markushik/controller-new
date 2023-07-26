@@ -3,7 +3,7 @@ from yarl import URL
 from application.core.config.config import settings
 
 
-class URLMakers:
+class URLMaker:
     # Variables for PostgreSQL
     database_host: str = settings['postgres.POSTGRES_HOST']
     database_port: int = settings['postgres.POSTGRES_PORT']
@@ -21,7 +21,7 @@ class URLMakers:
     nats_port: int = settings['nats.NATS_PORT']
 
     @property
-    def database_url(self) -> URL:
+    def create_postgres_url(self) -> URL:
         return URL.build(
             scheme='postgresql+asyncpg',
             host=self.database_host,
@@ -32,7 +32,7 @@ class URLMakers:
         )
 
     @property
-    def redis_url(self) -> URL:
+    def create_redis_url(self) -> URL:
         return URL.build(
             scheme='redis',
             host=self.redis_host,
@@ -41,10 +41,12 @@ class URLMakers:
         )
 
     @property
-    def nats_url(self) -> URL:
+    def create_nats_url(self) -> URL:
         return URL.build(
             scheme='nats',
             host=self.nats_host,
             port=self.nats_port
         )
 
+
+maker = URLMaker()

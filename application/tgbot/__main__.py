@@ -26,16 +26,16 @@ from sqlalchemy.ext.asyncio import (
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.makers import URLMakers
+from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import nats_polling
+from application.tgbot.dialogs.change_menu.dialog import change_menu
 from application.tgbot.dialogs.create_menu.dialog import create_menu
+from application.tgbot.dialogs.delete_menu.dialog import delete_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
 from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
 from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import make_i18n_middleware, I18nMiddleware
-
-maker = URLMakers()
 
 
 async def _main() -> None:
@@ -50,22 +50,22 @@ async def _main() -> None:
     )
 
     storage: RedisStorage = RedisStorage.from_url(
-        url=maker.redis_url.human_repr(),
+        url=maker.create_redis_url.human_repr(),
         key_builder=DefaultKeyBuilder(with_destiny=True)
     )
 
     nats_connect: Client = await nats.connect(
-        servers=[maker.nats_url.human_repr(), ]
+        servers=[maker.create_nats_url.human_repr(), ]
     )
     jetstream: JetStreamContext = nats_connect.jetstream()
 
-    asyncio_engine: AsyncEngine = create_async_engine(
-        url=maker.database_url.human_repr(),
+    async_engine: AsyncEngine = create_async_engine(
+        url=maker.create_postgres_url.human_repr(),
         pool_pre_ping=True,
         echo=False
     )
-    session_maker: AsyncSession = async_sessionmaker(
-        bind=asyncio_engine,
+    async_session: AsyncSession = async_sessionmaker(
+        bind=async_engine,
         class_=AsyncSession,
         expire_on_commit=True
     )
@@ -78,10 +78,15 @@ async def _main() -> None:
     disp.message.middleware(i18n_middleware)
     disp.callback_query.middleware(i18n_middleware)
 
-    disp.update.outer_middleware(DbSessionMiddleware(session_maker=session_maker))
+    disp.update.outer_middleware(DbSessionMiddleware(session_maker=async_session))
 
     disp.include_router(client.router)
-    disp.include_routers(create_menu, main_menu)
+    disp.include_routers(
+        main_menu,
+        create_menu,
+        change_menu,
+        delete_menu
+    )
 
     disp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
     disp.errors.register(on_unknown_state, ExceptionTypeFilter(UnknownState))
@@ -98,13 +103,14 @@ async def _main() -> None:
         )
     finally:
         await storage.close()
-        await asyncio_engine.dispose()
+        await async_engine.dispose()
         await bot.session.close()
         await logger.complete()
 
 
 if __name__ == "__main__":
     try:
+        # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy()) # for psycopg
         asyncio.run(_main())
     except (SystemExit, KeyboardInterrupt):
         logger.warning("SHUTDOWN BOT")

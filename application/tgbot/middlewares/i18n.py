@@ -1,5 +1,11 @@
 import os
-from typing import Dict, Callable, Any, Awaitable, Union
+from typing import (
+    Dict,
+    Callable,
+    Any,
+    Awaitable,
+    Union
+)
 
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import CallbackQuery, Message
@@ -7,7 +13,7 @@ from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 from application.core.config.constants import DEFAULT_LOCALE, LOCALES
 from application.infrastructure.database.adapter.adapter import DbAdapter
-from application.tgbot.dialogs._extras.i18n_format import I18N_FORMAT_KEY
+from application.tgbot.dialogs.extras.i18n_format import I18N_FORMAT_KEY
 
 
 def make_i18n_middleware():
@@ -45,19 +51,12 @@ class I18nMiddleware(BaseMiddleware):
             event: Union[Message, CallbackQuery],
             data: Dict[str, Any],
     ) -> Any:
-
         session: DbAdapter = data["session"]
         language = await session.get_user_language(user_id=event.from_user.id)
 
-        match language:
-            case "en_GB":
-                lang = "en_GB"
-            case "ru_RU":
-                lang = "ru_RU"
-            case _:
-                lang = "ru_RU"
+        language = language or "ru_RU"
+        l10n = self.l10ns[language]
 
-        l10n = self.l10ns[lang]
         data_middleware = dict(
             zip(
                 ["l10n", "l10ns", I18N_FORMAT_KEY],

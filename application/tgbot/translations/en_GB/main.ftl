@@ -63,6 +63,7 @@ Set-for-delete = <b>Select</b> the subscription that you <b>want to delete</b>:
 Error-subs-limit = <b>🚫 Error:</b> Subscription limit reached
 Error-len-limit = <b>🚫 Error:</b> Character limit reached
 Error-unsupported-char = <b>🚫 Error:</b> Invalid characters entered
+Error-range-reached = <b>🚫 Error:</b> Value range reached
 
 Approve-sub-add = <b>✅ Approved:</b> Data written successfully
 Error-sub-add = <b>❎ Rejected:</b> Data not recorded
