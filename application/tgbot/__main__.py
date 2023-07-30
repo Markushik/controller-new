@@ -52,7 +52,10 @@ async def _main() -> None:
 
     storage: RedisStorage = RedisStorage.from_url(
         url=maker.create_redis_url.human_repr(),
-        key_builder=DefaultKeyBuilder(with_destiny=True, with_bot_id=True)
+        key_builder=DefaultKeyBuilder(
+            with_destiny=True,
+            with_bot_id=True
+        )
     )
 
     nats_connect: Client = await nats.connect(
@@ -63,7 +66,10 @@ async def _main() -> None:
     async_engine: AsyncEngine = create_async_engine(
         url=maker.create_postgres_url.human_repr(),
         pool_pre_ping=True,
-        echo=False
+        echo=False,
+        connect_args={
+            'server_settings': {'jit': 'off'}
+        }
     )
     async_session: AsyncSession = async_sessionmaker(
         bind=async_engine,
@@ -94,7 +100,7 @@ async def _main() -> None:
 
     setup_dialogs(disp)
 
-    logger.info("LAUNCHING BOT")
+    logger.info("Bot Launching")
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
@@ -112,7 +118,6 @@ async def _main() -> None:
 
 if __name__ == "__main__":
     try:
-        # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy()) # for psycopg
         asyncio.run(_main())
     except (SystemExit, KeyboardInterrupt):
-        logger.warning("SHUTDOWN BOT")
+        logger.warning("Bot Shutdown")

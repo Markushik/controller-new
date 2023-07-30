@@ -17,7 +17,7 @@ class DbAdapter:
         return await self.session.get(User, user_id)
 
     async def get_services(self, user_id: int) -> None:
-        return (await self.session.scalars(select(Service).where(Service.service_by_user_id == user_id))).all()
+        return (await self.session.scalars(select(Service).where(Service.service_fk == user_id))).all()
 
     async def get_user_count_subs(self, user_id: int) -> None:
         return await self.session.scalar(select(User.count_subs).where(User.user_id == user_id))
@@ -35,14 +35,14 @@ class DbAdapter:
             )
         )
 
-    async def create_subscription(self, title: str, months: int, reminder: datetime, service_by_user_id: int) -> None:
+    async def create_subscription(self, title: str, months: int, reminder: datetime, service_fk: int) -> None:
         return await self.session.execute(
             insert(Service)
             .values(
                 title=title,
                 months=months,
                 reminder=reminder,
-                service_by_user_id=service_by_user_id
+                service_fk=service_fk
             )
         )
 

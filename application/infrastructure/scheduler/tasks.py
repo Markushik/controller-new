@@ -2,8 +2,10 @@ import datetime
 import logging
 import uuid
 
+import lz4.frame
 import nats
 import orjson
+from loguru import logger
 from sqlalchemy import (
     select,
     func,
@@ -12,7 +14,8 @@ from sqlalchemy import (
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
-    AsyncEngine
+    AsyncEngine,
+    AsyncSession
 )
 from taskiq import (
     Context,
@@ -36,15 +39,26 @@ scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)]
 
 @broker.on_event(TaskiqEvents.WORKER_STARTUP)
 async def startup(state: TaskiqState) -> None:
+    logger.info("Taskiq Launching")
+
     nats_connect = await nats.connect(maker.create_nats_url.human_repr())
-    asyncio_engine: AsyncEngine = create_async_engine(url=maker.create_postgres_url.human_repr(), echo=False)
+    async_engine: AsyncEngine = create_async_engine(
+        url=maker.create_postgres_url.human_repr(),
+        pool_pre_ping=True,
+        echo=False,
+        connect_args={
+            'server_settings': {'jit': 'off'}
+        }
+    )
 
     state.nats = nats_connect
-    state.database = asyncio_engine
+    state.database = async_engine
 
 
 @broker.on_event(TaskiqEvents.WORKER_SHUTDOWN)
 async def shutdown(state: TaskiqState) -> None:
+    logger.info("Taskiq Shutdown")
+
     await state.nats.drain()
     await state.database.dispose()
 
@@ -55,22 +69,18 @@ async def shutdown(state: TaskiqState) -> None:
 )
 async def base_polling_task(context: Context = TaskiqDepends()) -> None:
     nats_connect = context.state.nats
-    asyncio_engine = context.state.database
+    async_engine = context.state.database
 
     jetstream = nats_connect.jetstream()
-    session_maker = async_sessionmaker(asyncio_engine, expire_on_commit=True)
+    async_session: AsyncSession = async_sessionmaker(
+        bind=async_engine,
+        expire_on_commit=True  # when commit, load new object in db
+    )
 
-    async with session_maker() as session:
+    async with async_session() as session:
         async with session.begin():
-            request = await session.execute(
-                select(
-                    Service.service_id,
-                    Service.service_by_user_id,
-                    User.language,
-                    Service.title,
-                    Service.reminder
-                )
-                .join(User, User.user_id == Service.service_by_user_id)
+            request = await session.scalars(
+                select(Service)
                 .where(func.date(Service.reminder) == datetime.datetime.utcnow().date())
             )
             services = request.all()
@@ -80,20 +90,30 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
                     stream="service_notify",
                     timeout=10,
                     subject="service_notify.message",
-                    payload=orjson.dumps(
-                        {
-                            "user_id": service[1],
-                            "language": service[2],
-                            "service_name": service[3],
-                        }
+                    payload=lz4.frame.compress(  # compress data (read the lz4 technology)
+                        orjson.dumps(  # or you can use ormsgpack
+                            {
+                                "user_id": service.user.user_id,
+                                "language": service.user.language,
+                                "service_name": service.title,
+                            }
+                        )
                     ),
                     headers={
                         "Nats-Msg-Id": uuid.uuid4().hex,
                     }
                 )
 
-                await session.execute(delete(Service).where(Service.service_id == service[0]))
-                await session.merge(User(user_id=service.service_by_user_id, count_subs=User.count_subs - 1))
+                await session.execute(
+                    delete(Service)
+                    .where(Service.service_id == service.service_id)
+                )
+                await session.merge(
+                    User(
+                        user_id=service.service_fk,
+                        count_subs=User.count_subs - 1
+                    )
+                )
 
     await session.commit()
     await session.close()

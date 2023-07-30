@@ -1,5 +1,6 @@
 import asyncio
 
+import lz4.frame
 import orjson
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
@@ -17,7 +18,7 @@ async def nats_polling(bot: Bot, i18n_middleware, jetstream: JetStreamContext) -
 
     async for message in subscribe.messages:
         try:
-            data = orjson.loads(message.data)
+            data = orjson.loads(lz4.frame.decompress(message.data))
 
             user_id = data["user_id"]
             service = data["service_name"]

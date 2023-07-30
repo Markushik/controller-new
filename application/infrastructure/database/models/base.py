@@ -15,10 +15,10 @@ from sqlalchemy import (
 from sqlalchemy import MetaData
 from sqlalchemy.orm import (
     DeclarativeBase,
-    registry
+    registry,
+    relationship
 )
 from sqlalchemy.orm import Mapped, mapped_column
-
 
 convention = {
     "ix": "ix_%(column_0_label)s",
@@ -45,10 +45,6 @@ class User(BaseModel):
     language: Mapped[str] = mapped_column(String(length=5), default="ru_RU")
     count_subs: Mapped[int] = mapped_column(SmallInteger, default=0)
 
-    # test_user: Mapped[List["Service"]] = relationship(back_populates='test_service')
-
-    __mapper_args__ = {"eager_defaults": True}
-
 
 class Service(BaseModel):
     __tablename__ = "services"
@@ -58,9 +54,5 @@ class Service(BaseModel):
     months: Mapped[int] = mapped_column(SmallInteger)
     reminder: Mapped[datetime] = mapped_column(DateTime)
 
-    service_by_user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.user_id"))  # service_fk
-
-    # test_service: Mapped["User"] = relationship(back_populates='test_user')
-
-    __mapper_args__ = {"eager_defaults": True}
-
+    service_fk: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.user_id"))
+    user: Mapped["User"] = relationship(argument="User", lazy="immediate")

@@ -68,7 +68,7 @@ async def on_click_button_confirm(
         title=dialog_manager.dialog_data['service'],
         months=dialog_manager.dialog_data['months'],
         reminder=datetime.fromisoformat(dialog_manager.dialog_data['reminder']),
-        service_by_user_id=callback.from_user.id
+        service_fk=callback.from_user.id
     )
     await session.increment_count(user_id=dialog_manager.event.from_user.id)
     await session.commit()
