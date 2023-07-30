@@ -1,4 +1,4 @@
-в <p align="center">
+<p align="center">
 <img src="https://img.shields.io/badge/Telegram-%40sub__controller__bot-blue?style=flat-square" alt="https://t.me/sub_controller_bot">
 <img src="https://img.shields.io/badge/Docker%20Hub-controller--new-green?style=flat-square" alt="https://hub.docker.com/repository/docker/markushik/controller-new/">
 

@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+import markupsafe
 from aiogram.methods import SendMessage
 from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import (
@@ -22,7 +23,7 @@ async def service_name_handler(
     if len(message.text) > 30:
         return await message.answer(l10n.format_value("Error-len-limit"))
 
-    dialog_manager.dialog_data["service"] = message.text
+    dialog_manager.dialog_data["service"] = markupsafe.escape(message.text)
     await dialog_manager.switch_to(CreateMenu.MONTHS)
 
 
@@ -63,7 +64,7 @@ async def on_click_button_confirm(
     l10n = dialog_manager.middleware_data["l10n"]
     session = dialog_manager.middleware_data["session"]
 
-    await session.add_subscription(
+    await session.create_subscription(
         title=dialog_manager.dialog_data['service'],
         months=dialog_manager.dialog_data['months'],
         reminder=datetime.fromisoformat(dialog_manager.dialog_data['reminder']),

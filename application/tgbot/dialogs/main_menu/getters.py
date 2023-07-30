@@ -1,11 +1,12 @@
-import asyncstdlib
 from aiogram_dialog import DialogManager
 
 from application.core.config.constants import LANGUAGES
 
 
 async def get_langs_for_output(**kwargs) -> None:
-    return {'langs': [item async for item in asyncstdlib.enumerate(LANGUAGES)]}
+    return {
+        'langs': [item for item in enumerate(LANGUAGES)]
+    }
 
 
 async def get_input_service_data(dialog_manager: DialogManager, **kwargs) -> None:

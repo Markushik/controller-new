@@ -18,6 +18,9 @@ class CreateMenu(StatesGroup):
 class ChangeMenu(StatesGroup):
     CHANGE = State()
     PARAMETERS = State()
+    TITLE = State()
+    MONTHS = State()
+    REMINDER = State()
     CHECK_CHANGE = State()
 
 

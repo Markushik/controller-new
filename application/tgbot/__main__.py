@@ -43,6 +43,7 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
+
     logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
     logger.add(
         '../../debug.log', format='{time} {level} {message}', level='INFO',
@@ -51,7 +52,7 @@ async def _main() -> None:
 
     storage: RedisStorage = RedisStorage.from_url(
         url=maker.create_redis_url.human_repr(),
-        key_builder=DefaultKeyBuilder(with_destiny=True)
+        key_builder=DefaultKeyBuilder(with_destiny=True, with_bot_id=True)
     )
 
     nats_connect: Client = await nats.connect(
@@ -103,8 +104,9 @@ async def _main() -> None:
         )
     finally:
         await storage.close()
-        await async_engine.dispose()
         await bot.session.close()
+        await async_engine.dispose()
+        await nats_connect.drain()
         await logger.complete()
 
 

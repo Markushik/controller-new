@@ -1,12 +1,13 @@
 import datetime
 import logging
+import uuid
 
 import nats
-from ormsgpack.ormsgpack import packb
+import orjson
 from sqlalchemy import (
     select,
-    delete,
-    func
+    func,
+    delete
 )
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
@@ -29,14 +30,14 @@ from application.infrastructure.database.models.base import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
-broker = NatsBroker([maker.create_nats_url.human_repr(), ], queue="send_service")
+broker = NatsBroker(servers=[maker.create_nats_url.human_repr(), ], queue="send_service")
 scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)])
 
 
 @broker.on_event(TaskiqEvents.WORKER_STARTUP)
 async def startup(state: TaskiqState) -> None:
     nats_connect = await nats.connect(maker.create_nats_url.human_repr())
-    asyncio_engine: AsyncEngine = create_async_engine(url=maker.create_postgres_url.human_repr(), echo=True)
+    asyncio_engine: AsyncEngine = create_async_engine(url=maker.create_postgres_url.human_repr(), echo=False)
 
     state.nats = nats_connect
     state.database = asyncio_engine
@@ -79,7 +80,7 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
                     stream="service_notify",
                     timeout=10,
                     subject="service_notify.message",
-                    payload=packb(
+                    payload=orjson.dumps(
                         {
                             "user_id": service[1],
                             "language": service[2],
@@ -87,7 +88,7 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
                         }
                     ),
                     headers={
-                        'Foo': 'Bar'  # FIXME: change headers
+                        "Nats-Msg-Id": uuid.uuid4().hex,
                     }
                 )
 

@@ -20,37 +20,73 @@ class InterceptHandler(logging.Handler):
             level, record.getMessage()
         )
 
-# import logging
+# import logging.config
+#
 # import structlog
-# logger = structlog.get_logger()
 #
-# configure_logger(logging.getLogger(), "INFO")
 #
-# await logger.ainfo("LAUNCHING BOT")
-#
-# def configure_logger(logger, level):
+# def configure_logger():
+#     timestamper = structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S", utc=False)
+#     pre_chain = [
+#         structlog.stdlib.add_log_level,
+#         structlog.stdlib.ExtraAdder()
+#     ]
+#     logging.config.dictConfig({
+#         "version": 1,
+#         "disable_existing_loggers": False,
+#         "formatters": {
+#             "plain": {
+#                 "()": structlog.stdlib.ProcessorFormatter,
+#                 "processors": [
+#                     timestamper,
+#                     structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+#                     structlog.dev.ConsoleRenderer(colors=False),
+#                 ],
+#                 "foreign_pre_chain": pre_chain,
+#             },
+#             "colored": {
+#                 "()": structlog.stdlib.ProcessorFormatter,
+#                 "processors": [
+#                     timestamper,
+#                     structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+#                     structlog.dev.ConsoleRenderer(colors=True),
+#                 ],
+#                 "foreign_pre_chain": pre_chain,
+#             },
+#         },
+#         "handlers": {
+#             "default": {
+#                 "level": "INFO",
+#                 "class": "logging.StreamHandler",
+#                 "formatter": "colored",
+#             },
+#             "file": {
+#                 "level": "DEBUG",
+#                 "class": "logging.handlers.WatchedFileHandler",
+#                 "filename": "debug.log",
+#                 "formatter": "plain",
+#             },
+#         },
+#         "loggers": {
+#             "": {
+#                 "handlers": ["default", "file"],
+#                 "level": "DEBUG",
+#                 "propagate": True,
+#             },
+#         }
+#     })
 #     structlog.configure(
 #         processors=[
-#             structlog.contextvars.merge_contextvars,
+#             structlog.stdlib.add_log_level,
 #             structlog.stdlib.PositionalArgumentsFormatter(),
-#             structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S"),
+#             timestamper,
 #             structlog.processors.StackInfoRenderer(),
 #             structlog.processors.format_exc_info,
-#             structlog.processors.add_log_level,
-#             structlog.dev.ConsoleRenderer(),
+#             structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
 #         ],
-#         wrapper_class=structlog.make_filtering_bound_logger(logging.NOTSET),
-#         context_class=dict,
-#         logger_factory=structlog.PrintLoggerFactory(),
-#         cache_logger_on_first_use=True
+#         logger_factory=structlog.stdlib.LoggerFactory(),
+#         wrapper_class=structlog.stdlib.BoundLogger,
+#         cache_logger_on_first_use=True,
 #     )
-#
-#     formatter = structlog.stdlib.ProcessorFormatter(
-#         processor=structlog.dev.ConsoleRenderer()
-#     )
-#
-#     handler = logging.StreamHandler()
-#     handler.setFormatter(formatter)
-#
-#     logger.addHandler(handler)
-#     logger.setLevel(level)
+#     logger: structlog.stdlib.BoundLogger = structlog.get_logger()
+#     return logger
