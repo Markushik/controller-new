@@ -34,15 +34,15 @@
 - [dynaconf](https://github.com/dynaconf/dynaconf) – configuration management
 - [loguru](https://github.com/Delgan/loguru) – simple (stupid) logging
 
-### Auxiliary libraries
+### Auxiliary Libraries
 
 - [lz4](https://github.com/lz4/lz4) – compression technology
 - [ormsgpack](https://github.com/aviramha/ormsgpack) – msgpack serialization
 - [orjson](https://github.com/ijl/orjson) – fast JSON serializer
 - [markupsafe](https://github.com/pallets/markupsafe) – safely add untrusted strings to HTML
-- [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization 
+- [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization
 
-## 🐘 Database Models
+## 🐘 Database Schemas
 
 [![draw-SQL-controller-new-export-2023-07-31-1.png](https://i.postimg.cc/MpxWLH4b/draw-SQL-controller-new-export-2023-07-31-1.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
 
@@ -51,12 +51,15 @@
 ### 🐳 Docker
 
 **1. Clone the repository:**
+
 ```
 git clone https://github.com/Markushik/controller-new.git
 ```
+
 **2. Create file `.secrets.toml` in folder `configs` and fill data**
 
 **3. Run the command:**
+
 ```
 docker-compose up
 ```
@@ -64,21 +67,27 @@ docker-compose up
 ### 💻 Default
 
 **1. Clone the repository:**
+
 ```
 git clone https://github.com/Markushik/controller-new.git
 ```
+
 **2. Create file `.secrets.toml` in folder `configs` and fill data**
 
 **3. Bring up PostgreSQL, Redis and NATS**
 
 **4. First run the `taskiq` scripts:**
+
 ```
 taskiq worker application.infrastructure.scheduler.tasks:broker
 ```
+
 ```
 taskiq scheduler application.infrastructure.scheduler.tasks:scheduler
 ```
+
 **5. Second run the `bot`:**
+
 ```
 python -m application.tgbot
 ```
