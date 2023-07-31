@@ -29,9 +29,18 @@
 - [asyncpg](https://github.com/MagicStack/asyncpg) – fast client for PostgreSQL Database
 - [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy) – SQL toolkit & ORM
 - [alembic](https://github.com/sqlalchemy/alembic) – migration tool
+- [nats-py](https://github.com/nats-io/nats.py) - Python client for NATS
 - [taskiq](https://github.com/taskiq-python/taskiq) – distributed task queue
 - [dynaconf](https://github.com/dynaconf/dynaconf) – configuration management
 - [loguru](https://github.com/Delgan/loguru) – simple (stupid) logging
+
+### Auxiliary libraries
+
+- [lz4](https://github.com/lz4/lz4) – compression technology
+- [ormsgpack](https://github.com/aviramha/ormsgpack) – msgpack serialization
+- [orjson](https://github.com/ijl/orjson) – fast JSON serializer
+- [markupsafe](https://github.com/pallets/markupsafe) – safely add untrusted strings to HTML
+- [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization 
 
 ## 🐘 Database Models
 
