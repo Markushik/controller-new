@@ -28,7 +28,7 @@ from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import nats_polling
-from application.tgbot.dialogs.change_menu.dialog import change_menu
+# from application.tgbot.dialogs.change_menu.dialog import change_menu
 from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.delete_menu.dialog import delete_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
@@ -91,7 +91,7 @@ async def _main() -> None:
     disp.include_routers(
         main_menu,
         create_menu,
-        change_menu,
+        # change_menu,
         delete_menu
     )
 

@@ -33,6 +33,7 @@ delete_menu = Dialog(
                     item_id_getter=itemgetter(0),
                     items="subs",
                     on_click=on_click_sub_selected,
+                    type_factory=int
                 ),
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_get_subs_menu)

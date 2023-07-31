@@ -29,7 +29,7 @@ from taskiq_nats import NatsBroker
 
 from application.core.misc.logging import InterceptHandler
 from application.core.misc.makers import maker
-from application.infrastructure.database.models.base import Service, User
+from application.infrastructure.database.models import Service, User
 
 logging.basicConfig(handlers=[InterceptHandler()], level="INFO")
 
@@ -74,7 +74,7 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
     jetstream = nats_connect.jetstream()
     async_session: AsyncSession = async_sessionmaker(
         bind=async_engine,
-        expire_on_commit=True  # when commit, load new object in db
+        expire_on_commit=True  # when you commit, load new object from database
     )
 
     async with async_session() as session:

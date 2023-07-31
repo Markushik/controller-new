@@ -10,7 +10,6 @@ from aiogram_dialog.widgets.kbd import (
 )
 from aiogram_dialog.widgets.text import Const, Format
 
-from application.tgbot.dialogs.change_menu.handlers import on_click_get_change_menu
 from application.tgbot.dialogs.create_menu.getters import get_subs_for_output
 from application.tgbot.dialogs.delete_menu.handerls import on_click_get_delete_menu
 from application.tgbot.dialogs.extras.i18n_format import I18NFormat
@@ -59,7 +58,7 @@ main_menu = Dialog(
         Group(
             Row(
                 Button(I18NFormat("Add"), id="add_id", on_click=on_click_sub_create),
-                Button(I18NFormat("Change"), id="change_id", on_click=on_click_get_change_menu),
+                Button(I18NFormat("Change"), id="change_id"),
                 Button(I18NFormat("Delete"), id="remove_id", on_click=on_click_get_delete_menu)
             ),
             Button(I18NFormat("Back"), id="back_id", on_click=on_click_back_to_main_menu)

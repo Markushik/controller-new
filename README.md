@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://img.shields.io/badge/Telegram-%40sub__controller__bot-blue?style=flat-square" alt="https://t.me/sub_controller_bot">
+<img src="https://img.shields.io/badge/Telegram-%40sub__controller__bot-blue?style=flat-square" alt="https://t.me/sub_controller_bot/">
 <img src="https://img.shields.io/badge/Docker%20Hub-controller--new-green?style=flat-square" alt="https://hub.docker.com/repository/docker/markushik/controller-new/">
 
 <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="https://opensource.org/licenses/MIT/">
@@ -35,20 +35,46 @@
 
 ## 🐘 Database Models
 
-[![draw-SQL-controller-new-export-2023-07-11.png](https://i.postimg.cc/mrJwFkqj/draw-SQL-controller-new-export-2023-07-11.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
+[![draw-SQL-controller-new-export-2023-07-31-1.png](https://i.postimg.cc/MpxWLH4b/draw-SQL-controller-new-export-2023-07-31-1.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
 
-## 🐋 Deployment
+## 🪛 Installation
 
-**1. Clone the repository**
+### 🐳 Docker
 
+**1. Clone the repository:**
 ```
 git clone https://github.com/Markushik/controller-new.git
 ```
+**2. Create file `.secrets.toml` in folder `configs` and fill data**
 
-**2. Create file `.secrets.toml` in folder configs and fill data**
-
-**3. Run the command**
-
+**3. Run the command:**
 ```
 docker-compose up
 ```
+
+### 💻 Default
+
+**1. Clone the repository:**
+```
+git clone https://github.com/Markushik/controller-new.git
+```
+**2. Create file `.secrets.toml` in folder `configs` and fill data**
+
+**3. Bring up PostgreSQL, Redis and NATS**
+
+**4. First run the `taskiq` scripts:**
+```
+taskiq worker application.infrastructure.scheduler.tasks:broker
+```
+```
+taskiq scheduler application.infrastructure.scheduler.tasks:scheduler
+```
+**5. Second run the `bot`:**
+```
+python -m application.tgbot
+```
+
+## ✅ ToDo's
+
+- Changing subscription options
+- Renewal Subscription

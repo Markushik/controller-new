@@ -57,12 +57,8 @@ class I18nMiddleware(BaseMiddleware):
         language = language or "ru_RU"
         l10n = self.l10ns[language]
 
-        data_middleware = dict(
-            zip(
-                ["l10n", "l10ns", I18N_FORMAT_KEY],
-                [l10n, self.l10ns, l10n.format_value]
-            )
-        )
-        data.update(data_middleware)
+        data["l10n"] = l10n
+        data["l10ns"] = self.l10ns
+        data[I18N_FORMAT_KEY] = l10n.format_value
 
         return await handler(event, data)

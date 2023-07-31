@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import select, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.infrastructure.database.models.base import User, Service
+from application.infrastructure.database.models import User, Service
 
 
 class DbAdapter:
@@ -15,6 +15,9 @@ class DbAdapter:
 
     async def get_user(self, user_id: int) -> None:
         return await self.session.get(User, user_id)
+
+    async def get_service(self, service_id: int) -> None:
+        return await self.session.scalar(select(Service).where(Service.service_id == service_id))
 
     async def get_services(self, user_id: int) -> None:
         return (await self.session.scalars(select(Service).where(Service.service_fk == user_id))).all()
