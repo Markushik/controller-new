@@ -20,6 +20,7 @@ class InterceptHandler(logging.Handler):
             level, record.getMessage()
         )
 
+
 # import logging.config
 #
 # import structlog

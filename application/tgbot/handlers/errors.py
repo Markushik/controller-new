@@ -5,10 +5,10 @@ from application.tgbot.states.states import MainMenu
 
 
 async def on_unknown_intent(event, dialog_manager: DialogManager):
-    logger.info("Restarting dialog: %s", event.exception)
+    logger.info('Restarting dialog: %s', event.exception)
     await dialog_manager.start(MainMenu.MAIN, mode=StartMode.RESET_STACK)
 
 
 async def on_unknown_state(event, dialog_manager: DialogManager):
-    logger.info("Restarting dialog: %s", event.exception)
+    logger.info('Restarting dialog: %s', event.exception)
     await dialog_manager.start(MainMenu.MAIN, mode=StartMode.RESET_STACK)

@@ -4,7 +4,7 @@ from aiogram_dialog.api.protocols import DialogManager
 from aiogram_dialog.widgets.common import WhenCondition
 from aiogram_dialog.widgets.text import Text
 
-I18N_FORMAT_KEY = "aiogd_i18n_format"
+I18N_FORMAT_KEY = 'aiogd_i18n_format'
 
 
 class Values(Protocol):
@@ -23,6 +23,7 @@ class I18NFormat(Text):
 
     async def _render_text(self, data: Dict, manager: DialogManager) -> str:
         format_text = manager.middleware_data.get(
-            I18N_FORMAT_KEY, default_format_text,
+            I18N_FORMAT_KEY,
+            default_format_text,
         )
         return format_text(self.text, data)

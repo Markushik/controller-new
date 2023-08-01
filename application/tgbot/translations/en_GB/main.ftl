@@ -73,3 +73,5 @@ Reject-sub-delete = <b>❎ Rejected:</b> Subscription not deleted
 
 Notification-message = <b>🔔 Notification</b>
                        <b>We remind you</b> that your <code>{ $service }</code> subscription will soon <b>end</b>!
+
+Renew-subscription = Renew subscription
