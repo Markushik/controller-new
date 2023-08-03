@@ -70,10 +70,12 @@ async def _main() -> None:
         url=maker.create_postgres_url.human_repr(),
         pool_pre_ping=True,
         echo=False,
-        connect_args={'server_settings': {'jit': 'off'}},
     )
-    async_session: AsyncSession = async_sessionmaker(
-        bind=async_engine, class_=AsyncSession, expire_on_commit=True
+    async_session_maker: async_sessionmaker = async_sessionmaker(
+        bind=async_engine,
+        class_=AsyncSession,
+        autoflush=True,
+        expire_on_commit=True,
     )
 
     bot: Bot = Bot(token=settings['API_TOKEN'], parse_mode=ParseMode.HTML)
@@ -87,14 +89,13 @@ async def _main() -> None:
     disp.callback_query.middleware(i18n_middleware)
 
     disp.update.outer_middleware(
-        DbSessionMiddleware(session_maker=async_session)
+        DbSessionMiddleware(session_maker=async_session_maker)
     )
 
     disp.include_router(client.router)
     disp.include_routers(
         main_menu,
         create_menu,
-        # change_menu,
         delete_menu,
     )
 
@@ -121,6 +122,7 @@ async def _main() -> None:
 
 if __name__ == '__main__':
     try:
+        # asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
         asyncio.run(_main())
     except (SystemExit, KeyboardInterrupt):
         logger.warning('Bot Shutdown')

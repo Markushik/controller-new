@@ -8,7 +8,12 @@ from sqlalchemy import (
     String,
     DateTime,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import (
+    Mapped,
+    Relationship,
+    mapped_column,
+)
+
 from .base import BaseModel
 
 
@@ -28,17 +33,24 @@ class User(BaseModel):
 class Service(BaseModel):
     __tablename__ = 'services'
 
-    service_id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
-    )
+    service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    service_fk: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.user_id'))
     title: Mapped[str] = mapped_column(String(length=30))
     months: Mapped[int] = mapped_column(SmallInteger)
     reminder: Mapped[datetime] = mapped_column(DateTime)
 
-    service_fk: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey('users.user_id')
+    user: Mapped['User'] = Relationship(
+        argument='User', lazy='immediate', backref='services'
     )
-    user: Mapped['User'] = relationship(argument='User', lazy='immediate')
 
     def __repr__(self) -> str:
         return f'Service:{self.service_id}:{self.title}:{self.reminder}'
+
+
+class CommonService(BaseModel):
+    __tablename__ = 'common_services'
+
+    title: Mapped[str] = mapped_column(String(length=255), primary_key=True)
+
+    def __repr__(self) -> str:
+        return f'CommonService:{self.title}'

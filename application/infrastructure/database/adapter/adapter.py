@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import select, delete, insert
+from sqlalchemy import (
+    select,
+    delete,
+    insert
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.infrastructure.database.models import User, Service

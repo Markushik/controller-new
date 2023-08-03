@@ -22,7 +22,7 @@ class URLMaker:
     @property
     def create_postgres_url(self) -> URL:
         return URL.build(
-            scheme='postgresql+asyncpg',
+            scheme='postgresql+asyncpg',  # or psycopg_async
             host=self.database_host,
             port=self.database_port,
             user=self.database_username,

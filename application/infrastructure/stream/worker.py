@@ -9,7 +9,9 @@ from nats.js import JetStreamContext
 
 
 async def nats_polling(
-    bot: Bot, i18n_middleware, jetstream: JetStreamContext
+        bot: Bot,
+        i18n_middleware,
+        jetstream: JetStreamContext
 ) -> None:
     subscribe = await jetstream.subscribe(
         stream='service_notify',
@@ -26,8 +28,7 @@ async def nats_polling(
             service = data['service_name']
             language = data['language']
 
-            l10ns = i18n_middleware.l10ns
-            l10n = l10ns[language]
+            l10n = i18n_middleware.l10ns[language]
 
             await bot.send_message(
                 chat_id=user_id,
