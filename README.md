@@ -42,9 +42,12 @@
 - [markupsafe](https://github.com/pallets/markupsafe) – safely add untrusted strings to HTML
 - [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization
 
-## 🐘 Database Schemas
+## 🔸 Application Schema
+...
 
-[![draw-SQL-controller-new-export-2023-07-31-1.png](https://i.postimg.cc/MpxWLH4b/draw-SQL-controller-new-export-2023-07-31-1.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
+## 🐘 Database Schema
+
+[![schemas.png](https://i.postimg.cc/c4thQY99/schemas.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
 
 ## 🪛 Installation
 
@@ -96,4 +99,4 @@ python -m application.tgbot
 
 - Changing subscription options
 - Renewal Subscription
-- Services table
+- Common services table
