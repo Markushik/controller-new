@@ -40,7 +40,9 @@ async def startup(state: TaskiqState) -> None:
 
     nats_connect = await nats.connect(maker.create_nats_url.human_repr())
     async_engine: AsyncEngine = create_async_engine(
-        url=maker.create_postgres_url.human_repr(), pool_pre_ping=True, echo=False,
+        url=maker.create_postgres_url.human_repr(),
+        pool_pre_ping=True,
+        echo=False,
     )
 
     state.nats = nats_connect

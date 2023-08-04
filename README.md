@@ -42,12 +42,12 @@
 - [markupsafe](https://github.com/pallets/markupsafe) – safely add untrusted strings to HTML
 - [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization
 
-## 🔸 Application Schema
-...
+## ⭐ Application Schema
+[![application-schema.png](https://i.postimg.cc/YCg4LRKZ/application-schema.png)](https://github.com/Markushik/controller-new/)
 
 ## 🐘 Database Schema
 
-[![schemas.png](https://i.postimg.cc/c4thQY99/schemas.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new)
+[![database-scheme.png](https://i.postimg.cc/BbYFNnMz/database-scheme.png)](https://drawsql.app/teams/marqezs-team/diagrams/controller-new/)
 
 ## 🪛 Installation
 

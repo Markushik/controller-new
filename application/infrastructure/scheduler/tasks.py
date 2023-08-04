@@ -3,7 +3,11 @@ import datetime
 import lz4.frame
 import orjson
 import uuid6
-from sqlalchemy import select, func, delete
+from sqlalchemy import (
+    select,
+    func,
+    delete
+)
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     AsyncSession,

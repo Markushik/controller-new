@@ -1,39 +1,55 @@
 from aiogram.types import CallbackQuery
-from aiogram_dialog import DialogManager, StartMode, DialogProtocol
+from aiogram_dialog import (
+    DialogManager,
+    StartMode,
+    DialogProtocol
+)
 from aiogram_dialog.widgets.kbd import Button
 
 from application.tgbot.dialogs.extras.i18n_format import I18N_FORMAT_KEY
-from application.tgbot.states.states import MainMenu, CreateMenu, DeleteMenu
+from application.tgbot.states.states import (
+    MainMenu,
+    CreateMenu,
+    DeleteMenu
+)
 
 
 async def on_click_get_subs_menu(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(MainMenu.CONTROL, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
 
 
 async def on_click_back_to_main_menu(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(MainMenu.MAIN, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=MainMenu.MAIN, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_settings_menu(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(MainMenu.SETTINGS, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=MainMenu.SETTINGS, mode=StartMode.RESET_STACK)
 
 
 async def on_click_get_help_menu(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(MainMenu.HELP, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=MainMenu.HELP, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_create(
-    callback: CallbackQuery,
-    dialog: DialogProtocol,
-    dialog_manager: DialogManager,
+        callback: CallbackQuery,
+        protocol: DialogProtocol,
+        dialog_manager: DialogManager,
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -43,17 +59,15 @@ async def on_click_sub_create(
     )
 
     if count_subs < 7:
-        return await dialog_manager.start(
-            CreateMenu.TITLE, mode=StartMode.RESET_STACK
-        )
+        return await dialog_manager.start(state=CreateMenu.TITLE, mode=StartMode.RESET_STACK)
 
     await callback.message.edit_text(l10n.format_value('Error-subs-limit'))
     await dialog_manager.done()
-    await dialog_manager.start(MainMenu.CONTROL, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_delete(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -66,23 +80,22 @@ async def on_click_sub_delete(
 
     await callback.message.edit_text(l10n.format_value('Approve-sub-delete'))
     await dialog_manager.done()
-    await dialog_manager.start(DeleteMenu.DELETE, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(state=DeleteMenu.DELETE, mode=StartMode.RESET_STACK)
 
 
 async def update_format_key(
-    dialog_manager: DialogManager, language: str
+        dialog_manager: DialogManager,
+        language: str
 ) -> None:
-    l10ns = dialog_manager.middleware_data['l10ns']
-    l10n = l10ns[language]
-
+    l10n = dialog_manager.middleware_data['l10ns'][language]
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
 
 async def on_click_change_lang(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
-    item_id: str,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
+        item_id: str,
 ) -> None:
     session = dialog_manager.middleware_data['session']
 
@@ -94,7 +107,5 @@ async def on_click_change_lang(
         await callback.answer('You switched language to 🇬🇧 English')
 
     await update_format_key(dialog_manager=dialog_manager, language=language)
-    await session.update_language(
-        user_id=dialog_manager.event.from_user.id, language=language
-    )
+    await session.update_language(user_id=dialog_manager.event.from_user.id, language=language)
     await session.commit()
