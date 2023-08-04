@@ -30,6 +30,7 @@ from application.core.misc.makers import maker
 from application.infrastructure.stream.worker import nats_polling
 from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.delete_menu.dialog import delete_menu
+from application.tgbot.dialogs.edit_menu.dialog import edit_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
 from application.tgbot.handlers.errors import (
@@ -97,6 +98,7 @@ async def _main() -> None:
         main_menu,
         create_menu,
         delete_menu,
+        edit_menu,
     )
 
     disp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))

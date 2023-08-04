@@ -71,7 +71,13 @@ Error-sub-add = <b>❎ Rejected:</b> Data not recorded
 Approve-sub-delete = <b>✅ Approved:</b> Subscription successfully deleted
 Reject-sub-delete = <b>❎ Rejected:</b> Subscription not deleted
 
+Approve-sub-edit = <b>✅ Approved:</b> Subscription changed successfully
+Reject-sub-edit = <b>❎ Rejected:</b> Subscription not changed
+
 Notification-message = <b>🔔 Notification</b>
                        <b>We remind you</b> that your <code>{ $service }</code> subscription will soon <b>end</b>!
 
 Renew-subscription = Renew subscription
+
+Set-parameters = Select the <b>parameter</b> that you <b>want to change</b>:
+Edit-form = Select the <b>subscription</b> that you <b>want to change</b>:

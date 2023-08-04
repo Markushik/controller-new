@@ -8,6 +8,7 @@ from application.tgbot.dialogs.create_menu.getters import get_subs_for_output
 from application.tgbot.dialogs.delete_menu.handerls import (
     on_click_get_delete_menu,
 )
+from application.tgbot.dialogs.edit_menu.handlers import on_click_get_edit_menu
 from application.tgbot.dialogs.extras.i18n_format import I18NFormat
 from application.tgbot.dialogs.main_menu.getters import get_langs_for_output
 from application.tgbot.dialogs.main_menu.handler import (
@@ -74,7 +75,11 @@ main_menu = Dialog(
                     id='add_id',
                     on_click=on_click_sub_create,
                 ),
-                Button(I18NFormat('Change'), id='change_id'),
+                Button(
+                    I18NFormat('Change'),
+                    id='change_id',
+                    on_click=on_click_get_edit_menu,
+                ),
                 Button(
                     I18NFormat('Delete'),
                     id='remove_id',

@@ -22,7 +22,6 @@ structlog = "^23.1.0"
 rich = "^13.4.2"
 colorama = "^0.4.6"
 dataclass-factory = "^2.16"
-diagrams = "^0.23.3"
 markupsafe = "^2.1.3"
 orjson = "^3.9.2"
 taskiq = {extras = ["reload"], version = "^0.8.6"}

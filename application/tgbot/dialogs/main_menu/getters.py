@@ -8,7 +8,8 @@ async def get_langs_for_output(**kwargs) -> None:
 
 
 async def get_input_service_data(
-    dialog_manager: DialogManager, **kwargs
+        dialog_manager: DialogManager,
+        **kwargs
 ) -> None:
     return {
         'service': dialog_manager.dialog_data.get('service'),

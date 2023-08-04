@@ -15,13 +15,16 @@ class CreateMenu(StatesGroup):
     CHECK_ADD = State()
 
 
-class ChangeMenu(StatesGroup):
-    CHANGE = State()
+class EditMenu(StatesGroup):
+    EDIT = State()
     PARAMETERS = State()
     TITLE = State()
     MONTHS = State()
     REMINDER = State()
-    CHECK_CHANGE = State()
+
+    CHECK_TITLE_CHANGE = State()
+    CHECK_MONTHS_CHANGE = State()
+    CHECK_REMINDER_CHANGE = State()
 
 
 class DeleteMenu(StatesGroup):
