@@ -1,9 +1,9 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.types import Message
 from aiogram_dialog import DialogManager, StartMode
 
-from application.tgbot.states.states import MainMenu, CreateMenu
+from application.tgbot.states.user import CreateMenu, MainMenu
 
 router = Router()
 

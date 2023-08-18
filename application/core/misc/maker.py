@@ -1,6 +1,7 @@
+from dataclasses import dataclass
+
 from yarl import URL
 
-from dataclasses import dataclass
 from application.core.config.config import settings
 
 
@@ -42,7 +43,9 @@ class URLMaker:
     @property
     def create_nats_url(self) -> URL:
         return URL.build(
-            scheme='nats', host=self.nats_host, port=self.nats_port
+            scheme='nats',
+            host=self.nats_host,
+            port=self.nats_port
         )
 
 

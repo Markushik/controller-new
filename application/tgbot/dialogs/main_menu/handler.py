@@ -1,17 +1,9 @@
 from aiogram.types import CallbackQuery
-from aiogram_dialog import (
-    DialogManager,
-    StartMode,
-    DialogProtocol
-)
+from aiogram_dialog import DialogManager, DialogProtocol, StartMode
 from aiogram_dialog.widgets.kbd import Button
 
 from application.tgbot.dialogs.extras.i18n_format import I18N_FORMAT_KEY
-from application.tgbot.states.states import (
-    MainMenu,
-    CreateMenu,
-    DeleteMenu
-)
+from application.tgbot.states.user import CreateMenu, DeleteMenu, MainMenu
 
 
 async def on_click_get_subs_menu(

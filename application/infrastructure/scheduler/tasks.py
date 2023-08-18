@@ -1,21 +1,11 @@
 import datetime
 
 import lz4.frame
-import orjson
+import ormsgpack
 import uuid6
-from sqlalchemy import (
-    select,
-    func,
-    delete
-)
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    AsyncSession,
-)
-from taskiq import (
-    Context,
-    TaskiqDepends,
-)
+from sqlalchemy import delete, func, select
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from taskiq import Context, TaskiqDepends
 
 from application.infrastructure.database.models import Service, User
 from application.infrastructure.scheduler.tkq import broker
@@ -42,44 +32,41 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
     )
 
     async with async_session_maker() as session:
-        async with session.begin():
-            request = await session.scalars(
-                select(Service)
-                .where(
-                    func.date(Service.reminder) == datetime.datetime.utcnow().date()
-                )
+        request = await session.scalars(
+            select(Service).where(
+                func.date(Service.reminder) == datetime.datetime.utcnow().date()
             )
-            services = request.all()
+        )
+        services = request.all()
+        services_ids = list()
 
-            for service in services:
-                await jetstream.publish(
-                    stream='service_notify',
-                    subject='service_notify.message',
-                    timeout=10,
-                    payload=lz4.frame.compress(  # compress data (read the lz4 technology)
-                        orjson.dumps(  # or you can use ormsgpack
-                            {
-                                'user_id': service.user.user_id,
-                                'language': service.user.language,
-                                'service_name': service.title,
-                            }
-                        )
-                    ),
-                    headers={
-                        'Nats-Msg-Id': uuid6.uuid8().hex,  # uuid8, because uniqueness guarantee
-                    },
+    for service in services:
+        await jetstream.publish(
+            subject='service_notify.message',
+            payload=lz4.frame.compress(
+                ormsgpack.packb(
+                    {
+                        "user_id": service.user.user_id,
+                        "language": service.user.language,
+                        "service": service.title
+                    }
                 )
+            ),
+            headers={
+                'Nats-Msg-Id': uuid6.uuid8().hex,  # uuid8, because uniqueness guarantee
+            },
+        )
+        await session.merge(
+            User(
+                user_id=service.user.user_id,
+                count_subs=User.count_subs - 1,
+            )
+        )
+        services_ids.append(service.service_id)
 
-                await session.execute(
-                    delete(Service).where(
-                        Service.service_id == service.service_id
-                    )
-                )
-                await session.merge(
-                    User(
-                        user_id=service.service_fk,
-                        count_subs=User.count_subs - 1,
-                    )
-                )
-
-        await session.commit()
+    await session.execute(
+        delete(Service).where(
+            Service.service_id.in_(services_ids)
+        )
+    )
+    await session.commit()

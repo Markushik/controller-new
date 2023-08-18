@@ -21,6 +21,10 @@ Catalog-remove = <b>🗂️ Subscription removal catalog:</b>
 
 { $message }
 
+Catalog-edit = <b>🗂️ Subscription editing catalog:</b>
+
+{ $message }
+
 Are-you-sure = <b>Are you sure</b> you want to <b>delete</b> the subscription?
 Q-A = <b>❓ Q&A</b>
 
@@ -51,7 +55,7 @@ Check-form = 📩 Check <b>correctness</b> of the entered data:
              <b>Duration:</b> <code>{ $months } (mon.)</code>
              <b>Notify: </b> <code>{ $reminder }</code>
 
-Start-menu = <b>CONTROLLER</b> — <b>probably</b>, <b>best way</b> to <b>remind</b> about <b>subscription expiration</b>.
+Start-menu = <b>Subscriptions Controller</b> — <b>probably</b>, <b>best way</b> to <b>remind</b> about <b>subscription expiration</b>.
 
             📣 <i><b>Required</b> add your <b>subscriptions</b> to our service. We we will take care of <b>You</b> and <b>send you</b> a notification about the next <b>charge</b></i>
 
@@ -59,6 +63,7 @@ Nothing-delete = <b>🤷‍♂️ It seems</b>, there is <b>nothing to delete he
 Nothing-output = <b>🤷‍♂️ It seems</b> that we <b>haven't found anything...</b>
 
 Set-for-delete = <b>Select</b> the subscription that you <b>want to delete</b>:
+Set-for-edit = <b>Select</b> the subscription that you <b>want to change</b>:
 
 Error-subs-limit = <b>🚫 Error:</b> Subscription limit reached
 Error-len-limit = <b>🚫 Error:</b> Character limit reached
@@ -81,3 +86,15 @@ Renew-subscription = Renew subscription
 
 Set-parameters = Select the <b>parameter</b> that you <b>want to change</b>:
 Edit-form = Select the <b>subscription</b> that you <b>want to change</b>:
+
+Check-title-form = 📩 Check <b>correctness</b> of data changes:
+
+                  <b>{ $service_old_title }</b> → <b>{ $service_new_title }</b>
+
+Check-months-form = 📩 Check <b>correctness</b> of data changes:
+
+                  <code>{ $service_old_months } (mon.)</code> → <code>{ $service_new_months } (mon.)</code>
+
+Check-reminder-form = 📩 Check <b>correctness</b> of data changes:
+
+                  <b>{ $service_old_reminder }</b> → <b>{ $service_new_reminder }</b>

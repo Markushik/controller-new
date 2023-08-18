@@ -2,7 +2,7 @@ from aiogram.types import CallbackQuery
 from aiogram_dialog import DialogManager, StartMode
 from aiogram_dialog.widgets.kbd import Button
 
-from application.tgbot.states.states import DeleteMenu
+from application.tgbot.states.user import DeleteMenu
 
 
 async def on_click_get_delete_menu(

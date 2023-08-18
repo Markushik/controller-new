@@ -1,11 +1,13 @@
 import asyncio
 
 import lz4.frame
-import orjson
+import ormsgpack
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
 from loguru import logger
 from nats.js import JetStreamContext
+
+from application.tgbot.keyboards.inline import get_extension_menu
 
 
 async def nats_polling(
@@ -22,10 +24,14 @@ async def nats_polling(
 
     async for message in subscribe.messages:
         try:
-            data = orjson.loads(lz4.frame.decompress(message.data))
+            data = ormsgpack.unpackb(
+                lz4.frame.decompress(
+                    message.data
+                )
+            )
 
             user_id = data['user_id']
-            service = data['service_name']
+            service = data['service']
             language = data['language']
 
             l10n = i18n_middleware.l10ns[language]
@@ -33,17 +39,28 @@ async def nats_polling(
             await bot.send_message(
                 chat_id=user_id,
                 text=l10n.format_value(
-                    'Notification-message', {'service': service}
+                    'Notification-message', {
+                        'service': service
+                    }
                 ),
+                reply_markup=get_extension_menu(
+                    l10n.format_value(
+                        'Renew-subscription'
+                    )
+                )
             )
             await message.ack()
 
+        except TimeoutError:
+            pass
         except TelegramRetryAfter as ex:
-            logger.info(f'LIMIT EXCEEDED, CONTINUE IN: {ex.retry_after}')
+            logger.info(f'Limit exceeded, continue in: {ex.retry_after}')
             await asyncio.sleep(float(ex.retry_after))
             continue
         except TelegramForbiddenError:
+            logger.info('User blocked Bot')
             await message.ack()
             continue
-        except TimeoutError:
-            pass
+        except BaseException as ex:
+            logger.error(f'Unexpected error: {ex}')
+            continue

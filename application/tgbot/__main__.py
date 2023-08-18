@@ -7,41 +7,34 @@ import asyncio
 import logging
 
 import nats
-from aiogram import Bot
-from aiogram import Dispatcher
+from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.filters import ExceptionTypeFilter
-from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
+from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
 from loguru import logger
 from nats.aio.client import Client
 from nats.js import JetStreamContext
 from sqlalchemy.ext.asyncio import (
+    async_sessionmaker,
     AsyncEngine,
     AsyncSession,
     create_async_engine,
-    async_sessionmaker,
 )
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.makers import maker
+from application.core.misc.maker import maker
 from application.infrastructure.stream.worker import nats_polling
 from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.delete_menu.dialog import delete_menu
 from application.tgbot.dialogs.edit_menu.dialog import edit_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
-from application.tgbot.handlers.errors import (
-    on_unknown_intent,
-    on_unknown_state,
-)
+from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
 from application.tgbot.middlewares.database import DbSessionMiddleware
-from application.tgbot.middlewares.i18n import (
-    make_i18n_middleware,
-    I18nMiddleware,
-)
+from application.tgbot.middlewares.i18n import I18nMiddleware, make_i18n_middleware
 
 
 async def _main() -> None:

@@ -2,12 +2,12 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-def get_extension_menu(l10n_text: str):
+def get_extension_menu(text: str):
     menu_builder = InlineKeyboardBuilder()
 
     menu_builder.row(
         InlineKeyboardButton(
-            text=l10n_text,
+            text=text,
             callback_data='extension_data',
         )
     )

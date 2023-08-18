@@ -9,7 +9,7 @@ from aiogram_dialog.widgets.kbd.calendar_kbd import (
     CalendarScopeView,
     CalendarYearsView,
 )
-from aiogram_dialog.widgets.text import Text, Format
+from aiogram_dialog.widgets.text import Format, Text
 from babel.dates import get_day_names, get_month_names
 
 

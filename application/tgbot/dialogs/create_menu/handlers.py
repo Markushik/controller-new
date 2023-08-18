@@ -1,15 +1,11 @@
-from datetime import datetime, date
+from datetime import date, datetime
 
 import markupsafe
-from aiogram.types import Message, CallbackQuery
-from aiogram_dialog import (
-    DialogProtocol,
-    DialogManager,
-    StartMode
-)
+from aiogram.types import CallbackQuery, Message
+from aiogram_dialog import DialogManager, DialogProtocol, StartMode
 from aiogram_dialog.widgets.kbd import Button
 
-from application.tgbot.states.states import CreateMenu, MainMenu
+from application.tgbot.states.user import CreateMenu, MainMenu
 
 
 async def service_name_handler(

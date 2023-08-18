@@ -2,20 +2,13 @@ import logging
 
 import nats
 from loguru import logger
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    AsyncEngine,
-)
-from taskiq import (
-    TaskiqState,
-    TaskiqEvents,
-    TaskiqScheduler,
-)
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
 
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.makers import maker
+from application.core.misc.maker import maker
 
 logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
 
@@ -23,7 +16,6 @@ broker = NatsBroker(
     servers=[
         maker.create_nats_url.human_repr(),
     ],
-    subject='taskiq_tasks',
     queue='send_service',
 )
 scheduler = TaskiqScheduler(

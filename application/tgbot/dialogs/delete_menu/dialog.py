@@ -1,20 +1,17 @@
 from operator import itemgetter
 
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Group, Column, Select, Button, Row
-from aiogram_dialog.widgets.text import Format, Const
+from aiogram_dialog.widgets.kbd import Button, Column, Group, Row, Select
+from aiogram_dialog.widgets.text import Const, Format
 
-from application.tgbot.dialogs.create_menu.getters import get_subs_for_delete
-from application.tgbot.dialogs.delete_menu.handerls import (
-    on_click_sub_selected,
-    on_click_sub_not_delete,
-)
-from application.tgbot.dialogs.extras.i18n_format import I18NFormat
 from application.tgbot.dialogs.main_menu.handler import (
     on_click_get_subs_menu,
     on_click_sub_delete,
 )
-from application.tgbot.states.states import DeleteMenu
+from application.tgbot.states.user import DeleteMenu
+from ..extras.i18n_format import I18NFormat
+from .getters import get_subs_for_delete
+from .handerls import on_click_sub_not_delete, on_click_sub_selected
 
 delete_menu = Dialog(
     Window(
@@ -36,8 +33,8 @@ delete_menu = Dialog(
                 on_click=on_click_get_subs_menu,
             ),
         ),
-        state=DeleteMenu.DELETE,
         getter=get_subs_for_delete,
+        state=DeleteMenu.DELETE,
     ),
     Window(
         I18NFormat('Are-you-sure'),

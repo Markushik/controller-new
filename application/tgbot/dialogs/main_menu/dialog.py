@@ -1,25 +1,23 @@
 import operator
 
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Row, Button, Url, Select, Group
+from aiogram_dialog.widgets.kbd import Button, Group, Row, Select, Url
 from aiogram_dialog.widgets.text import Const, Format
 
 from application.tgbot.dialogs.create_menu.getters import get_subs_for_output
-from application.tgbot.dialogs.delete_menu.handerls import (
-    on_click_get_delete_menu,
-)
+from application.tgbot.dialogs.delete_menu.handerls import on_click_get_delete_menu
 from application.tgbot.dialogs.edit_menu.handlers import on_click_get_edit_menu
 from application.tgbot.dialogs.extras.i18n_format import I18NFormat
 from application.tgbot.dialogs.main_menu.getters import get_langs_for_output
 from application.tgbot.dialogs.main_menu.handler import (
-    on_click_get_subs_menu,
-    on_click_get_settings_menu,
-    on_click_get_help_menu,
     on_click_back_to_main_menu,
-    on_click_sub_create,
     on_click_change_lang,
+    on_click_get_help_menu,
+    on_click_get_settings_menu,
+    on_click_get_subs_menu,
+    on_click_sub_create,
 )
-from application.tgbot.states.states import MainMenu
+from application.tgbot.states.user import MainMenu
 
 main_menu = Dialog(
     Window(
