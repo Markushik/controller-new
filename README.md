@@ -39,7 +39,6 @@
 
 - [lz4](https://github.com/lz4/lz4) – compression technology
 - [ormsgpack](https://github.com/aviramha/ormsgpack) – msgpack serialization
-- [orjson](https://github.com/ijl/orjson) – fast JSON serializer
 - [markupsafe](https://github.com/pallets/markupsafe) – safely add untrusted strings to HTML
 - [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization
 
@@ -98,6 +97,6 @@ python -m application.tgbot
 
 ## ✅ ToDo's
 
-- Changing subscription options
+[X] Changing subscription options
 - Renewal Subscription
 - Common services table
