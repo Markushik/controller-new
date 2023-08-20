@@ -9,6 +9,7 @@
 
 <img src="https://github.com/Markushik/controller-new/actions/workflows/CI.yaml/badge.svg?style=flat-square" alt="https://github.com/Markushik/controller-new/actions/">
 <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json?style=flat-square" alt="https://github.com/astral-sh/ruff/">
+<img src="https://img.shields.io/badge/code%20style-blue-blue.svg?style=flat-square" alt="https://github.com/grantjenks/blue">
 
 > **controller** — probably the best bot for a reminder of the end of the subscription.
 
