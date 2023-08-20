@@ -39,7 +39,7 @@ class DbAdapter:
         )
 
     async def add_user(
-            self, user_id: int, user_name: str, chat_id: int
+        self, user_id: int, user_name: str, chat_id: int
     ) -> None:
         return await self.session.execute(
             insert(User).values(
@@ -48,7 +48,7 @@ class DbAdapter:
         )
 
     async def create_subscription(
-            self, title: str, months: int, reminder: datetime, service_fk: int
+        self, title: str, months: int, reminder: datetime, service_fk: int
     ) -> None:
         return await self.session.execute(
             insert(Service).values(
@@ -60,21 +60,21 @@ class DbAdapter:
         )
 
     async def edit_title_subscription(
-            self, service_id: int, title: str
+        self, service_id: int, title: str
     ) -> None:
         return await self.session.merge(
             Service(service_id=service_id, title=title)
         )
 
     async def edit_months_subscription(
-            self, service_id: int, months: int
+        self, service_id: int, months: int
     ) -> None:
         return await self.session.merge(
             Service(service_id=service_id, months=months)
         )
 
     async def edit_date_subscription(
-            self, service_id: int, reminder: datetime
+        self, service_id: int, reminder: datetime
     ) -> None:
         return await self.session.merge(
             Service(service_id=service_id, reminder=reminder)

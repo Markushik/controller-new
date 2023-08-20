@@ -1,7 +1,14 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, SmallInteger, String
-from sqlalchemy.orm import Mapped, mapped_column, Relationship
+from sqlalchemy import (
+    BigInteger,
+    DateTime,
+    ForeignKey,
+    Integer,
+    SmallInteger,
+    String,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
 
@@ -22,15 +29,17 @@ class User(BaseModel):
 class Service(BaseModel):
     __tablename__ = 'services'
 
-    service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    service_fk: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.user_id'))
+    service_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True
+    )
+    service_fk: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey('users.user_id')
+    )
     title: Mapped[str] = mapped_column(String(length=30))
     months: Mapped[int] = mapped_column(SmallInteger)
     reminder: Mapped[datetime] = mapped_column(DateTime)
 
-    user: Mapped['User'] = Relationship(
-        argument='User', lazy='immediate', backref='services'
-    )
+    user = relationship(argument='User', lazy='joined', innerjoin=True)
 
     def __repr__(self) -> str:
         return f'Service:{self.service_id}:{self.title}:{self.reminder}'

@@ -1,23 +1,28 @@
 import operator
 
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Button, Group, Row, Select, Url
+from aiogram_dialog.widgets.kbd import (
+    Button,
+    Group,
+    Row,
+    Select,
+    Url,
+    SwitchTo,
+)
 from aiogram_dialog.widgets.text import Const, Format
 
-from application.tgbot.dialogs.create_menu.getters import get_subs_for_output
-from application.tgbot.dialogs.delete_menu.handerls import on_click_get_delete_menu
-from application.tgbot.dialogs.edit_menu.handlers import on_click_get_edit_menu
-from application.tgbot.dialogs.extras.i18n_format import I18NFormat
-from application.tgbot.dialogs.main_menu.getters import get_langs_for_output
-from application.tgbot.dialogs.main_menu.handler import (
+from application.tgbot.states.user import MainMenu
+from ..create_menu.getters import get_subs_for_output
+from ..delete_menu.handerls import on_click_get_delete_menu
+from ..edit_menu.handlers import on_click_get_edit_menu
+from ..extras.i18n_format import I18NFormat
+from ..main_menu.getters import get_langs_for_output
+from ..main_menu.handler import (
     on_click_back_to_main_menu,
     on_click_change_lang,
-    on_click_get_help_menu,
-    on_click_get_settings_menu,
     on_click_get_subs_menu,
     on_click_sub_create,
 )
-from application.tgbot.states.user import MainMenu
 
 main_menu = Dialog(
     Window(
@@ -29,15 +34,15 @@ main_menu = Dialog(
                 on_click=on_click_get_subs_menu,
             ),
             Row(
-                Button(
+                SwitchTo(
                     I18NFormat('Settings'),
                     id='settings_id',
-                    on_click=on_click_get_settings_menu,
+                    state=MainMenu.SETTINGS,
                 ),
-                Button(
+                SwitchTo(
                     I18NFormat('Support'),
-                    id='help_id',
-                    on_click=on_click_get_help_menu,
+                    id='support_id',
+                    state=MainMenu.SUPPORT,
                 ),
             ),
         ),
@@ -62,7 +67,7 @@ main_menu = Dialog(
                 on_click=on_click_back_to_main_menu,
             ),
         ),
-        state=MainMenu.HELP,
+        state=MainMenu.SUPPORT,
     ),
     Window(
         I18NFormat('Catalog-add'),

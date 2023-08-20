@@ -5,7 +5,7 @@ class MainMenu(StatesGroup):
     MAIN = State()
     CONTROL = State()
     SETTINGS = State()
-    HELP = State()
+    SUPPORT = State()
 
 
 class CreateMenu(StatesGroup):

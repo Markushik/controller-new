@@ -5,18 +5,17 @@ import ormsgpack
 import uuid6
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.orm import joinedload
 from taskiq import Context, TaskiqDepends
 
-from application.infrastructure.database.models import Service, User
-from application.infrastructure.scheduler.tkq import broker
+from ..database.models import Service, User
+from ..scheduler.tkq import broker
 
 
 @broker.task(
     task_name='base_polling',
     schedule=[
-        {
-            'cron': '*/1 * * * *'  # 00 '12 * * *' and '00 16 * * * '
-        },
+        {'cron': '*/1 * * * *'},  # 00 '12 * * *' and '00 16 * * * ' ?
     ],
 )
 async def base_polling_task(context: Context = TaskiqDepends()) -> None:
@@ -33,12 +32,15 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
 
     async with async_session_maker() as session:
         request = await session.scalars(
-            select(Service).where(
-                func.date(Service.reminder) == datetime.datetime.utcnow().date()
+            select(Service)
+            .options(joinedload(Service.user))
+            .where(
+                func.date(Service.reminder)
+                == datetime.datetime.utcnow().date()
             )
         )
         services = request.all()
-        services_ids = list()
+        identifiers = list()
 
     for service in services:
         await jetstream.publish(
@@ -46,9 +48,9 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
             payload=lz4.frame.compress(
                 ormsgpack.packb(
                     {
-                        "user_id": service.user.user_id,
-                        "language": service.user.language,
-                        "service": service.title
+                        'user_id': service.user.user_id,
+                        'language': service.user.language,
+                        'service': service.title,
                     }
                 )
             ),
@@ -62,11 +64,9 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
                 count_subs=User.count_subs - 1,
             )
         )
-        services_ids.append(service.service_id)
+        identifiers.append(service.service_id)
 
     await session.execute(
-        delete(Service).where(
-            Service.service_id.in_(services_ids)
-        )
+        delete(Service).where(Service.service_id.in_(identifiers))
     )
     await session.commit()

@@ -32,9 +32,15 @@ from application.tgbot.dialogs.delete_menu.dialog import delete_menu
 from application.tgbot.dialogs.edit_menu.dialog import edit_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
 from application.tgbot.handlers import client
-from application.tgbot.handlers.errors import on_unknown_intent, on_unknown_state
+from application.tgbot.handlers.errors import (
+    on_unknown_intent,
+    on_unknown_state,
+)
 from application.tgbot.middlewares.database import DbSessionMiddleware
-from application.tgbot.middlewares.i18n import I18nMiddleware, make_i18n_middleware
+from application.tgbot.middlewares.i18n import (
+    I18nMiddleware,
+    make_i18n_middleware,
+)
 
 
 async def _main() -> None:
@@ -42,10 +48,16 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
+    logging.basicConfig(handlers=[InterceptHandler()], level='DEBUG')
     logger.add(
-        sink='../../debug.log', format='{time} {level} {message}', level='INFO',
-        enqueue=True, colorize=True, encoding='utf-8', rotation='10 MB', compression='zip',
+        sink='../../debug.log',
+        format='{time} {level} {message}',
+        level='INFO',
+        enqueue=True,
+        colorize=True,
+        encoding='utf-8',
+        rotation='10 MB',
+        compression='zip',
     )
 
     storage: RedisStorage = RedisStorage.from_url(

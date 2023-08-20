@@ -4,11 +4,7 @@ from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Button, Group, Row
 from aiogram_dialog.widgets.text import Const
 
-from application.tgbot.dialogs.main_menu.getters import get_input_service_data
-from application.tgbot.dialogs.main_menu.handler import on_click_get_subs_menu
 from application.tgbot.states.user import CreateMenu
-from ..extras.calendar import CustomCalendar
-from ..extras.i18n_format import I18NFormat
 from .handlers import (
     months_count_handler,
     on_click_button_confirm,
@@ -16,6 +12,10 @@ from .handlers import (
     on_click_calendar_reminder,
     service_name_handler,
 )
+from ..extras.calendar import CustomCalendar
+from ..extras.i18n_format import I18NFormat
+from ..main_menu.getters import get_input_service_data
+from ..main_menu.handler import on_click_get_subs_menu
 
 create_menu = Dialog(
     Window(

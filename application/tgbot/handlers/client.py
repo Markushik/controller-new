@@ -10,17 +10,17 @@ router = Router()
 
 @router.callback_query(F.data == 'extension_data')
 async def command_extension(
-        message: Message,
-        dialog_manager: DialogManager
+    message: Message, dialog_manager: DialogManager
 ) -> None:
     await dialog_manager.done()
-    await dialog_manager.start(state=CreateMenu.REMINDER, mode=StartMode.NORMAL)
+    await dialog_manager.start(
+        state=CreateMenu.REMINDER, mode=StartMode.NORMAL
+    )
 
 
 @router.message(CommandStart(), StateFilter('*'))
 async def command_start(
-        message: Message,
-        dialog_manager: DialogManager
+    message: Message, dialog_manager: DialogManager
 ) -> None:
     session = dialog_manager.middleware_data['session']
     user = await session.get_user(user_id=message.from_user.id)

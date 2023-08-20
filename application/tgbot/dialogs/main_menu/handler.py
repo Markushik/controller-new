@@ -7,35 +7,17 @@ from application.tgbot.states.user import CreateMenu, DeleteMenu, MainMenu
 
 
 async def on_click_get_subs_menu(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
-    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(
+        state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
+    )
 
 
 async def on_click_back_to_main_menu(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     await dialog_manager.start(state=MainMenu.MAIN, mode=StartMode.RESET_STACK)
-
-
-async def on_click_get_settings_menu(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager
-) -> None:
-    await dialog_manager.start(state=MainMenu.SETTINGS, mode=StartMode.RESET_STACK)
-
-
-async def on_click_get_help_menu(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager
-) -> None:
-    await dialog_manager.start(state=MainMenu.HELP, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_create(
@@ -51,11 +33,15 @@ async def on_click_sub_create(
     )
 
     if count_subs < 7:
-        return await dialog_manager.start(state=CreateMenu.TITLE, mode=StartMode.RESET_STACK)
+        return await dialog_manager.start(
+            state=CreateMenu.TITLE, mode=StartMode.RESET_STACK
+        )
 
     await callback.message.edit_text(l10n.format_value('Error-subs-limit'))
     await dialog_manager.done()
-    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(
+        state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
+    )
 
 
 async def on_click_sub_delete(
@@ -72,12 +58,13 @@ async def on_click_sub_delete(
 
     await callback.message.edit_text(l10n.format_value('Approve-sub-delete'))
     await dialog_manager.done()
-    await dialog_manager.start(state=DeleteMenu.DELETE, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(
+        state=DeleteMenu.DELETE, mode=StartMode.RESET_STACK
+    )
 
 
 async def update_format_key(
-        dialog_manager: DialogManager,
-        language: str
+        dialog_manager: DialogManager, language: str
 ) -> None:
     l10n = dialog_manager.middleware_data['l10ns'][language]
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
@@ -91,6 +78,8 @@ async def on_click_change_lang(
 ) -> None:
     session = dialog_manager.middleware_data['session']
 
+    language = None
+
     if item_id == '0':
         language = 'ru_RU'
         await callback.answer('Вы сменили язык на 🇷🇺 Русский')
@@ -99,5 +88,7 @@ async def on_click_change_lang(
         await callback.answer('You switched language to 🇬🇧 English')
 
     await update_format_key(dialog_manager=dialog_manager, language=language)
-    await session.update_language(user_id=dialog_manager.event.from_user.id, language=language)
+    await session.update_language(
+        user_id=dialog_manager.event.from_user.id, language=language
+    )
     await session.commit()

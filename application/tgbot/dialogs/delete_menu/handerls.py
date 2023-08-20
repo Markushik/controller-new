@@ -30,6 +30,6 @@ async def on_click_sub_selected(
     item_id: int,
 ) -> None:
     await dialog_manager.start(
-        DeleteMenu.CHECK_DELETE, mode=StartMode.RESET_STACK
+        state=DeleteMenu.CHECK_DELETE, mode=StartMode.RESET_STACK
     )
     dialog_manager.dialog_data['service_id'] = item_id
