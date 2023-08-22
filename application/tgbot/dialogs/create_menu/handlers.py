@@ -9,7 +9,7 @@ from application.tgbot.states.user import CreateMenu, MainMenu
 
 
 async def service_name_handler(
-    message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
+        message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
 ) -> Message:
     l10n = dialog_manager.middleware_data['l10n']
 
@@ -21,7 +21,7 @@ async def service_name_handler(
 
 
 async def months_count_handler(
-    message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
+        message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
 ) -> Message:
     l10n = dialog_manager.middleware_data['l10n']
 
@@ -40,17 +40,17 @@ async def months_count_handler(
 
 
 async def on_click_calendar_reminder(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
-    selected_date: date,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
+        selected_date: date,
 ) -> None:
     dialog_manager.dialog_data['reminder'] = selected_date.isoformat()
     await dialog_manager.switch_to(state=CreateMenu.CHECK_ADD)
 
 
 async def on_click_button_confirm(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -74,7 +74,7 @@ async def on_click_button_confirm(
 
 
 async def on_click_button_reject(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
 

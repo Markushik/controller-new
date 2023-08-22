@@ -29,12 +29,8 @@ class User(BaseModel):
 class Service(BaseModel):
     __tablename__ = 'services'
 
-    service_id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
-    )
-    service_fk: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey('users.user_id')
-    )
+    service_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    service_fk: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.user_id'))
     title: Mapped[str] = mapped_column(String(length=30))
     months: Mapped[int] = mapped_column(SmallInteger)
     reminder: Mapped[datetime] = mapped_column(DateTime)

@@ -1,26 +1,33 @@
 from aiogram import F, Router
 from aiogram.filters import CommandStart, StateFilter
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram_dialog import DialogManager, StartMode
 
+from application.tgbot.keyboards.inline import CallbackExtensionBody
 from application.tgbot.states.user import CreateMenu, MainMenu
 
 router = Router()
 
 
-@router.callback_query(F.data == 'extension_data')
+@router.callback_query(CallbackExtensionBody.filter(F.extension == 'extension'))
 async def command_extension(
-    message: Message, dialog_manager: DialogManager
+        callback: CallbackQuery,
+        dialog_manager: DialogManager,
+        callback_data: CallbackExtensionBody,
 ) -> None:
     await dialog_manager.done()
-    await dialog_manager.start(
-        state=CreateMenu.REMINDER, mode=StartMode.NORMAL
-    )
+    await dialog_manager.start(state=CreateMenu.REMINDER, mode=StartMode.NORMAL)
+
+    dialog_manager.dialog_data['service'] = callback_data.service
+    dialog_manager.dialog_data['months'] = callback_data.months
+
+    await callback.answer()
 
 
 @router.message(CommandStart(), StateFilter('*'))
 async def command_start(
-    message: Message, dialog_manager: DialogManager
+        message: Message,
+        dialog_manager: DialogManager
 ) -> None:
     session = dialog_manager.middleware_data['session']
     user = await session.get_user(user_id=message.from_user.id)

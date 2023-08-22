@@ -7,7 +7,7 @@ from application.tgbot.states.user import CreateMenu, DeleteMenu, MainMenu
 
 
 async def on_click_get_subs_menu(
-        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     await dialog_manager.start(
         state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
@@ -15,15 +15,15 @@ async def on_click_get_subs_menu(
 
 
 async def on_click_back_to_main_menu(
-        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     await dialog_manager.start(state=MainMenu.MAIN, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_create(
-        callback: CallbackQuery,
-        protocol: DialogProtocol,
-        dialog_manager: DialogManager,
+    callback: CallbackQuery,
+    protocol: DialogProtocol,
+    dialog_manager: DialogManager,
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -45,7 +45,7 @@ async def on_click_sub_create(
 
 
 async def on_click_sub_delete(
-        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -64,17 +64,17 @@ async def on_click_sub_delete(
 
 
 async def update_format_key(
-        dialog_manager: DialogManager, language: str
+    dialog_manager: DialogManager, language: str
 ) -> None:
     l10n = dialog_manager.middleware_data['l10ns'][language]
     dialog_manager.middleware_data[I18N_FORMAT_KEY] = l10n.format_value
 
 
 async def on_click_change_lang(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager,
-        item_id: str,
+    callback: CallbackQuery,
+    button: Button,
+    dialog_manager: DialogManager,
+    item_id: str,
 ) -> None:
     session = dialog_manager.middleware_data['session']
 

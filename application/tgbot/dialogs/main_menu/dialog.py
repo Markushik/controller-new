@@ -35,14 +35,10 @@ main_menu = Dialog(
             ),
             Row(
                 SwitchTo(
-                    I18NFormat('Settings'),
-                    id='settings_id',
-                    state=MainMenu.SETTINGS,
+                    I18NFormat('Settings'), id='settings_id', state=MainMenu.SETTINGS,
                 ),
                 SwitchTo(
-                    I18NFormat('Support'),
-                    id='support_id',
-                    state=MainMenu.SUPPORT,
+                    I18NFormat('Support'), id='support_id', state=MainMenu.SUPPORT,
                 ),
             ),
         ),
@@ -74,25 +70,17 @@ main_menu = Dialog(
         Group(
             Row(
                 Button(
-                    I18NFormat('Add'),
-                    id='add_id',
-                    on_click=on_click_sub_create,
+                    I18NFormat('Add'), id='add_id', on_click=on_click_sub_create,
                 ),
                 Button(
-                    I18NFormat('Change'),
-                    id='change_id',
-                    on_click=on_click_get_edit_menu,
+                    I18NFormat('Change'), id='change_id', on_click=on_click_get_edit_menu,
                 ),
                 Button(
-                    I18NFormat('Delete'),
-                    id='remove_id',
-                    on_click=on_click_get_delete_menu,
+                    I18NFormat('Delete'), id='remove_id', on_click=on_click_get_delete_menu,
                 ),
             ),
             Button(
-                I18NFormat('Back'),
-                id='back_id',
-                on_click=on_click_back_to_main_menu,
+                I18NFormat('Back'), id='back_id', on_click=on_click_back_to_main_menu,
             ),
         ),
         state=MainMenu.CONTROL,
@@ -111,9 +99,7 @@ main_menu = Dialog(
                 ),
             ),
             Button(
-                I18NFormat('Back'),
-                id='back_id',
-                on_click=on_click_back_to_main_menu,
+                I18NFormat('Back'), id='back_id', on_click=on_click_back_to_main_menu,
             ),
         ),
         state=MainMenu.SETTINGS,

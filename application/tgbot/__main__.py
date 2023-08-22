@@ -48,7 +48,7 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logging.basicConfig(handlers=[InterceptHandler()], level='DEBUG')
+    logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
     logger.add(
         sink='../../debug.log',
         format='{time} {level} {message}',

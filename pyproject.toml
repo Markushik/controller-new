@@ -28,10 +28,10 @@ uuid6 = "^2023.5.2"
 psycopg = {extras = ["binary", "pool"], version = "^3.1.9"}
 aiogram-dialog = "^2.0.0b21"
 adaptix = "^3.0.0a4"
+orjson = "^3.9.5"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.280"
-blue = "^0.9.1"
 
 [tool.ruff]
 line-length = 120

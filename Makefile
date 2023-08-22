@@ -10,16 +10,12 @@ help:
 	@echo  migrate		Migrate with alembic
 
 # --- Linters & Checkers ---
-.PHONY: blue
-blue:
-	blue .
-
 .PHONY: ruff
 ruff:
 	ruff . --fix
 
 .PHONY: lint
-lint: blue ruff
+lint: ruff
 
 # --- Alembic Utils ---
 .PHONY: generate

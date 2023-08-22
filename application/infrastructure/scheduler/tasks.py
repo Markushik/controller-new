@@ -15,7 +15,7 @@ from ..scheduler.tkq import broker
 @broker.task(
     task_name='base_polling',
     schedule=[
-        {'cron': '*/1 * * * *'},  # 00 '12 * * *' and '00 16 * * * ' ?
+        {"cron": "*/1 * * * *"},  # '00 12 * * *' and '00 16 * * *'
     ],
 )
 async def base_polling_task(context: Context = TaskiqDepends()) -> None:
@@ -33,10 +33,11 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
     async with async_session_maker() as session:
         request = await session.scalars(
             select(Service)
-            .options(joinedload(Service.user))
+            .options(
+                joinedload(Service.user)
+            )
             .where(
-                func.date(Service.reminder)
-                == datetime.datetime.utcnow().date()
+                func.date(Service.reminder) == datetime.datetime.utcnow().date()
             )
         )
         services = request.all()
@@ -48,9 +49,10 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
             payload=lz4.frame.compress(
                 ormsgpack.packb(
                     {
-                        'user_id': service.user.user_id,
+                        'chat_id': service.user.chat_id,
                         'language': service.user.language,
                         'service': service.title,
+                        'months': service.months
                     }
                 )
             ),

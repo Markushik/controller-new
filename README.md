@@ -82,7 +82,7 @@ git clone https://github.com/Markushik/controller-new.git
 **4. First run the `taskiq` scripts:**
 
 ```
-taskiq worker application.infrastructure.scheduler.tkq:broker --fs-discover --reload
+taskiq worker application.infrastructure.scheduler.tkq:broker --fs-discover --reload --max-async-tasks -1
 ```
 
 ```
@@ -97,6 +97,6 @@ python -m application.tgbot
 
 ## ✅ ToDo's
 
-[X] Changing subscription options
-- Renewal Subscription
-- Common services table
+[x] Changing subscription options
+[x] Renewal Subscription
+- Common services table (???)
