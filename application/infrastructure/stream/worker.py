@@ -14,8 +14,8 @@ async def nats_polling(
         bot: Bot, i18n_middleware, jetstream: JetStreamContext
 ) -> None:
     subscribe = await jetstream.subscribe(
-        stream='service_notify',
         subject='service_notify.message',
+        stream='service_notify',
         durable='get_message',
         manual_ack=True,
     )
@@ -36,7 +36,9 @@ async def nats_polling(
             await bot.send_message(
                 chat_id=chat_id,
                 text=l10n.format_value(
-                    'Notification-message', {'service': service}
+                    'Notification-message', {
+                        'service': service
+                    }
                 ),
                 reply_markup=get_extension_menu(
                     text=l10n.format_value('Renew-subscription'),

@@ -9,47 +9,47 @@ from application.tgbot.states.user import EditMenu, MainMenu
 
 
 async def on_click_get_edit_menu(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     await dialog_manager.start(state=EditMenu.EDIT, mode=StartMode.RESET_STACK)
 
 
 async def on_click_set_parameters(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
-    item_id: int,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
+        item_id: int,
 ) -> None:
     dialog_manager.dialog_data['service_id'] = item_id
     await dialog_manager.switch_to(state=EditMenu.PARAMETERS)
 
 
 async def on_click_edit_title(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.switch_to(state=EditMenu.TITLE)
 
 
 async def on_click_edit_months(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.switch_to(state=EditMenu.MONTHS)
 
 
 async def on_click_edit_date(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.switch_to(state=EditMenu.REMINDER)
 
 
 async def edit_title_handler(
-    message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
+        message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
 ) -> Message:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -69,7 +69,7 @@ async def edit_title_handler(
 
 
 async def edit_months_handler(
-    message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
+        message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
 ) -> Message:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']
@@ -94,10 +94,10 @@ async def edit_months_handler(
 
 
 async def edit_reminder_handler(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
-    selected_date: date,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
+        selected_date: date,
 ) -> None:
     session = dialog_manager.middleware_data['session']
 
@@ -115,9 +115,9 @@ async def edit_reminder_handler(
 
 
 async def reject_edit_menu(
-    callback: CallbackQuery,
-    button: Button,
-    dialog_manager: DialogManager,
+        callback: CallbackQuery,
+        button: Button,
+        dialog_manager: DialogManager,
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
 
@@ -127,7 +127,7 @@ async def reject_edit_menu(
 
 
 async def approve_edit_menu(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
     session = dialog_manager.middleware_data['session']

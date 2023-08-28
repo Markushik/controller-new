@@ -8,13 +8,13 @@ from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
 
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.maker import maker
+from application.core.misc.maker import create_nats_url, create_postgres_url
 
 logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
 
 broker = NatsBroker(
     servers=[
-        maker.create_nats_url.human_repr(),
+        create_nats_url().human_repr(),
     ],
     queue='send_service',
 )
@@ -30,9 +30,13 @@ scheduler = TaskiqScheduler(
 async def startup(state: TaskiqState) -> None:
     logger.info('Taskiq Launching')
 
-    nats_connect = await nats.connect(maker.create_nats_url.human_repr())
+    nats_connect = await nats.connect(
+        servers=[
+            create_nats_url().human_repr()
+        ]
+    )
     async_engine: AsyncEngine = create_async_engine(
-        url=maker.create_postgres_url.human_repr(),
+        url=create_postgres_url().human_repr(),
         pool_pre_ping=True,
         echo=False,
     )

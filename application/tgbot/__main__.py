@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The main file responsible for launching the bot
 """
@@ -25,22 +24,15 @@ from sqlalchemy.ext.asyncio import (
 
 from application.core.config.config import settings
 from application.core.misc.logging import InterceptHandler
-from application.core.misc.maker import maker
+from application.core.misc.maker import create_nats_url, create_redis_url, create_postgres_url
 from application.infrastructure.stream.worker import nats_polling
 from application.tgbot.dialogs.create_menu.dialog import create_menu
 from application.tgbot.dialogs.delete_menu.dialog import delete_menu
 from application.tgbot.dialogs.edit_menu.dialog import edit_menu
 from application.tgbot.dialogs.main_menu.dialog import main_menu
-from application.tgbot.handlers import client
-from application.tgbot.handlers.errors import (
-    on_unknown_intent,
-    on_unknown_state,
-)
+from application.tgbot.handlers import client, errors
 from application.tgbot.middlewares.database import DbSessionMiddleware
-from application.tgbot.middlewares.i18n import (
-    I18nMiddleware,
-    make_i18n_middleware,
-)
+from application.tgbot.middlewares.i18n import I18nMiddleware, make_i18n_middleware
 
 
 async def _main() -> None:
@@ -48,7 +40,13 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
+    logging.basicConfig(
+        handlers=[
+            InterceptHandler()
+        ],
+        encoding='utf-8',
+        level='INFO'
+    )
     logger.add(
         sink='../../debug.log',
         format='{time} {level} {message}',
@@ -61,19 +59,22 @@ async def _main() -> None:
     )
 
     storage: RedisStorage = RedisStorage.from_url(
-        url=maker.create_redis_url.human_repr(),
-        key_builder=DefaultKeyBuilder(with_destiny=True, with_bot_id=True),
+        url=create_redis_url().human_repr(),
+        key_builder=DefaultKeyBuilder(
+            with_destiny=True,
+            with_bot_id=True
+        ),
     )
 
     nats_connect: Client = await nats.connect(
         servers=[
-            maker.create_nats_url.human_repr(),
-        ]
+            create_nats_url().human_repr()
+        ],
     )
     jetstream: JetStreamContext = nats_connect.jetstream()
 
     async_engine: AsyncEngine = create_async_engine(
-        url=maker.create_postgres_url.human_repr(),
+        url=create_postgres_url().human_repr(),
         pool_pre_ping=True,
         echo=False,
     )
@@ -106,8 +107,8 @@ async def _main() -> None:
         edit_menu,
     )
 
-    disp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
-    disp.errors.register(on_unknown_state, ExceptionTypeFilter(UnknownState))
+    disp.errors.register(errors.on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
+    disp.errors.register(errors.on_unknown_state, ExceptionTypeFilter(UnknownState))
 
     setup_dialogs(disp)
 
@@ -116,7 +117,9 @@ async def _main() -> None:
     try:
         await bot.delete_webhook(drop_pending_updates=True)
         await asyncio.gather(
-            nats_polling(bot, i18n_middleware, jetstream),
+            nats_polling(
+                bot, i18n_middleware, jetstream
+            ),
             disp.start_polling(bot),
         )
     finally:
@@ -129,7 +132,6 @@ async def _main() -> None:
 
 if __name__ == '__main__':
     try:
-        # asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
         asyncio.run(_main())
     except (SystemExit, KeyboardInterrupt):
         logger.warning('Bot Shutdown')

@@ -58,9 +58,7 @@ async def on_click_button_confirm(
     await session.create_subscription(
         title=dialog_manager.dialog_data['service'],
         months=dialog_manager.dialog_data['months'],
-        reminder=datetime.fromisoformat(
-            dialog_manager.dialog_data['reminder']
-        ),
+        reminder=datetime.fromisoformat(dialog_manager.dialog_data['reminder']),
         service_fk=callback.from_user.id,
     )
     await session.increment_count(user_id=dialog_manager.event.from_user.id)
@@ -68,9 +66,7 @@ async def on_click_button_confirm(
 
     await callback.message.edit_text(l10n.format_value('Approve-sub-add'))
     await dialog_manager.done()
-    await dialog_manager.start(
-        state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
-    )
+    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
 
 
 async def on_click_button_reject(
@@ -80,6 +76,4 @@ async def on_click_button_reject(
 
     await callback.message.edit_text(l10n.format_value('Error-sub-add'))
     await dialog_manager.done()
-    await dialog_manager.start(
-        state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
-    )
+    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
