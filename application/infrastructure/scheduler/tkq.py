@@ -1,16 +1,20 @@
 import logging
 
 import nats
-from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
 
-from application.core.misc.logging import InterceptHandler
 from application.core.misc.maker import create_nats_url, create_postgres_url
 
-logging.basicConfig(handlers=[InterceptHandler()], level='INFO')
+logging.basicConfig(
+    format='%(asctime)s | %(levelname)s | %(name)s:%(filename)s:%(lineno)d — %(message)s',
+    encoding='utf-8',
+    level='INFO',
+)
+logger = logging.getLogger(__name__)
+
 
 broker = NatsBroker(
     servers=[

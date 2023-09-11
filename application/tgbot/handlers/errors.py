@@ -1,7 +1,9 @@
-from aiogram_dialog import DialogManager, StartMode
-from loguru import logger
+import logging
 
+from aiogram_dialog import DialogManager, StartMode
 from application.tgbot.states.user import MainMenu
+
+logger = logging.getLogger(__name__)
 
 
 async def on_unknown_intent(event, dialog_manager: DialogManager):

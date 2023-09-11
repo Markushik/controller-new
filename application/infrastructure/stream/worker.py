@@ -1,13 +1,20 @@
 import asyncio
+import logging
 
 import lz4.frame
 import ormsgpack
 from aiogram import Bot
-from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
-from loguru import logger
+from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
 from nats.js import JetStreamContext
 
 from application.tgbot.keyboards.inline import get_extension_menu
+
+logging.basicConfig(
+    format='%(asctime)s | %(levelname)s | %(name)s:%(filename)s:%(lineno)d — %(message)s',
+    encoding='utf-8',
+    level='INFO',
+)
+logger = logging.getLogger(__name__)
 
 
 async def nats_polling(
