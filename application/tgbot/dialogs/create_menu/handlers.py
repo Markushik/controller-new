@@ -8,19 +8,19 @@ from aiogram_dialog.widgets.kbd import Button
 from application.tgbot.states.user import CreateMenu, MainMenu
 
 
-async def service_name_handler(
+async def add_title_handler(
         message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
 ) -> Message:
     l10n = dialog_manager.middleware_data['l10n']
 
     if len(message.text) > 30:
-        return await message.answer(l10n.format_value('Error-len-limit'))
+        return await message.answer(l10n.format_value('error-len-limit'))
 
     dialog_manager.dialog_data['service'] = markupsafe.escape(message.text)
     await dialog_manager.switch_to(state=CreateMenu.MONTHS)
 
 
-async def months_count_handler(
+async def add_months_handler(
         message: Message, protocol: DialogProtocol, dialog_manager: DialogManager
 ) -> Message:
     l10n = dialog_manager.middleware_data['l10n']
@@ -29,17 +29,17 @@ async def months_count_handler(
         value = int(message.text)
     except ValueError:
         return await message.answer(
-            l10n.format_value('Error-unsupported-char')
+            l10n.format_value('error-unsupported-char')
         )
 
     if value not in range(1, 12 + 1):
-        return await message.answer(l10n.format_value('Error-range-reached'))
+        return await message.answer(l10n.format_value('error-range-reached'))
 
     dialog_manager.dialog_data['months'] = int(message.text)
     await dialog_manager.switch_to(state=CreateMenu.REMINDER)
 
 
-async def on_click_calendar_reminder(
+async def on_click_select_date(
         callback: CallbackQuery,
         button: Button,
         dialog_manager: DialogManager,
@@ -49,7 +49,7 @@ async def on_click_calendar_reminder(
     await dialog_manager.switch_to(state=CreateMenu.CHECK_ADD)
 
 
-async def on_click_button_confirm(
+async def on_click_confirm_data(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
@@ -64,16 +64,16 @@ async def on_click_button_confirm(
     await session.increment_count(user_id=dialog_manager.event.from_user.id)
     await session.commit()
 
-    await callback.message.edit_text(l10n.format_value('Approve-sub-add'))
+    await callback.message.edit_text(l10n.format_value('approve-sub-add'))
     await dialog_manager.done()
     await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
 
 
-async def on_click_button_reject(
+async def on_click_reject_data(
         callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
 
-    await callback.message.edit_text(l10n.format_value('Error-sub-add'))
+    await callback.message.edit_text(l10n.format_value('error-sub-add'))
     await dialog_manager.done()
     await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)

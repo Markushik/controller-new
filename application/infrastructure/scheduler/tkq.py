@@ -1,20 +1,13 @@
-import logging
-
 import nats
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from taskiq import TaskiqEvents, TaskiqScheduler, TaskiqState
 from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_nats import NatsBroker
 
+from application.core.misc.logging import configure_logger
 from application.core.misc.maker import create_nats_url, create_postgres_url
 
-logging.basicConfig(
-    format='%(asctime)s | %(levelname)s | %(name)s:%(filename)s:%(lineno)d — %(message)s',
-    encoding='utf-8',
-    level='INFO',
-)
-logger = logging.getLogger(__name__)
-
+logger = configure_logger()
 
 broker = NatsBroker(
     servers=[
@@ -32,7 +25,7 @@ scheduler = TaskiqScheduler(
 
 @broker.on_event(TaskiqEvents.WORKER_STARTUP)
 async def startup(state: TaskiqState) -> None:
-    logger.info('Taskiq Launching')
+    await logger.ainfo('Taskiq Launching')
 
     nats_connect = await nats.connect(
         servers=[
@@ -51,7 +44,7 @@ async def startup(state: TaskiqState) -> None:
 
 @broker.on_event(TaskiqEvents.WORKER_SHUTDOWN)
 async def shutdown(state: TaskiqState) -> None:
-    logger.info('Taskiq Shutdown')
+    await logger.warning('Taskiq Shutdown')
 
     await state.nats.drain()
     await state.database.dispose()

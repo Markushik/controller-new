@@ -13,7 +13,7 @@ from aiogram_dialog.widgets.text import Const, Format
 
 from application.tgbot.states.user import MainMenu
 from ..create_menu.getters import get_subs_for_output
-from ..delete_menu.handerls import on_click_get_delete_menu
+from ..delete_menu.handlers import on_click_get_delete_menu
 from ..edit_menu.handlers import on_click_get_edit_menu
 from ..extras.i18n_format import I18NFormat
 from ..main_menu.getters import get_langs_for_output
@@ -26,30 +26,28 @@ from ..main_menu.handler import (
 
 main_menu = Dialog(
     Window(
-        I18NFormat('Start-menu'),
+        I18NFormat('start-menu'),
         Group(
             Button(
-                I18NFormat('My-Subscriptions'),
-                id='subs_id',
-                on_click=on_click_get_subs_menu,
+                I18NFormat('my-subscriptions'), id='subs_id', on_click=on_click_get_subs_menu,
             ),
             Row(
                 SwitchTo(
-                    I18NFormat('Settings'), id='settings_id', state=MainMenu.SETTINGS,
+                    I18NFormat('settings'), id='settings_id', state=MainMenu.SETTINGS,
                 ),
                 SwitchTo(
-                    I18NFormat('Support'), id='support_id', state=MainMenu.SUPPORT,
+                    I18NFormat('support'), id='support_id', state=MainMenu.SUPPORT,
                 ),
             ),
         ),
         state=MainMenu.MAIN,
     ),
     Window(
-        I18NFormat('Q-A'),
+        I18NFormat('faq'),
         Group(
             Row(
                 Url(
-                    I18NFormat('Administrator'),
+                    I18NFormat('administrator'),
                     Const('tg://user?id=878406427'),
                 ),
                 Url(
@@ -58,36 +56,34 @@ main_menu = Dialog(
                 ),
             ),
             Button(
-                I18NFormat('Back'),
-                id='back_id',
-                on_click=on_click_back_to_main_menu,
+                I18NFormat('back'), id='back_id', on_click=on_click_back_to_main_menu,
             ),
         ),
         state=MainMenu.SUPPORT,
     ),
     Window(
-        I18NFormat('Catalog-add'),
+        I18NFormat('catalog-add'),
         Group(
             Row(
                 Button(
-                    I18NFormat('Add'), id='add_id', on_click=on_click_sub_create,
+                    I18NFormat('add'), id='add_id', on_click=on_click_sub_create,
                 ),
                 Button(
-                    I18NFormat('Change'), id='change_id', on_click=on_click_get_edit_menu,
+                    I18NFormat('change'), id='change_id', on_click=on_click_get_edit_menu,
                 ),
                 Button(
-                    I18NFormat('Delete'), id='remove_id', on_click=on_click_get_delete_menu,
+                    I18NFormat('delete'), id='remove_id', on_click=on_click_get_delete_menu,
                 ),
             ),
             Button(
-                I18NFormat('Back'), id='back_id', on_click=on_click_back_to_main_menu,
+                I18NFormat('back'), id='back_id', on_click=on_click_back_to_main_menu,
             ),
         ),
         state=MainMenu.CONTROL,
         getter=get_subs_for_output,
     ),
     Window(
-        I18NFormat('Set-lang'),
+        I18NFormat('select-lang'),
         Group(
             Row(
                 Select(
@@ -99,7 +95,7 @@ main_menu = Dialog(
                 ),
             ),
             Button(
-                I18NFormat('Back'), id='back_id', on_click=on_click_back_to_main_menu,
+                I18NFormat('back'), id='back_id', on_click=on_click_back_to_main_menu,
             ),
         ),
         state=MainMenu.SETTINGS,

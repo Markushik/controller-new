@@ -33,11 +33,11 @@
 - [nats-py](https://github.com/nats-io/nats.py) - Python client for NATS
 - [taskiq](https://github.com/taskiq-python/taskiq) – distributed task queue
 - [dynaconf](https://github.com/dynaconf/dynaconf) – configuration management
-- [loguru](https://github.com/Delgan/loguru) – simple (stupid) logging
+- [structlog](https://github.com/Delgan/loguru) – structured logging 
 
 ### Auxiliary Libraries
 
-- [lz4](https://github.com/lz4/lz4) – compression technology
+- [zstd](https://github.com/facebook/zstd) – compression technology
 - [ormsgpack](https://github.com/aviramha/ormsgpack) – msgpack serialization
 - [markupsafe](https://github.com/pallets/markupsafe) – safely add untrusted strings to HTML
 - [fluent.runtime](https://github.com/projectfluent/python-fluent) – localization / internationalization
@@ -94,9 +94,3 @@ taskiq scheduler application.infrastructure.scheduler.tkq:scheduler --fs-discove
 ```
 python -m application.tgbot
 ```
-
-## ✅ ToDo's
-
-[x] Changing subscription options
-[x] Renewal Subscription
-- Common services table (???)

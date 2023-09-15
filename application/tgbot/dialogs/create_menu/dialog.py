@@ -6,11 +6,11 @@ from aiogram_dialog.widgets.text import Const
 
 from application.tgbot.states.user import CreateMenu
 from .handlers import (
-    months_count_handler,
-    on_click_button_confirm,
-    on_click_button_reject,
-    on_click_calendar_reminder,
-    service_name_handler,
+    add_months_handler,
+    on_click_confirm_data,
+    on_click_reject_data,
+    on_click_select_date,
+    add_title_handler,
 )
 from ..extras.calendar import CustomCalendar
 from ..extras.i18n_format import I18NFormat
@@ -19,46 +19,41 @@ from ..main_menu.handler import on_click_get_subs_menu
 
 create_menu = Dialog(
     Window(
-        I18NFormat('Add-service-title'),
-        MessageInput(service_name_handler, content_types=[ContentType.TEXT]),
+        I18NFormat('add-service-title'),
+        MessageInput(func=add_title_handler, content_types=ContentType.TEXT),
         Button(
-            I18NFormat('Back'), id='back_id', on_click=on_click_get_subs_menu
+            I18NFormat('back'), id='back_id', on_click=on_click_get_subs_menu
         ),
         state=CreateMenu.TITLE,
     ),
     Window(
-        I18NFormat('Add-service-months'),
-        MessageInput(months_count_handler, content_types=[ContentType.TEXT]),
+        I18NFormat('add-service-months'),
+        MessageInput(func=add_months_handler, content_types=ContentType.TEXT),
         Button(
-            I18NFormat('Back'), id='back_id', on_click=on_click_get_subs_menu
+            I18NFormat('back'), id='back_id', on_click=on_click_get_subs_menu
         ),
         state=CreateMenu.MONTHS,
     ),
     Window(
-        I18NFormat('Add-calendar-date'),
+        I18NFormat('add-calendar-date'),
         Group(
             CustomCalendar(
-                id='select_date_id',
-                on_click=on_click_calendar_reminder,
+                id='select_date_id', on_click=on_click_select_date
             ),
             Button(
-                I18NFormat('Back'),
-                id='back_id',
-                on_click=on_click_get_subs_menu,
+                I18NFormat('back'), id='back_id', on_click=on_click_get_subs_menu,
             ),
         ),
         state=CreateMenu.REMINDER,
     ),
     Window(
-        I18NFormat('Check-form'),
+        I18NFormat('check-form'),
         Row(
             Button(
-                Const('✅'),
-                id='confirm_add_id',
-                on_click=on_click_button_confirm,
+                Const('✅'), id='confirm_add_id', on_click=on_click_confirm_data,
             ),
             Button(
-                Const('❎'), id='reject_add_id', on_click=on_click_button_reject
+                Const('❎'), id='reject_add_id', on_click=on_click_reject_data
             ),
         ),
         state=CreateMenu.CHECK_ADD,

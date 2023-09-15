@@ -1,20 +1,15 @@
 import asyncio
-import logging
 
-import lz4.frame
 import ormsgpack
+import zstd
 from aiogram import Bot
 from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError
 from nats.js import JetStreamContext
 
+from application.core.misc.logging import configure_logger
 from application.tgbot.keyboards.inline import get_extension_menu
 
-logging.basicConfig(
-    format='%(asctime)s | %(levelname)s | %(name)s:%(filename)s:%(lineno)d — %(message)s',
-    encoding='utf-8',
-    level='INFO',
-)
-logger = logging.getLogger(__name__)
+logger = configure_logger()
 
 
 async def nats_polling(
@@ -29,9 +24,7 @@ async def nats_polling(
 
     async for message in subscribe.messages:
         try:
-            data = ormsgpack.unpackb(
-                lz4.frame.decompress(message.data)
-            )
+            data = ormsgpack.unpackb(zstd.decompress(message.data))
 
             chat_id = data['chat_id']
             language = data['language']
@@ -43,12 +36,12 @@ async def nats_polling(
             await bot.send_message(
                 chat_id=chat_id,
                 text=l10n.format_value(
-                    'Notification-message', {
+                    'notification-message', {
                         'service': service
                     }
                 ),
                 reply_markup=get_extension_menu(
-                    text=l10n.format_value('Renew-subscription'),
+                    text=l10n.format_value('renew'),
                     service=service,
                     months=months,
                 ),
@@ -58,13 +51,13 @@ async def nats_polling(
         except TimeoutError:
             pass
         except TelegramRetryAfter as ex:
-            logger.info(f'Limit exceeded, continue in: {ex.retry_after}')
+            await logger.ainfo(f'Limit exceeded, continue in: {ex.retry_after}')
             await asyncio.sleep(float(ex.retry_after))
             continue
         except TelegramForbiddenError:
-            logger.info('User blocked Bot')
+            await logger.ainfo('User blocked Bot')
             await message.ack()
             continue
         except BaseException as ex:
-            logger.error(f'Unexpected error: {ex}')
+            await logger.aerror(f'Unexpected error: {ex}')
             continue

@@ -37,7 +37,7 @@ from ..main_menu.handler import on_click_get_subs_menu
 
 edit_menu = Dialog(
     Window(
-        I18NFormat('Catalog-edit'),
+        I18NFormat('catalog-edit'),
         Column(
             Select(
                 Format('{item[1]} — {item[2]}'),
@@ -48,65 +48,60 @@ edit_menu = Dialog(
                 type_factory=int,
             ),
             Button(
-                I18NFormat('Back'),
-                id='back_id',
-                on_click=on_click_get_subs_menu,
+                I18NFormat('back'), id='back_id', on_click=on_click_get_subs_menu,
             ),
         ),
         getter=get_subs_for_edit,
         state=EditMenu.EDIT,
     ),
     Window(
-        I18NFormat('Set-parameters'),
+        I18NFormat('select-parameters'),
         Group(
             Row(
                 Button(
-                    I18NFormat('Title'),
-                    id='title_id',
-                    on_click=on_click_edit_title,
+                    I18NFormat('Title'), id='title_id', on_click=on_click_edit_title,
                 ),
                 Button(
-                    I18NFormat('Months'),
-                    id='months_id',
-                    on_click=on_click_edit_months,
+                    I18NFormat('months'), id='months_id', on_click=on_click_edit_months,
                 ),
                 Button(
-                    I18NFormat('Date'),
-                    id='date_id',
-                    on_click=on_click_edit_date,
+                    I18NFormat('date'), id='date_id', on_click=on_click_edit_date,
                 ),
             ),
-            SwitchTo(I18NFormat('Back'), id='back_id', state=EditMenu.EDIT),
+            SwitchTo(
+                I18NFormat('back'), id='back_id', state=EditMenu.EDIT
+            ),
         ),
         state=EditMenu.PARAMETERS,
     ),
     Window(
-        I18NFormat('Add-service-title'),
-        MessageInput(edit_title_handler, content_types=[ContentType.TEXT]),
-        SwitchTo(I18NFormat('Back'), id='back_id', state=EditMenu.PARAMETERS),
+        I18NFormat('add-service-title'),
+        MessageInput(func=edit_title_handler, content_types=ContentType.TEXT),
+        SwitchTo(
+            I18NFormat('back'), id='back_id', state=EditMenu.PARAMETERS
+        ),
         state=EditMenu.TITLE,
     ),
     Window(
-        I18NFormat('Add-service-months'),
-        MessageInput(edit_months_handler, content_types=[ContentType.TEXT]),
-        SwitchTo(I18NFormat('Back'), id='back_id', state=EditMenu.PARAMETERS),
+        I18NFormat('add-service-months'),
+        MessageInput(func=edit_months_handler, content_types=ContentType.TEXT),
+        SwitchTo(I18NFormat('back'), id='back_id', state=EditMenu.PARAMETERS),
         state=EditMenu.MONTHS,
     ),
     Window(
-        I18NFormat('Add-calendar-date'),
+        I18NFormat('add-calendar-date'),
         Group(
             CustomCalendar(
-                id='select_date_id',
-                on_click=edit_reminder_handler,
+                id='select_date_id', on_click=edit_reminder_handler
             ),
             SwitchTo(
-                I18NFormat('Back'), id='back_id', state=EditMenu.PARAMETERS
+                I18NFormat('back'), id='back_id', state=EditMenu.PARAMETERS
             ),
         ),
         state=EditMenu.REMINDER,
     ),
     Window(
-        I18NFormat('Check-title-form'),
+        I18NFormat('check-title-form'),
         Row(
             Button(
                 Const('✅'), id='confirm_delete_id', on_click=approve_edit_menu
@@ -119,7 +114,7 @@ edit_menu = Dialog(
         state=EditMenu.CHECK_TITLE_CHANGE,
     ),
     Window(
-        I18NFormat('Check-months-form'),
+        I18NFormat('check-months-form'),
         Row(
             Button(
                 Const('✅'), id='confirm_delete_id', on_click=approve_edit_menu
@@ -132,7 +127,7 @@ edit_menu = Dialog(
         state=EditMenu.CHECK_MONTHS_CHANGE,
     ),
     Window(
-        I18NFormat('Check-reminder-form'),
+        I18NFormat('check-reminder-form'),
         Row(
             Button(
                 Const('✅'), id='confirm_delete_id', on_click=approve_edit_menu

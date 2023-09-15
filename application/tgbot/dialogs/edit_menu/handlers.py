@@ -25,25 +25,19 @@ async def on_click_set_parameters(
 
 
 async def on_click_edit_title(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager,
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.switch_to(state=EditMenu.TITLE)
 
 
 async def on_click_edit_months(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager,
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.switch_to(state=EditMenu.MONTHS)
 
 
 async def on_click_edit_date(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager,
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager,
 ) -> None:
     await dialog_manager.switch_to(state=EditMenu.REMINDER)
 
@@ -55,15 +49,13 @@ async def edit_title_handler(
     session = dialog_manager.middleware_data['session']
 
     if len(message.text) > 30:
-        return await message.answer(l10n.format_value('Error-len-limit'))
+        return await message.answer(l10n.format_value('error-len-limit'))
 
     service_id = dialog_manager.dialog_data['service_id']
     service = await session.get_service(service_id=service_id)
 
     dialog_manager.dialog_data['service_old_title'] = service.title
-    dialog_manager.dialog_data['service_new_title'] = markupsafe.escape(
-        message.text
-    )
+    dialog_manager.dialog_data['service_new_title'] = markupsafe.escape(message.text)
 
     await dialog_manager.switch_to(state=EditMenu.CHECK_TITLE_CHANGE)
 
@@ -78,11 +70,11 @@ async def edit_months_handler(
         value = int(message.text)
     except ValueError:
         return await message.answer(
-            l10n.format_value('Error-unsupported-char')
+            l10n.format_value('error-unsupported-char')
         )
 
     if value not in range(1, 12 + 1):
-        return await message.answer(l10n.format_value('Error-range-reached'))
+        return await message.answer(l10n.format_value('error-range-reached'))
 
     service_id = dialog_manager.dialog_data['service_id']
     service = await session.get_service(service_id=service_id)
@@ -104,24 +96,18 @@ async def edit_reminder_handler(
     service_id = dialog_manager.dialog_data['service_id']
     service = await session.get_service(service_id=service_id)
 
-    dialog_manager.dialog_data[
-        'service_old_reminder'
-    ] = service.reminder.date().isoformat()
-    dialog_manager.dialog_data[
-        'service_new_reminder'
-    ] = selected_date.isoformat()
+    dialog_manager.dialog_data['service_old_reminder'] = service.reminder.date().isoformat()
+    dialog_manager.dialog_data['service_new_reminder'] = selected_date.isoformat()
 
     await dialog_manager.switch_to(state=EditMenu.CHECK_REMINDER_CHANGE)
 
 
 async def reject_edit_menu(
-        callback: CallbackQuery,
-        button: Button,
-        dialog_manager: DialogManager,
+        callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     l10n = dialog_manager.middleware_data['l10n']
 
-    await callback.message.edit_text(l10n.format_value('Reject-sub-edit'))
+    await callback.message.edit_text(l10n.format_value('reject-sub-edit'))
     await dialog_manager.done()
     await dialog_manager.start(state=EditMenu.EDIT, mode=StartMode.RESET_STACK)
 
@@ -151,8 +137,6 @@ async def approve_edit_menu(
         )
     await session.commit()
 
-    await callback.message.edit_text(l10n.format_value('Approve-sub-edit'))
+    await callback.message.edit_text(l10n.format_value('approve-sub-edit'))
     await dialog_manager.done()
-    await dialog_manager.start(
-        state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
-    )
+    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)

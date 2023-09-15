@@ -3,7 +3,6 @@ The main file responsible for launching the bot
 """
 
 import asyncio
-import logging
 
 import nats
 from aiogram import Bot, Dispatcher
@@ -22,6 +21,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from application.core.config.config import settings
+from application.core.misc.logging import configure_logger
 from application.core.misc.maker import create_nats_url, create_redis_url, create_postgres_url
 from application.infrastructure.stream.worker import nats_polling
 from application.tgbot.dialogs.create_menu.dialog import create_menu
@@ -32,12 +32,7 @@ from application.tgbot.handlers import client, errors
 from application.tgbot.middlewares.database import DbSessionMiddleware
 from application.tgbot.middlewares.i18n import I18nMiddleware, make_i18n_middleware
 
-logging.basicConfig(
-    format='%(asctime)s | %(levelname)s | %(name)s:%(filename)s:%(lineno)d — %(message)s',
-    encoding='utf-8',
-    level='INFO',
-)
-logger = logging.getLogger(__name__)
+logger = configure_logger()
 
 
 async def _main() -> None:
@@ -45,8 +40,6 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    logger.info('Bot Launching')
-
     storage: RedisStorage = RedisStorage.from_url(
         url=create_redis_url().human_repr(),
         key_builder=DefaultKeyBuilder(
@@ -102,6 +95,8 @@ async def _main() -> None:
     disp.errors.register(errors.on_unknown_state, ExceptionTypeFilter(UnknownState))
 
     setup_dialogs(disp)
+
+    await logger.ainfo('Bot Launching')
 
     try:
         await jetstream.add_stream(

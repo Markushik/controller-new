@@ -11,11 +11,11 @@ from application.tgbot.dialogs.main_menu.handler import (
 from application.tgbot.states.user import DeleteMenu
 from ..extras.i18n_format import I18NFormat
 from .getters import get_subs_for_delete
-from .handerls import on_click_sub_not_delete, on_click_sub_selected
+from .handlers import on_click_sub_not_delete, on_click_sub_selected
 
 delete_menu = Dialog(
     Window(
-        I18NFormat('Catalog-remove'),
+        I18NFormat('catalog-remove'),
         Group(
             Column(
                 Select(
@@ -28,26 +28,20 @@ delete_menu = Dialog(
                 ),
             ),
             Button(
-                I18NFormat('Back'),
-                id='back_id',
-                on_click=on_click_get_subs_menu,
+                I18NFormat('back'), id='back_id', on_click=on_click_get_subs_menu,
             ),
         ),
         getter=get_subs_for_delete,
         state=DeleteMenu.DELETE,
     ),
     Window(
-        I18NFormat('Are-you-sure'),
+        I18NFormat('conformation'),
         Row(
             Button(
-                Const('✅'),
-                id='confirm_delete_id',
-                on_click=on_click_sub_delete,
+                Const('✅'), id='confirm_delete_id', on_click=on_click_sub_delete,
             ),
             Button(
-                Const('❎'),
-                id='reject_delete_id',
-                on_click=on_click_sub_not_delete,
+                Const('❎'), id='reject_delete_id', on_click=on_click_sub_not_delete,
             ),
         ),
         state=DeleteMenu.CHECK_DELETE,

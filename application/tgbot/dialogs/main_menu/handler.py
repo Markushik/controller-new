@@ -33,15 +33,11 @@ async def on_click_sub_create(
     )
 
     if count_subs < 7:
-        return await dialog_manager.start(
-            state=CreateMenu.TITLE, mode=StartMode.RESET_STACK
-        )
+        return await dialog_manager.start(state=CreateMenu.TITLE, mode=StartMode.RESET_STACK)
 
-    await callback.message.edit_text(l10n.format_value('Error-subs-limit'))
+    await callback.message.edit_text(l10n.format_value('error-subs-limit'))
     await dialog_manager.done()
-    await dialog_manager.start(
-        state=MainMenu.CONTROL, mode=StartMode.RESET_STACK
-    )
+    await dialog_manager.start(state=MainMenu.CONTROL, mode=StartMode.RESET_STACK)
 
 
 async def on_click_sub_delete(
@@ -56,7 +52,7 @@ async def on_click_sub_delete(
     await session.decrement_count(user_id=dialog_manager.event.from_user.id)
     await session.commit()
 
-    await callback.message.edit_text(l10n.format_value('Approve-sub-delete'))
+    await callback.message.edit_text(l10n.format_value('approve-sub-delete'))
     await dialog_manager.done()
     await dialog_manager.start(
         state=DeleteMenu.DELETE, mode=StartMode.RESET_STACK

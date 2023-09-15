@@ -1,8 +1,8 @@
 import datetime
 
-import lz4.frame
 import ormsgpack
 import uuid6
+import zstd
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy.orm import joinedload
@@ -10,6 +10,9 @@ from taskiq import Context, TaskiqDepends
 
 from ..database.models import Service, User
 from ..scheduler.tkq import broker
+from ...core.misc.logging import configure_logger
+
+logger = configure_logger()
 
 
 @broker.task(
@@ -30,6 +33,7 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
         expire_on_commit=True,  # when you commit, load new object from database
     )
 
+    await logger.ainfo('Polling database')
     async with async_session_maker() as session:
         request = await session.scalars(
             select(Service)
@@ -43,10 +47,11 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
         services = request.all()
         identifiers = list()
 
+    await logger.ainfo('Send service(s) to NATS')
     for service in services:
         await jetstream.publish(
             subject='service_notify.message',
-            payload=lz4.frame.compress(
+            payload=zstd.compress(
                 ormsgpack.packb(
                     {
                         'chat_id': service.user.chat_id,
