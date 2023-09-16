@@ -5,7 +5,7 @@ from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 
-from application.core.config.constants import DEFAULT_LOCALE, LOCALES
+from application.tgbot.constants import DEFAULT_LOCALE, LOCALES
 from application.infrastructure.database.adapter.adapter import DbAdapter
 from application.tgbot.dialogs.extras.i18n_format import I18N_FORMAT_KEY
 
@@ -47,7 +47,7 @@ class I18nMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         session: DbAdapter = data['session']
-        language = await session.get_user_language(user_id=event.from_user.id)
+        language = await session.get_language(user_id=event.from_user.id)
 
         language = language or 'ru_RU'
         l10n = self.l10ns[language]

@@ -33,7 +33,6 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
         expire_on_commit=True,  # when you commit, load new object from database
     )
 
-    await logger.ainfo('Polling database')
     async with async_session_maker() as session:
         request = await session.scalars(
             select(Service)
@@ -47,7 +46,6 @@ async def base_polling_task(context: Context = TaskiqDepends()) -> None:
         services = request.all()
         identifiers = list()
 
-    await logger.ainfo('Send service(s) to NATS')
     for service in services:
         await jetstream.publish(
             subject='service_notify.message',

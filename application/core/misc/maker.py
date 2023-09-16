@@ -1,6 +1,6 @@
 from yarl import URL
 
-from application.core.config.config import settings
+from application.core.config.parser import settings
 
 
 def create_postgres_url() -> URL:

@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from application.core.config.config import settings
+from application.core.config.parser import settings
 from application.core.misc.logging import configure_logger
 from application.core.misc.maker import create_nats_url, create_redis_url, create_postgres_url
 from application.infrastructure.stream.worker import nats_polling
@@ -40,21 +40,6 @@ async def _main() -> None:
     The main function responsible for launching the bot
     :return:
     """
-    storage: RedisStorage = RedisStorage.from_url(
-        url=create_redis_url().human_repr(),
-        key_builder=DefaultKeyBuilder(
-            with_destiny=True,
-            with_bot_id=True
-        ),
-    )
-
-    nats_connect: Client = await nats.connect(
-        servers=[
-            create_nats_url().human_repr()
-        ],
-    )
-    jetstream: JetStreamContext = nats_connect.jetstream()
-
     async_engine: AsyncEngine = create_async_engine(
         url=create_postgres_url().human_repr(),
         pool_pre_ping=True,
@@ -67,6 +52,20 @@ async def _main() -> None:
         expire_on_commit=True,
     )
 
+    nats_connect: Client = await nats.connect(
+        servers=[
+            create_nats_url().human_repr()
+        ],
+    )
+    jetstream: JetStreamContext = nats_connect.jetstream()
+
+    storage: RedisStorage = RedisStorage.from_url(
+        url=create_redis_url().human_repr(),
+        key_builder=DefaultKeyBuilder(
+            with_destiny=True,
+            with_bot_id=True
+        ),
+    )
     bot: Bot = Bot(
         token=settings['API_TOKEN'], parse_mode=ParseMode.HTML
     )
@@ -90,7 +89,6 @@ async def _main() -> None:
         delete_menu,
         edit_menu,
     )
-
     disp.errors.register(errors.on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
     disp.errors.register(errors.on_unknown_state, ExceptionTypeFilter(UnknownState))
 

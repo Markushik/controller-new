@@ -2,7 +2,7 @@ from typing import Any
 
 from aiogram_dialog import DialogManager
 
-from application.core.config.constants import LANGUAGES
+from application.tgbot.constants import LANGUAGES
 
 
 async def get_langs_for_output(**kwargs) -> dict[str, list[Any]]:

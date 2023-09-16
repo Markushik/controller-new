@@ -119,17 +119,17 @@ async def approve_edit_menu(
     session = dialog_manager.middleware_data['session']
 
     if dialog_manager.dialog_data.get('service_new_title'):
-        await session.edit_title_subscription(
+        await session.edit_sub_title(
             service_id=dialog_manager.dialog_data['service_id'],
             title=dialog_manager.dialog_data['service_new_title'],
         )
     if dialog_manager.dialog_data.get('service_new_months'):
-        await session.edit_months_subscription(
+        await session.edit_sub_months(
             service_id=dialog_manager.dialog_data['service_id'],
             months=dialog_manager.dialog_data['service_new_months'],
         )
     if dialog_manager.dialog_data.get('service_new_reminder'):
-        await session.edit_date_subscription(
+        await session.edit_sub_date(
             service_id=dialog_manager.dialog_data['service_id'],
             reminder=datetime.fromisoformat(
                 dialog_manager.dialog_data['service_new_reminder']

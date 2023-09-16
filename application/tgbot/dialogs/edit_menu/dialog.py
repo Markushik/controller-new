@@ -59,7 +59,7 @@ edit_menu = Dialog(
         Group(
             Row(
                 Button(
-                    I18NFormat('Title'), id='title_id', on_click=on_click_edit_title,
+                    I18NFormat('title'), id='title_id', on_click=on_click_edit_title,
                 ),
                 Button(
                     I18NFormat('months'), id='months_id', on_click=on_click_edit_months,

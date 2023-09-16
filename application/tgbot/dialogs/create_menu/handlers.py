@@ -61,7 +61,7 @@ async def on_click_confirm_data(
         reminder=datetime.fromisoformat(dialog_manager.dialog_data['reminder']),
         service_fk=callback.from_user.id,
     )
-    await session.increment_count(user_id=dialog_manager.event.from_user.id)
+    await session.increment_quantity(user_id=dialog_manager.event.from_user.id)
     await session.commit()
 
     await callback.message.edit_text(l10n.format_value('approve-sub-add'))
