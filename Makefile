@@ -36,3 +36,6 @@ worker:
 .PHONY: scheduler
 scheduler:
 	poetry run taskiq scheduler src.infrastructure.scheduler.tkq:scheduler --fs-discover
+
+# Написать программу, имитирующая работу калькулятора, который имеет арифметическую и функциональную часть
+# a - вещественное. вводится знак операции
