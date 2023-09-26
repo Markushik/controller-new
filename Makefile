@@ -31,8 +31,8 @@ migrate:
 # --- Taskiq Scripts ---
 .PHONY: worker
 worker:
-	poetry run taskiq worker application.infrastructure.scheduler.tkq:broker --fs-discover --reload --max-async-tasks -1
+	poetry run taskiq worker src.infrastructure.scheduler.tkq:broker --fs-discover --reload --max-async-tasks -1
 
 .PHONY: scheduler
 scheduler:
-	poetry run taskiq scheduler application.infrastructure.scheduler.tkq:scheduler --fs-discover
+	poetry run taskiq scheduler src.infrastructure.scheduler.tkq:scheduler --fs-discover
